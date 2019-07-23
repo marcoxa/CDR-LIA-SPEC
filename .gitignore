@@ -1,0 +1,9 @@
+*.log
+*.aux
+*.pdf
+*.dvi
+*.bbl
+*.blg
+*.c
+CDR-IEEE-754-support.synctex.gz
+cleqcmp.html

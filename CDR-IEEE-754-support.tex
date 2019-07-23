@@ -1,0 +1,956 @@
+%%%% -*- Mode: LaTeX -*-
+
+%%%% CDR-IEEE-754-support.tex --
+%%%% Minimalistic support for (a subset) of IEEE 754 for Common Lisp.
+
+
+\documentclass[fleqn]{article}
+
+\usepackage{latexsym}
+\usepackage{epsfig}
+\usepackage{alltt}
+\usepackage{color}
+\usepackage[margin=4cm]{geometry}
+
+% \usepackage[OT1]{fontenc}
+% \usepackage{bold-extra}
+% \renewcommand{\ttdefault}{cmt}
+
+\usepackage{lmodern}            % This works for decent bold 'tt'.
+
+
+\newcommand{\tm}{$^\mathsf{tm}$}
+\newcommand{\cfr}{\emph{cfr.}}
+
+\newcommand{\Lisp}{\textsf{Lisp}}
+\newcommand{\CL}{\textsf{Common~Lisp}}
+
+\newcommand{\Java}{\textsc{Java}}
+
+\newcommand{\checkcite}[1]{{\textbf{[Missing Citation: #1]}}}
+\newcommand{\checkref}[1]{{\textbf{[Missing Reference: #1]}}}
+
+\newcommand{\missingpart}[1]{{\ }\vspace{2mm}\\
+{\textbf{[Still Missing: #1]}}\\
+\vspace{2mm}}
+
+\newcommand{\marginnote}[1]{%
+\marginpar{\begin{tiny}\begin{em}
+{\raggedright #1}
+\end{em}\end{tiny}}}
+
+%\addtolength{\textwidth}{2cm}
+
+
+%%% CL 
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+\newcommand{\term}[1]{\texttt{#1}}
+\newcommand{\nonterm}[1]{\textit{$<$#1$>$}}
+
+
+\newcommand{\kwd}[1]{\texttt{:#1}}
+
+\newcommand{\varname}[1]{\textit{#1}}
+
+\newcommand{\codeprompt}[1]{\textcolor{blue}{\textbf{#1}}}
+
+
+%%% ANSI-Spec Like Macros.
+
+% \newcommand{\DDictionaryItem}[1]{\subsection{#1}\vspace*{-9pt}\hrulefill}
+\newcommand{\DDictionaryItem}[1]{\vspace*{6pt}\noindent\hrulefill\vspace*{-9pt}\subsection*{#1}}
+
+\newcommand{\DSyntax}{\subsubsection*{Syntax:}}
+\newcommand{\DArgsNValues}{\subsubsection*{Arguments and Values:}}
+\newcommand{\DDescription}{\subsubsection*{Description:}}
+\newcommand{\DExamples}{\subsubsection*{Examples:}}
+\newcommand{\DExceptional}{\subsubsection*{Exceptional Situations:}}
+\newcommand{\DNotes}{\subsubsection*{Notes:}}
+\newcommand{\DSeeAlso}{\subsubsection*{See Also:}}
+
+
+
+%%%% Document Title.
+
+
+\title{
+\LARGE{\bfseries Minimalistic Support for (a subset of) IEEE~745 in \CL{}}}
+
+% \author{
+% Marco Antoniotti\\
+% Dipartimento di Informatica, Sistemistica e Comunicazione\\
+% Universit\`{a} degli Studi di Milano Bicocca\\
+% Viale Sarca 336, U14, Milan (MI), \textsc{Italy}\\
+% \vspace{2mm}
+% \texttt{mantoniotti} at \texttt{common-lisp.net},
+% \texttt{marco.antoniotti} at \texttt{unimib.it}}
+
+\author{TBD}
+
+%\date{}
+
+
+%\includeonly{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This document presents a set of names and functions that aim at
+providing a common ground for the support of (a subset of) IEEE~754 in
+\CL{}.
+
+The set of names and functions (and ancillary information) is intented
+to be minimalistic; essentially for IEEE~754 constants (e.g.,
+\code{NaN}) and some functionalities that are needed to control
+floating point computations.
+\end{abstract}
+
+
+\section{Introduction}
+
+The ANSI \CL{} Specification \cite{ANSIHyperSpec} hints at possible
+compliance with IEEE ``Floating Points'' (in retrospect, IEEE~754) in
+the description of the \code{*features*} variable, where:
+\begin{description}
+\item[\code{:ieee-floating-point}]
+  If present, indicates that the
+  implementation \emph{purports to conform}  to the requirements of
+  \emph{IEEE Standard for Binary Floating-Point Arithmetic}. 
+\end{description}
+
+\noindent
+Alas, the actual state of ``compliance'' among different
+implementations varies wildly, with some implementations publicizing
+the \code{:ieee-floating-point} feature while providing an unclear
+subset of features\footnote{We talk of the sin and not of the sinner;
+  you can check for yourself what happens in the various
+  implementations.}.  This is in contrast with the current state of
+affairs in other languages; especially languages designed
+\emph{after} the publication of IEEE~754.
+
+\vspace*{3mm}
+
+The goal of this document is to address some of this state of affairs
+by providing a specification for a minimalistic subset of names,
+functions and macros to be used in conjunction with IEEE~754
+concepts.  Two issues especially will 
+be addressed:
+\begin{itemize}
+\item Names for \code{NaN}s and ``infinities''.
+\item Functions and macros to handle \emph{rounding modes}; with
+  special care devoted to incentivate non-invasive, yet informative,
+  implementations.
+\end{itemize}
+
+\vspace*{3mm}
+
+Most of the contents of this document borrow ideas from
+\cite{IEEE-754}, \cite{C18}, and the documentation of
+several \CL{} implementations.
+
+
+
+\section{Description}
+
+The IEEE~754 standard introduces a number of ``names'' for certain
+special values: \code{NaN}s and infinities, as an example.  Several
+\CL{} implementations provide such concepts, alas, not in a consensual
+way.  The goal of this document is to provide such a minimal
+consensus.
+
+\subsection{\code{CL-MATH-IEEE-2019} Package}
+
+The implementations of this specification will provide a package named
+(or nicknamed) \code{CL-MATH-IEEE-2019}.  All the symbols named in the rest
+of the document are \code{export}ed from the above mentioned package.
+
+
+
+
+\section{IEEE~754 \CL{}-related Dictionary}
+
+\subsection{Floats, Infinities and NaNs}
+
+\DDictionaryItem{Function \code{make-float}}
+
+\DSyntax{}
+
+\code{make-float} \varname{bytes} \code{\&optional}
+\varname{float-type}
+$\Rightarrow$ \varname{float}
+
+\DArgsNValues{}
+
+\varname{bytes} -- An integer or bit-vector representing the binary
+pattern of a floating point number.\\
+\varname{float-type} -- A recognizable subtype of \code{float},
+defaulting to \code{*read-default-float-format*}.\\
+\varname{result} -- the resulting floating point number or \code{NAN}.
+
+
+\DDescription{}
+
+The function constructs a floating point number of appropriate
+\varname{float-type}, starting from the bit content of
+\varname{bytes}.
+
+If \varname{bytes} corresponds to the byte pattern of a \emph{NaN},
+then a \code{NAN} is returned, regardless of \varname{float-type}.
+
+\DExceptional{}
+
+The function signals a \code{type-error} if either \varname{bytes} or
+\varname{float-type} are not as described above.
+
+\DSeeAlso{}
+
+\code{NAN}.
+
+
+\DNotes{}
+
+This function is, in one form or another, already present in \CL{}
+implementations.
+
+
+\DDictionaryItem{Functions
+  \code{make-short-float},
+  \code{make-single-float},\\
+  \code{make-double-float},
+  \code{make-long-float}}
+
+\DSyntax{}
+
+\code{make-short-float} \varname{bytes}
+$\Rightarrow$ \varname{result}\\
+\code{make-single-float} \varname{bytes}
+$\Rightarrow$ \varname{result}\\
+\code{make-double-float} \varname{bytes}
+$\Rightarrow$ \varname{result}\\
+\code{make-long-float} \varname{bytes}
+$\Rightarrow$ \varname{result}
+
+\subsubsection*{Arguments and Values:}
+
+\varname{bytes} -- An integer or bit-vector representing the binary
+pattern of a floating point number.\\
+\varname{result} -- the resulting floating point number or \code{NAN}.
+
+\subsubsection*{Description:}
+
+The functions construct a floating point number of appropriate
+float type starting from the bit content of
+\varname{bytes}.
+
+If \varname{bytes} corresponds to the byte pattern of a \emph{NaN},
+then a \code{NAN} is returned.
+
+The actual float type returned by the functions is the widest one
+supported by the implementation; i.e., a call to
+\code{make-long-float} may return a \code{double-float}.
+
+\subsubsection*{Exceptional Situations:}
+
+The functions signals a \code{type-error} if \varname{bytes} is not of
+the type described above
+
+\subsubsection*{See Also:}
+
+\code{NAN}, \code{make-float}.
+
+\subsubsection*{Notes:}
+
+These functions are, in one form or another, already present in \CL{}
+implementations.
+
+Implementations may supply a larger set of these functions, e.g.,
+\code{make-quad-float}.
+
+
+\DDictionaryItem{Value \code{NAN}}
+
+\subsubsection*{Value:}
+
+An \emph{implementation-dependent value}.
+
+
+\subsubsection*{Description:}
+
+The value \code{NAN} holds a representation of a ``not a number'' object.
+
+
+\subsubsection*{Examples:}
+
+The actual value of \code{NAN} varies from implementation to
+implementation.  Here are two examples of how \code{NAN} can be
+represented in two implementations:
+
+\begin{alltt}
+SBCL> \codeprompt{NAN}
+\textit{#<DOUBLE-FLOAT quiet NaN>}
+\textcolor{red}{;;; E.g., the result of (sb-kernel:make-double-float -524288 0)}
+\end{alltt}
+
+\begin{alltt}
+LW> \codeprompt{NAN}
+\textit{1D+-0} \textcolor{red}{#| 1D+-0 is double-float not-a-number |#}
+\end{alltt}
+
+\subsubsection*{Notes:}
+
+\noindent
+It is to be understood that testing for equality of two \code{NAN}s is
+not meaningful.
+
+\noindent
+It is also understood that, \code{(numberp nan)} should return \code{T}.
+
+\subsubsection*{See Also:}
+
+\code{is-nan, nanp}
+
+
+\DDictionaryItem{Functions \code{is-nan}, \code{nanp}}
+
+\subsubsection*{Syntax:}
+
+\code{is-nan} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{nanp} \varname{x} $\Rightarrow$ \textit{boolean}
+
+\subsubsection*{Arguments and Values:}
+
+\varname{x} -- any \CL{} object.
+
+\subsubsection*{Description:}
+
+The function \code{is-nan} (respectively \code{nanp}) returns \code{T}
+whenever \varname{x} is a (representation of an IEEE) NaN.  Otherwise
+it returns \code{NIL}.
+
+
+\subsubsection*{Example:}
+
+\begin{alltt}
+CL prompt> \codeprompt{(is-nan nan)}
+\textit{T}
+
+CL prompt> \codeprompt{(nanp nan)}
+\textit{T}
+
+CL prompt> \codeprompt{(is-nan 42)}
+\textit{NIL}
+
+CL prompt> \codeprompt{(is-nan "NaN")}
+\textit{NIL}
+\end{alltt}
+
+
+
+\DDictionaryItem{Constant Variables\\
+  \code{long-float-positive-infinity},
+  \code{long-float-negative-infinity},\\
+  \code{double-float-positive-infinity},
+  \code{double-float-negative-infinity},\\
+  \code{single-float-positive-infinity},
+  \code{single-float-negative-infinity},\\
+  \code{short-float-positive-infinity},
+  \code{short-float-negative-infinity},\\
+  \code{+infL0}, 
+  \code{-infL0},
+  \code{+infD0}, 
+  \code{-infD0},
+  \code{+infF0}, 
+  \code{-infF0},
+  \code{+infS0}, 
+  \code{-infS0},
+  }
+
+\subsubsection*{Value:}
+
+The value of each of these constants is
+\emph{implementation-dependent}.
+
+
+\subsubsection*{Description:}
+
+The value of each of these constants must conform with the format
+(i.e., the floating point type) codified in the name.
+
+
+\subsubsection*{Examples:}
+
+\begin{alltt}
+SBCL> \codeprompt{single-float-positive-infinity}
+\textit{#.SB-EXT:SINGLE-FLOAT-POSITIVE-INFINITY}
+\end{alltt}
+
+\begin{alltt}
+LW> \codeprompt{single-float-positive-infinity}
+\textit{+1F++0} \textcolor{red}{#| +1F++0 is single-float plus-infinity |#}
+\end{alltt}
+
+\begin{alltt}
+LW> \codeprompt{-infD0}
+\textit{-1D++0} \textcolor{red}{#| -1D++0 is double-float plus-infinity |#}
+\end{alltt}
+
+\begin{alltt}
+LW> \codeprompt{-infL0}
+\textit{-1D++0} \textcolor{red}{#| -1D++0 is double-float plus-infinity |#}
+\textcolor{red}{;;; Note that in this case the widest float representation
+;;; available is DOUBLE-FLOAT.}
+\end{alltt}
+
+
+\subsubsection*{Notes:}
+
+The ``short'' names and the ``long ones'' are completely equivalent.
+A possible implementation would be the following:
+\begin{alltt}
+(define-symbol-macro -infD0 double-float-negative-infinity)
+\end{alltt}
+
+
+\DDictionaryItem{Functions \code{is-infinity}, \code{infinityp}}
+
+\subsubsection*{Syntax:}
+
+\code{is-infinity} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{infinityp} \varname{x} $\Rightarrow$ \textit{boolean}
+
+\subsubsection*{Arguments and Values:}
+
+\varname{x} -- any \CL{} object.
+
+\subsubsection*{Description:}
+
+The function \code{is-infinity} (respectively \code{infinityp}) returns \code{T}
+whenever \varname{x} is a (representation of an IEEE) infinity.  Otherwise
+it returns \code{NIL}.
+
+
+\subsubsection*{Example:}
+
+\begin{alltt}
+CL prompt> \codeprompt{(is-infinity double-float-negative-infinity)}
+\textit{T}
+
+CL prompt> \codeprompt{(infinityp nan)}
+\textit{NIL}
+
+CL prompt> \codeprompt{(is-infinity 42)}
+\textit{NIL}
+
+CL prompt> \codeprompt{(is-infinity "NaN")}
+\textit{NIL}
+\end{alltt}
+
+
+
+\subsection{Low Level Exception Handling}
+
+The \CL{} ANSI Specification provides the following conditions that
+may be raised by an implementation (in an \emph{implementation
+  dependent} way) in conjunction with floating point operations.
+\begin{description}
+\item \code{floating-point-invalid-operation},
+\item \code{floating-point-inexact},
+\item \code{floating-point-overflow},
+\item \code{floating-point-underflow}.
+\end{description}
+Of course, the condition \code{division-by-zero} may also be signaled by floating
+point operations.
+
+
+The following entries specify an interface similar the C Library
+interface to the \emph{Floating Point Environment} provided by
+\verb|<fenv.h>| \cite{C18}.
+
+
+\DDictionaryItem{Type \code{fe-exception}}
+
+\DDescription{}
+
+The \code{fe-exception} type is defined to be:
+\begin{alltt}
+(member :divide-by-zero
+        :inexact
+        :invalid
+        :overflow
+        :underflow)
+\end{alltt}
+The meaning of these values correspond to a the possible exceptions
+supported by an implementation.
+
+\DSeeAlso{}
+
+\code{+fe-all-exceptions+}
+
+
+
+\DDictionaryItem{Constant Value \code{+fe-all-exceptions+}}
+
+\subsubsection*{Value:}
+
+An \emph{implementation-dependent value}.
+
+\subsubsection*{Description:}
+
+The value \code{+fe-all-exceptions+} holds a representation the set of
+exceptions -- whose members are of type \code{fe-exception} -- that
+are supported by the implementation.
+
+\subsubsection*{Notes:}
+
+A simple implementation could be a list, but this specification does
+not impose such a constraint.
+
+
+\subsubsection*{See Also:}
+
+\code{fe-exception}, \code{all-supported-exceptions-p},
+\code{some-supported-exceptions-p},\\
+\code{supported-exception-p}.
+
+
+\DDictionaryItem{Functions \code{supported-exception-p},\\
+  \code{all-supported-exceptions-p},
+  \code{some-supported-exceptions-p}}
+
+\subsubsection*{Syntax:}
+
+\code{supported-exception-p}
+\varname{exception} $\Rightarrow$ \textit{boolean}\\
+\code{all-supported-exceptions-p} \code{\&rest}
+\varname{exceptions} $\Rightarrow$ \textit{boolean}\\
+\code{some-supported-exceptions-p} \code{\&rest}
+\varname{exceptions} $\Rightarrow$ \textit{boolean}
+
+\subsubsection*{Arguments and Values:}
+
+\varname{exception} -- a \CL{} object of type 
+\code{fe-exception}.\\
+\varname{exceptions} -- a list of \CL{} objects each of type 
+\code{fe-exception}.
+
+
+\subsubsection*{Description:}
+
+The functions returns a true value if the exceptions passed as
+arguments are supported by the implementation.
+
+The function \code{supported-exception-p} returns true if 
+\varname{exception} is supported by the implementation, and \code{NIL}
+otherwise.
+
+The function \code{all-supported-exceptions-p} returns true if all the
+elements in \varname{exceptions} are supported by the implementation,
+and \code{NIL} otherwise.
+
+The function \code{some-supported-exceptions-p} returns true if any the
+elements in \varname{exceptions} is supported by the implementation,
+and \code{NIL} otherwise.
+
+\DExamples{}
+
+\begin{alltt}
+CL prompt> \codeprompt{(supported-exception-p :divide-by-zero)}
+\textit{T} \textcolor{red}{; Or could be be NIL.}
+
+CL prompt> \codeprompt{(some-supported-exceptions-p :divide-by-zero :inexact)}
+\textit{T} \textcolor{red}{; Assuming the previous operation returned true.}
+
+CL prompt> \codeprompt{(all-supported-exception-p :divide-by-zero :inexact)}
+\textit{NIL} \textcolor{red}{; Or could be be T.}
+\end{alltt}
+
+\subsubsection*{Exceptional Situations:}
+
+The functions signal a \code{type-error} if \varname{exception}
+is not of type \code{fe-exception} or if \varname{exceptions} contains
+objects not of type \code{fe-exception}.
+
+
+
+
+
+
+
+
+
+\subsection{Rounding}
+
+Having control over IEEE rounding modes is necessary to implement a
+number of numerical algorithms and data structures. The following
+entries provide access to the IEEE facilities.
+
+
+\DDictionaryItem{Type \code{rounding-modes}}
+
+\subsubsection{Description:}
+
+The \code{rounding-modes} type is defined to be:
+\begin{alltt}
+(member :indeterminable
+        :zero
+        :nearest
+        :positive-infinity
+        :negative-infinity)
+\end{alltt}
+The meaning of these values correspond to a direction of floating
+point rounding.
+
+
+\subsubsection*{Notes:}
+
+The keywords used correspond to the C Library \cite{C18}
+\textbf{\code{FLT\_ROUNDS}} values of:
+
+\vspace*{3mm}
+
+\begin{tabular}{rl}
+  \textbf{\code{-1}} & indeterminable.\\
+  \textbf{\code{0}}  & toward zero.\\
+  \textbf{\code{1}}  & toward nearest.\\
+  \textbf{\code{2}}  & toward positive infinity.\\
+  \textbf{\code{3}}  & toward negative infinity.\\
+\end{tabular}
+
+\vspace*{3mm}
+
+As per the C Library standard, \CL{} implementations can extend the
+type \code{rounding-modes} with other keywords representing
+\emph{implementation dependent} rounding modes.
+
+
+
+\DDictionaryItem{Function \code{set-floating-point-modes}}
+
+\subsubsection*{Syntax:}
+
+\begin{tabbing}
+\code{set-floating-point-modes} \= \textit{\code{\&key}}\\
+\>\varname{traps}\\
+\>\varname{rounding-mode}\\
+\>\varname{current-exceptions}\\
+\>\varname{precision}\\
+\>\varname{\code{\&allow-other-keys}}\\
+$\Rightarrow$ \varname{modes}
+\end{tabbing}
+
+
+\subsubsection*{Arguments and Values:}
+
+\varname{traps} -- A list of the exception conditions that should cause
+traps.\\
+\varname{rounding-mode} -- The rounding mode to use when the result is
+not exact.\\
+\varname{current-exceptions} -- The argument is used to set the current
+set of exceptions.\\
+\varname{precision} -- An integer.\\
+\varname{modes} -- An a-list containing the current floating
+point modes; the indicators are keywords.
+
+\subsubsection*{Description:}
+
+This function sets options controlling the floating-point
+hardware. If a keyword is not supplied, then the current value is
+preserved.
+
+The possible values for each of the keywords are the
+following.
+
+\begin{itemize}
+\item \varname{traps} is a list that can contain the keywords
+  \code{:underflow}, \code{:overflow}, \code{:inexact}, \code{:invalid},
+  \code{:divide-by-zero}, and \code{:denormalized-operand}.
+
+\item \varname{rounding-mode} is the rounding mode to use when the result is
+  not exact; it can assume the values \code{:nearest},
+  \code{:positive-infinity}, \code{:negative-infinity} and
+  \code{:zero}.
+
+\item \varname{current-exceptions} is used to set the exception flags. The
+  main use is setting the accrued exceptions to \code{NIL} to clear
+  them.
+
+\item \varname{precision} can be one of the integers 24, 53 and 64, standing for
+  the internal precision of the mantissa.
+\end{itemize}
+
+\subsubsection*{Examples:}
+
+None.
+
+
+\subsubsection*{Notes:}
+
+None.
+
+
+\subsubsection*{Exceptional Situations:}
+
+The function can always result in a no-op if access to the underlying
+hardware is not fully supported.  When this happens
+\code{set-floating-point-modes} must issue a warning.
+
+
+\subsubsection*{See also:}
+
+\code{get-floating-point-modes}.
+
+
+\DDictionaryItem{Function \code{get-floating-point-modes}}
+
+\subsubsection*{Syntax:}
+
+\code{get-floating-point-modes} \textit{$<$no arguments$>$}
+$\Rightarrow$ \varname{modes}
+
+\subsubsection*{Arguments and Values:}
+
+\varname{modes} -- An a-list containing the current floating
+point modes; the indicators are keywords.
+
+
+\subsubsection*{Description:}
+
+The function returns an a-list that represents the current state of
+the floating point modes in use at the time.  The format of the
+returned \varname{modes} a-list is such to be
+usable as an \code{apply} last argument for
+\code{set-floating-point-modes}.
+
+
+\subsubsection*{Examples:}
+
+\begin{alltt}
+SBCL> \codeprompt{(get-floating-point-modes)}
+\textit{(:TRAPS (:OVERFLOW :INVALID :DIVIDE-BY-ZERO)
+ :ROUNDING-MODE :NEAREST
+ :CURRENT-EXCEPTIONS (:INEXACT)
+ :FAST-MODE NIL
+ :PRECISION :53-BIT)}
+\end{alltt}
+
+
+\subsubsection*{See also:}
+
+\code{set-floating-point-modes}.
+
+
+\DDictionaryItem{Function \code{default-floating-point-modes}}
+
+\subsubsection*{Syntax:}
+
+\code{default-floating-point-modes} \textit{$<$no arguments$>$}
+$\Rightarrow$ \varname{modes}
+
+\subsubsection*{Arguments and Values:}
+
+\varname{modes} -- An a-list containing the current floating
+point modes; the indicators are keywords.
+
+\subsubsection*{Description:}
+
+The function returns an a-list that represents the \emph{default}
+state of the floating point modes in use by the implementation.  The
+format of the returned \varname{modes} a-list is such to be usable as
+an \code{apply} last argument for \code{set-floating-point-modes}.
+
+\subsubsection*{Examples:}
+
+\begin{alltt}
+SBCL> \codeprompt{(default-floating-point-modes)}
+\textit{(:TRAPS (:OVERFLOW :INVALID :DIVIDE-BY-ZERO)
+ :ROUNDING-MODE :NEAREST
+ :CURRENT-EXCEPTIONS (:INEXACT)
+ :FAST-MODE NIL
+ :PRECISION :53-BIT)}
+\end{alltt}
+
+\subsubsection*{Notes:}
+
+The function \code{default-floating-point-modes} should always return
+the same (or \code{equal}) value.
+
+\subsubsection*{See also:}
+
+\code{set-floating-point-modes}, \code{get-floating-point-modes}.
+
+
+\newpage
+\DDictionaryItem{Macro \code{with-floating-point-modes}}
+
+\DSyntax{}
+
+% \code{with-floating-point-modes} (\textit{\code{\&key}}
+% \varname{traps}
+% \varname{rounding-mode}
+% \varname{current-exceptions}
+% \varname{precision}
+% \varname{\code{\&allow-other-keys}}) \varname{\code{\&body}} \varname{body}
+% $\Rightarrow$ \varname{results}
+
+\begin{tabbing}
+\code{with-floating-point-modes} \=(\=\textit{\code{\&key}}\\
+\>\>                                \varname{traps}\\
+\>\>                                \varname{rounding-mode}\\
+\>\>                                \varname{current-exceptions}\\
+\>\>                                \varname{precision}\\
+\>\>                                \varname{\code{\&allow-other-keys}})\\
+\>                           \varname{\code{\&body}} \varname{body}\\
+$\Rightarrow$ \varname{results}
+\end{tabbing}
+
+
+
+
+\subsubsection*{Arguments and Values:}
+
+\varname{traps} -- A list of the exception conditions that should cause
+traps.\\
+\varname{rounding-mode} -- The rounding mode to use when the result is
+not exact.\\
+\varname{current-exceptions} -- The argument is used to set the current
+set of exceptions.\\
+\varname{precision} -- An integer.\\
+\varname{results} -- One or more \CL{} objects.
+
+
+\subsubsection*{Description:}
+
+The \code{with-floating-point-modes} macro executes \varname{body} in a
+an environment where the floating point modes are determined by the
+values passed as arguments to the macro.  Upon termination (either
+normal or exceptional) of the code in \varname{body} the floating
+point modes are restored to those in effect before the execution of
+\code{with-floating-point-modes}.
+
+As for \code{set-floating-point-modes} the values that the arguments
+can take are the following:
+
+\begin{itemize}
+\item \varname{traps} is a list that can contain the keywords
+  \code{:underflow}, \code{:overflow}, \code{:inexact}, \code{:invalid},
+  \code{:divide-by-zero}, and \code{:denormalized-operand}.
+
+\item \varname{rounding-mode} is the rounding mode to use when the result is
+  not exact; it can assume the values \code{:nearest},
+  \code{:positive-infinity}, \code{:negative-infinity} and
+  \code{:zero}.
+
+\item \varname{current-exceptions} is used to set the exception flags. The
+  main use is setting the accrued exceptions to \code{NIL} to clear
+  them.
+
+\item \varname{precision} can be one of the integers 24, 53 and 64,
+  standing for the internal precision of the mantissa.
+\end{itemize}
+
+
+
+\noindent
+\varname{results} is the value (or values) returned by \varname{body}.
+
+
+\subsubsection*{Notes:}
+
+When called with an empty arguments list,
+\code{with-floating-point-modes} is a no-op.
+
+
+\subsubsection*{See Also:}
+
+\code{get-floating-point-modes}, \code{set-floating-point-modes}.
+
+
+\DDictionaryItem{Function \code{get-rounding-mode}}
+
+\subsubsection*{Syntax:}
+
+\code{get-rounding-mode} \textit{$<$no arguments$>$}
+$\Rightarrow$ \varname{rounding-mode}
+
+\DArgsNValues{}
+
+\varname{rounding-mode} -- a value of type \code{rounding-modes}.
+
+\DDescription{}
+
+The function returns the current rounding mode.  The value
+\code{:indeterminate} is returned if such rounding mode cannot be
+determined.
+
+\DSeeAlso{}
+
+ \code{rounding-modes}.
+
+
+\DDictionaryItem{Function \code{set-rounding-mode}}
+
+\subsubsection*{Syntax:}
+
+\code{set-rounding-mode} \varname{rounding-mode}
+$\Rightarrow$ \varname{result}, \varname{success}
+
+\DArgsNValues{}
+
+\varname{rounding-mode} -- a \code{rounding-mode}\\
+\varname{result} -- a \code{rounding-mode}\\
+\varname{success} -- a boolean
+
+
+\DDescription{}
+
+The function sets the rounding mode.  If the setting of the rounding
+mode is succesful, then \varname{rounding-node} is returned as
+\varname{result} and \varname{success} is \code{T}.  Otherwise, the
+rounding mode before the the call is returned with \varname{success}
+\code{NIL}.\marginnote{Should it instead signal an error?}
+
+
+
+
+\begin{thebibliography}{9}
+
+\bibitem{IEEE-754}
+  \textit{{IEEE} Standard for Floating-Point Arithmetic}, IEEE Std
+  754$^{\mathrm{TM}}$-2008, IEEE Computer Society, 2008.
+  
+\bibitem{C18}
+  \textit{Programming languages -- C},
+  International Standard \emph{ISO/IEC 9899-2018}, 2018.
+  
+\bibitem{ANSIHyperSpec}
+  \textit{The \CL{} Hyperspec},
+  published online at\\
+  \texttt{http://www.lisp.org/HyperSpec/FrontMatter/index.html}, 1994.
+
+\end{thebibliography}
+
+
+\appendix
+
+\section{Copying and License}
+
+This work may be distributed and/or modified under the conditions of
+the \emph{LaTeX Project Public License} (LPPL), either version 1.3 of this license
+or (at your option) any later version. The latest version of this
+license is in \texttt{http://www.latex-project.org/lppl.txt} and version 1.3 or
+later is part of all distributions of LaTeX version 2005/12/01 or
+later.
+
+\noindent
+This work has the LPPL maintenance status `maintained'.
+
+\noindent
+The Current Maintainer of this work is Marco Antoniotti.
+
+\end{document}
+
+%%%% end of file --CDR-IEEE-754-support.tex --
