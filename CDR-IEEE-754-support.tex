@@ -9,6 +9,7 @@
 \usepackage{latexsym}
 \usepackage{epsfig}
 \usepackage{alltt}
+\usepackage{tabularx}
 \usepackage{color}
 \usepackage[margin=4cm]{geometry}
 
@@ -242,6 +243,7 @@ way.  The goal of this document is to provide such a minimal
 consensus.
 
 \subsection{\code{CL-MATH-IEEE-2019} Package}
+\label{sect:package}
 
 The implementations of this specification will provide a package named
 (or nicknamed) \code{CL-MATH-IEEE-2019}.  All the symbols named in the rest
@@ -1407,6 +1409,90 @@ presence of the \code{ieee-floating-point} feature in
 These features are present in the \code{*features*} list whenever the
 corresponding function, \code{is-}\emph{feature} returns a
 non-\code{NIL} value.
+
+\subsubsection{Numeric Operations}
+
+The following \CL{} operations, broken down according to the
+classification in Section~12.1.1 of \cite{ANSIHyperSpec} are exported
+form the \code{CL-MATH-IEEE-2019} package
+(cfr.,~\ref{sect:package}).
+
+If \code{is-cdr-ieee-754-operation-providing} returns non-\code{NIL}
+(and the\\ \code{:cdr-ieee-754-operation-providing} is in
+\code{*features*}, then the operations are also implemented, otherwise
+each of them signal an ``not implemented'' error.
+
+\paragraph{Arithmetic Operations} ~\\
+
+\begin{tt}
+  \begin{tabular}{lll}
+    * & 1+ & gcd\\
+    + & 1- & lcm\\
+    - & incf & conjugate\\
+    / & decf & {\ }\\
+  \end{tabular}
+\end{tt}
+
+
+
+
+\paragraph{Exponential, Logarithms and Trigonometry Operations} ~\\
+
+\begin{tt}
+  \begin{tabular}{lll}
+    abs & cos & signum\\
+    acos &  cosh &  sin\\
+    acosh & exp  &  sinh\\
+    asin &  expt &  sqrt\\
+    asinh & isqrt &  tan\\
+    atan &  log &   tanh\\
+    atanh & phase & \\
+    cis & & \\
+  \end{tabular}
+\end{tt}
+
+\vspace*{3mm}
+
+\noindent
+Note that the \code{pi} constant is not present in the above table, 
+which corresponds to Figure~12-2 of \cite{ANSIHyperSpec}.
+
+
+\paragraph{Numeric Comparison and Predicates} ~\\
+
+\begin{tt}
+  \begin{tabular}{lll}
+    /= &  >= & \\
+    < &   & plusp\\
+    <= &  max & zerop\\
+    = & min & \\
+    > & minusp & \\
+  \end{tabular}
+\end{tt}
+
+\vspace*{3mm}
+
+\noindent
+Note that the \code{evenp} and \code{oddp} functions are not present in the above table, 
+which corresponds to Figure~12-3 of \cite{ANSIHyperSpec}.
+
+\paragraph{Correspondances with IEEE-754.} The list of operations
+recommended by \cite{IEEE-754} is more extensive than the list of
+operations provided by \CL{} (cfr., Table~9.1 in \cite{IEEE-754}).
+The tables referenced below provide correspondances for the \CL{} functions,
+especially regarding the exceptions (conditions) that must be
+signalled.
+
+\begin{table}[h]
+  \begin{tabularx}{\textwidth}{|X|X|X|X|X|}
+    \hline
+    \CL{} function & IEEE-745 function & Math function & Domain &
+    Exceptions\\
+    \hline\hline
+    
+  \end{tabularx}
+\end{table}
+
 
 
 
