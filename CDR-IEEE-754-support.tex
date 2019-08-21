@@ -9,7 +9,7 @@
 \usepackage{latexsym}
 \usepackage{epsfig}
 \usepackage{alltt}
-\usepackage{tabularx}
+\usepackage{tabulary}
 \usepackage{color}
 \usepackage[margin=4cm]{geometry}
 
@@ -56,9 +56,16 @@
 
 \newcommand{\kwd}[1]{\texttt{:#1}}
 
+\newcommand{\clieeeterm}[1]{\textit{#1}}
+
 \newcommand{\varname}[1]{\textit{#1}}
 
+\newcommand{\clterm}[1]{\textit{#1}}
+\newcommand{\clname}[1]{\texttt{#1}}
+
 \newcommand{\codeprompt}[1]{\textcolor{blue}{\textbf{#1}}}
+
+\newcommand{\RArrow}{$\Rightarrow$}
 
 
 %%% ANSI-Spec Like Macros.
@@ -81,7 +88,7 @@
 
 
 \title{
-\LARGE{\bfseries Minimalistic Support for (a subset of) IEEE~745 in \CL{}}}
+\LARGE{\bfseries Support for (a subset of) IEEE~745 in \CL{}}}
 
 % \author{
 % Marco Antoniotti\\
@@ -355,7 +362,7 @@ Implementations may supply a larger set of these functions, e.g.,
 \code{make-quad-float}.
 
 
-\DDictionaryItem{Value \code{NAN}}
+\DDictionaryItem{Values \code{NAN}}
 
 \subsubsection*{Value:}
 
@@ -364,12 +371,14 @@ An \emph{implementation-dependent value}.
 
 \DDescription{}
 
-The value \code{NAN} holds a representation of a ``not a number'' object.
+The value \code{NAN} holds a representation of a ``not a number''
+object.  The object can either be a \emph{quiet} or a
+\emph{signalling} \code{NAN} (see~\cite{IEEE-754}).
 
 
 \DExamples{}
 
-The actual value of \code{NAN} varies from implementation to
+The actual values of \code{NAN} vary from implementation to
 implementation.  Here are two examples of how \code{NAN} can be
 represented in two implementations:
 
@@ -388,22 +397,29 @@ LW> \codeprompt{NAN}
 
 \noindent
 It is to be understood that testing for equality of two \code{NAN}s is
-not meaningful.
+not meaningful.  Especially testing for \code{eq} or \code{eql}.
 
 \noindent
 It is also understood that, \code{(numberp nan)} should return \code{T}.
 
 \DSeeAlso{}
 
-\code{is-nan, nanp}
+\code{is-nan}, \code{nanp}, \code{is-quiet-nan}, \code{quiet-nan-p},
+\code{is-signalling-nan}, \code{signalling-nan-p}.
 
 
-\DDictionaryItem{Functions \code{is-nan}, \code{nanp}}
+\DDictionaryItem{Functions \code{is-nan}, \code{nanp},
+  \code{is-quiet-nan}, \code{quiet-nan-p},\\\code{is-signalling-nan},
+  \code{signalling-nan-p}}
 
 \DSyntax{}
 
 \code{is-nan} \varname{x} $\Rightarrow$ \textit{boolean}\\
-\code{nanp} \varname{x} $\Rightarrow$ \textit{boolean}
+\code{nanp} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{is-quiet-nan} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{quiet-nan-p} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{is-signalling-nan} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{signalling-nan-p} \varname{x} $\Rightarrow$ \textit{boolean}\\
 
 \DArgsNValues{}
 
@@ -411,9 +427,10 @@ It is also understood that, \code{(numberp nan)} should return \code{T}.
 
 \DDescription{}
 
-The function \code{is-nan} (respectively \code{nanp}) returns \code{T}
+The function \code{is-nan} (respectively \code{nanp} etc.) returns \code{T}
 whenever \varname{x} is a (representation of an IEEE) NaN.  Otherwise
-it returns \code{NIL}.
+it returns \code{NIL}. The \emph{quiet} and \emph{signalling} versions
+operate similarly.
 
 
 \subsubsection*{Example:}
@@ -1269,7 +1286,7 @@ the function CL:* may not respect the new rounding mode :POSITIVE-INFINITY.}
 
 
 
-\subsection{Floating Point IEEE~754 Respecting Operations}
+\section{Floating Point IEEE~754 Respecting Operations}
 \label{sect:fp-operations}
 
 A \CL{} implementation or a \CL{} library implementing this
@@ -1278,6 +1295,8 @@ specification will provide the following \emph{non-computational
 alongside some \CL{} features to allow for read-time (cfr.,
 \emph{translation-time}) evaluations.
 
+
+\subsection{Non-computational \CL{} Enviroment IEEE-754 Queries}
 
 \DDictionaryItem{Function \code{is-cdr-ieee-754-conformant}}
 
@@ -1380,7 +1399,7 @@ mandated behavior.
 \DSyntax{}
 
 \code{is-cl-using-cdr-ieee-745} \varname{$<$no argument$>$}
-$\Rightarrow$ \varname{result}
+\RArrow \varname{result}
 
 \DArgsNValues{}
 
@@ -1410,7 +1429,7 @@ These features are present in the \code{*features*} list whenever the
 corresponding function, \code{is-}\emph{feature} returns a
 non-\code{NIL} value.
 
-\subsubsection{Numeric Operations}
+\subsection{Numeric Operations}
 
 The following \CL{} operations, broken down according to the
 classification in Section~12.1.1 of \cite{ANSIHyperSpec} are exported
@@ -1418,25 +1437,432 @@ form the \code{CL-MATH-IEEE-2019} package
 (cfr.,~\ref{sect:package}).
 
 If \code{is-cdr-ieee-754-operation-providing} returns non-\code{NIL}
-(and the\\ \code{:cdr-ieee-754-operation-providing} is in
+(and the\\
+\code{:cdr-ieee-754-operation-providing} is in
 \code{*features*}, then the operations are also implemented, otherwise
-each of them signal an ``not implemented'' error.
+each of them signal an ``not implemented'' error;\\
+see \code{ieee-754-not-implemented-item}.
 
-\paragraph{Arithmetic Operations} ~\\
+The list of operations
+recommended by \cite{IEEE-754} is more extensive than the list of
+operations provided by \CL{} (cfr., Table~9.1 in \cite{IEEE-754}).
+%
+The tables referenced below provide correspondances for the \CL{} functions,
+especially regarding the exceptions (conditions) that must be
+signalled.
 
-\begin{tt}
-  \begin{tabular}{lll}
-    * & 1+ & gcd\\
-    + & 1- & lcm\\
-    - & incf & conjugate\\
-    / & decf & {\ }\\
-  \end{tabular}
-\end{tt}
+\paragraph{Rounding Modes.} In particular, all the operations listed
+in Sections~\ref{sect:arith-ops} and~\ref{sect:transc-ops} respect the
+\clieeeterm{rounding mode} set in the floating point
+environment in effect when the operation is executed.
+
+\paragraph{Underflow and Overflow.}  The operations listed signal
+\code{cl:floating-point-overflow} and
+\code{cl:floating-point-underflow} according to the rules established
+in \cite{IEEE-754} and Section~12.1.4.3 of \cite{ANSIHyperSpec}.
+
+
+
+\subsubsection{Arithmetic Operations}
+\label{sect:arith-ops}
+
+\begin{table}[h!]
+  \centering
+  \begin{tt}
+    \begin{tabular}{lll}
+      * & 1+ & \ldots \\
+      + & 1- & \ldots \\
+      - & incf & conjugate\\
+      / & decf & \ldots \\
+    \end{tabular}
+  \end{tt}
+  \caption{The basic \CL{} arithmetic operations}
+  \label{table:cl-arit-ops}
+\end{table}
+
+\noindent
+Each of the functions in Table~\ref{table:cl-arit-ops} must be further
+specified with respect to \cite{ANSIHyperSpec} in order to adhere to
+the requirements of IEEE~754.  The descriptions and the references for
+each function further specify the standard \CL{} behavior with respect
+to \emph{NaN}s, \emph{infinities} and floating point exceptions.
+
+
+\DDictionaryItem{Functions \code{+}, \code{*}}
+
+\DSyntax{}
+
+\code{+} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{*} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{+} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+\code{*} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+
+\DArgsNValues{}
+
+\varname{a}, \varname{b}, \varname{result} -- Floating Point numbers.\\
+\varname{numbers} -- A, possibly empty, list of numbers.\\
+\varname{n} -- A number.
+
+
+
+\DDescription{}
+
+The dyadic versions of the functions \code{+}, and \code{*}, when operating on
+floating point numbers (or numbers that eventually are converted to
+floating point numbers according to \CL{} float contagion rules -- cfr.,
+Section~12.1.4 of \cite{ANSIHyperSpec}) assume the behavior of the
+underlying IEEE~754 specification \cite{IEEE-754}.  It is assumed that
+the multiple argument versions are eventually built upon the dyadic
+ones (zero and one argument versions can be seen as special cases from
+the point of view of this specification).
+
+The dyadic versions of the functions \code{+}, and \code{*} behave
+according to the IEEE~754 operations described in Section~5.4.1 of
+\cite{IEEE-754}, which is assumed to be the usual behavior specified
+for \CL{} by \cite{ANSIHyperSpec} when \varname{a} and \varname{b} are
+not \emph{NaN}s or \emph{infinities}.
+
+\noindent
+The operations from \cite{IEEE-754} are:
+
+\vspace*{3mm}
+
+\noindent
+\textit{formatOf}-\textbf{addition}(\varname{a}, \varname{b})\\
+\textit{formatOf}-\textbf{multiplication}(\varname{a}, \varname{b})
+
+\vspace*{3mm}
+
+\noindent
+where \textit{formatOf} describes the resulting floating point
+format.  As already mentioned, the actual floating point format of
+\varname{result} is dictated by the \CL{} standard.
+
+When \code{+}, or \code{*} is called with either \varname{a} or \varname{b} being a
+\emph{quiet NaN}, and neither is a \emph{signalling NaN} then
+\varname{result} is a (quiet) \code{NAN}.  No error (floating point
+exception) is signalled in this case.
+
+When \code{+} is called with \varname{a} being an 
+\clieeeterm{infinity} and \varname{b} being a finite \clterm{number}
+(or viceversa), then \varname{result} is \varname{a} (or, viceversa, 
+\varname{b}).
+
+When \code{*} is called with \varname{a} being an
+\clieeeterm{infinity} and \varname{b} being a non-zero finite
+\clterm{number} (or viceversa), then \varname{result} is \varname{a}
+(or, viceversa, \varname{b}).
+
+\DExceptional{}
+
+There are different exceptional situations to be considered.
+
+\begin{enumerate}
+\item When \code{+} is called with either \varname{a} or \varname{b}
+  being a \emph{signalling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signalled.
+
+\item When \code{+} is called with \varname{a} being a
+  \clieeeterm{positive infinity} and \varname{b} being a
+  \clieeeterm{negative infinity} (or viceversa), then the
+  \clname{cl:floating-point-invalid-operation} error is signalled.
+
+\item When \code{*} is called with \varname{a} being an
+  \clieeeterm{infinity} and \varname{b} being a \clieeeterm{zero}
+  value (or viceversa), then the
+  \clname{cl:floating-point-invalid-operation} error is signalled.
+
+\item If some of \varname{a}, \varname{b}, or any element of a non-empty
+  \varname{numbers} is not a \CL{} \clterm{number} then the function
+  might signal a \clname{cl:type-error}.
+\end{enumerate}
+
+
+
+\DDictionaryItem{Function \code{-}}
+
+\DSyntax{}
+
+\code{-} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{-} \varname{a} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+
+\DArgsNValues{}
+
+\varname{a}, \varname{b}, \varname{result} -- Floating Point numbers.\\
+\varname{numbers} -- A, possibly empty, list of numbers.\\
+\varname{n} -- A number.
+
+
+
+\DDescription{}
+
+The dyadic version of the function \code{-}, when operating on
+floating point numbers (or numbers that eventually are converted to
+floating point numbers according to \CL{} float contagion rules -- cfr.,
+Section~12.1.4 of \cite{ANSIHyperSpec}) assume the behavior of the
+underlying IEEE~754 specification \cite{IEEE-754}.  It is assumed that
+the multiple argument versions are eventually built upon the dyadic
+ones (the one argument version can be seen as a special case from
+the point of view of this specification).
+
+The dyadic version of the functions \code{-} behaves
+according to the IEEE~754 operations described in Section~5.4.1 of
+\cite{IEEE-754}, which is assumed to be the usual behavior specified
+for \CL{} by \cite{ANSIHyperSpec} when \varname{a} and \varname{b} are
+not \emph{NaN}s or \emph{infinities}.
+
+\noindent
+The operation from \cite{IEEE-754} is:
+
+\vspace*{3mm}
+
+\noindent
+\textit{formatOf}-\textbf{subtraction}(\varname{a}, \varname{b})
+
+\vspace*{3mm}
+
+\noindent
+where \textit{formatOf} describes the resulting floating point
+format.  As already mentioned, the actual floating point format of
+\varname{result} is dictated by the \CL{} standard.
+
+When \code{-} is called with either \varname{a} or \varname{b} being a
+\emph{quiet NaN}, and neither is a \emph{signalling NaN} then
+\varname{result} is a (quiet) \code{NAN}.  No error (floating point
+exception) is signalled in this case.
+
+When \code{-} is called with \varname{a} being an 
+\clieeeterm{infinity} and \varname{b} being a finite \clterm{number}
+(or viceversa), then \varname{result} is \varname{a}; when \code{-} is
+called with \varname{b} being an \clieeeterm{infinity} and \varname{a}
+being a finite \clterm{number}, then \varname{result}
+is $-$\varname{b}.
+
+
+\DExceptional{}
+
+There are different exceptional situations to be considered.
+
+\begin{enumerate}
+\item When \code{-} is called with either \varname{a} or \varname{b}
+  being a \emph{signalling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signalled.
+
+\item When \code{-} is called with \varname{a} being a
+  \clieeeterm{positive infinity} and \varname{b} being a
+  \clieeeterm{positive infinity}, or \varname{a} being a
+  \clieeeterm{negative infinity} and \varname{b} being a
+  \clieeeterm{positive infinity}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signalled.
+
+\item If some of \varname{a}, \varname{b}, or any element of a non-empty
+  \varname{numbers} is not a \CL{} \clterm{number} then the function
+  might signal a \clname{cl:type-error}.
+\end{enumerate}
+
+
+\DDictionaryItem{Function \code{/}}
+
+\DSyntax{}
+
+\code{/} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{/} \varname{n} \code{\&rest} \varname{ns} \RArrow \varname \code{r}\\
+
+\DArgsNValues{}
+
+\varname{a}, \varname{b}, \varname{result} -- Floating Point numbers.\\
+\varname{numbers} -- A, possibly empty, list of numbers.\\
+\varname{n}, \varname{r} -- A number.
+
+
+
+\DDescription{}
+
+The dyadic version of the function \code{/}, when operating on
+floating point numbers (or numbers that eventually are converted to
+floating point numbers according to \CL{} float contagion rules -- cfr.,
+Section~12.1.4 of \cite{ANSIHyperSpec}) assume the behavior of the
+underlying IEEE~754 specification \cite{IEEE-754}.  It is assumed that
+the multiple argument versions are eventually built upon the dyadic
+ones (the one argument version can be seen as a special case from
+the point of view of this specification).
+
+The dyadic version of the functions \code{/} behaves
+according to the IEEE~754 operations described in Section~5.4.1 of
+\cite{IEEE-754}, which is assumed to be the usual behavior specified
+for \CL{} by \cite{ANSIHyperSpec} when \varname{a} and \varname{b} are
+not \emph{NaN}s or \emph{infinities}.
+
+
+\noindent
+The operation from \cite{IEEE-754} is:
+
+\vspace*{3mm}
+
+\noindent
+\textit{formatOf}-\textbf{division}(\varname{a}, \varname{b})
+
+\vspace*{3mm}
+
+\noindent
+where \textit{formatOf} describes the resulting floating point
+format.  As already mentioned, the actual floating point format of
+\varname{result} is dictated by the \CL{} standard.
+
+When \code{/} is called with either \varname{a} or \varname{b} being a
+\emph{quiet NaN}, and neither is a \emph{signalling NaN} then
+\varname{result} is a (quiet) \code{NAN}.  No error (floating point
+exception) is signalled in this case.
+
+When \code{/} is called with \varname{a} being an 
+\clieeeterm{infinity} and \varname{b} being a finite \clterm{number}
+(or viceversa), then \varname{result} is \varname{a} with its sign
+possibly changed; when \code{/} is
+called with \varname{b} being an \clieeeterm{infinity} and \varname{a}
+being a finite \clterm{number}, then \varname{result}
+is \clieeeterm{zero}.
+
+
+\DExceptional{}
+
+There are different exceptional situations to be considered.
+
+\begin{enumerate}
+\item When \code{/} is called with either \varname{a} or \varname{b}
+  being a \emph{signalling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signalled.
+
+\item When \code{/} is called with \varname{a} being an 
+  \clieeeterm{infinity} and \varname{b} being an 
+  \clieeeterm{infinity} as well, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signalled.
+
+\item When \code{/} is called with \varname{a} being a
+  \clieeeterm{zero} and \varname{b} being an 
+  \clieeeterm{zero} as well, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signalled.
+
+\item When the dyadic version of \code{/} is called with \varname{a}
+  being a finite \clterm{number} and \varname{b} being a
+  \clieeeterm{zero}, or when the monadic version of \code{/} is called
+  with \varname{n} being a \clieeeterm{zero}, then the
+  \clname{cl:division-by-zero} error is signalled.
+
+\item If some of \varname{a}, \varname{b}, or any element of a non-empty
+  \varname{numbers} is not a \CL{} \clterm{number} then the function
+  will signal a \clname{cl:type-error}.
+\end{enumerate}
+
+\noindent
+The monadic version of the function \code {/} behaves as \code{(/ 1}
+\varname{n}\code{)} with respect to exceptions being signalled.
+
+
+\DDictionaryItem{Functions \code{1+}, \code{1-}}
+
+\DSyntax{}
+
+\code{1+} \varname{n} \RArrow ~ \varname{result}\\
+\code{1-} \varname{n} \RArrow ~ \varname{result}\\
+
+\DArgsNValues{}
+
+\varname{n} -- A \clterm{number}.\\
+\varname{result} -- A \clterm{number}.
+
+
+\DDescription{}
+
+The functions \code{1+}, \code{1-}, behave
+as the \CL{} counterparts on non-\clieeeterm{NaN}s and
+non-\clieeeterm{infinities} (see \cite{ANSIHyperSpec}).
+
+The functions \code{1+}, \code{1-} return a \clieeeterm{quiet NaN} as \varname{result}
+when \varname{n} is a \clieeeterm{quiet NaN}; they return an
+\clieeeterm{infinity} equal to \varname{n}, when \varname{n} is an
+\clieeeterm{infinity}.
+
+\DExceptional{}
+
+There are different exceptional situations to be considered.
+
+\begin{enumerate}
+\item When \code{1+} or \code{1-} is called with \varname{n}
+  being a \emph{signalling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signalled.
+
+\item If \varname{n} is not a \CL{} \clterm{number} then the function
+  signals a \clname{cl:type-error}.
+\end{enumerate}
+
+\DSeeAlso{}
+
+\code{+}, \code{-}.
+
+
+\DDictionaryItem{Macros \code{incf}, \code{decf}}
+
+\DSyntax{}
+
+\code{incf} \varname{place} \code{\&optional} \varname{d} \RArrow ~ \varname{result}\\
+\code{decf} \varname{place} \code{\&optional} \varname{d} \RArrow ~ \varname{result}
+
+\DArgsNValues{}
+
+\varname{d} -- A \clterm{number}, the default is \code{1}.\\
+\varname{result} -- A \clterm{number}.\\
+\varname{place} -- A \CL{} \clterm{place}.\\
+
+
+\DDescription{}
+
+The macros \code{incf} and \code{decf} behave
+as the \CL{} counterparts on non-\clieeeterm{NaN}s and
+non-\clieeeterm{infinities} (see \cite{ANSIHyperSpec}).
+
+The macros \code{incf} and \code{decf} return a \clieeeterm{quiet NaN}
+as \varname{result} when \varname{place} or \varname{d} is a
+\clieeeterm{quiet NaN}; they return an \clieeeterm{infinity} equal to
+\varname{n}, when \varname{n} is an \clieeeterm{infinity}.
+
+\DExceptional{}
+
+The conditions signalled are those described for \code{+} and \code{-}.
+
+\DNotes{}
+
+The default for \varname{d} is coerced to the appropriate floating
+point \code{1.0}, depending on the floating point format of
+\varname{place}.
+
+\DSeeAlso{}
+
+\code{+}, \code{-}, \code{1+}, \code{1-}.
+
+
+\DDictionaryItem{Function \code{conjugate}}
+
+\DSyntax{}
+
+\code{conjugate} \varname{n} \RArrow{} \varname{c}
+
+\DArgsNValues{}
+
+\varname{n}, \varname{c} -- \CL{} \clterm{number}s.
+
+\DDescription{}
+
+The function \code{conjugate} behaves like the corresponding
+\code{cl:conjugate} function, when \varname{n} is a \clterm{real}
+number that is not a \clieeeterm{NaN}.
 
 
 
 
-\paragraph{Exponential, Logarithms and Trigonometry Operations} ~\\
+
+
+\subsubsection{Exponential, Logarithms and Trigonometry Operations}
+\label{sect:transc-ops}
 
 \begin{tt}
   \begin{tabular}{lll}
@@ -1458,7 +1884,7 @@ Note that the \code{pi} constant is not present in the above table,
 which corresponds to Figure~12-2 of \cite{ANSIHyperSpec}.
 
 
-\paragraph{Numeric Comparison and Predicates} ~\\
+\subsubsection*{Numeric Comparison and Predicates}
 
 \begin{tt}
   \begin{tabular}{lll}
@@ -1473,8 +1899,9 @@ which corresponds to Figure~12-2 of \cite{ANSIHyperSpec}.
 \vspace*{3mm}
 
 \noindent
-Note that the \code{evenp} and \code{oddp} functions are not present in the above table, 
-which corresponds to Figure~12-3 of \cite{ANSIHyperSpec}.
+Note that the \code{evenp} and \code{oddp} functions are not present
+in the above table,  which corresponds to Figure~12-3 of
+\cite{ANSIHyperSpec}.
 
 \paragraph{Correspondances with IEEE-754.} The list of operations
 recommended by \cite{IEEE-754} is more extensive than the list of
@@ -1484,15 +1911,25 @@ especially regarding the exceptions (conditions) that must be
 signalled.
 
 \begin{table}[h]
-  \begin{tabularx}{\textwidth}{|X|X|X|X|X|}
+  \begin{tabulary}{\textwidth}{|L|L|L|}
     \hline
-    \CL{} function & IEEE-745 function & Math function & Domain &
-    Exceptions\\
+    \CL{} Function & IEEE-745 Function & Exceptional Situations\\
     \hline\hline
+    \multicolumn{3}{|l|}{Arithmetic}\\\hline
+    \code{+}
+    & \textit{F\_\textbf{addition}}(\varname{a}, \varname{b})
+    & Long list of cases
+    \\\hline
     
-  \end{tabularx}
+  \end{tabulary}
 \end{table}
 
+\DDictionaryItem{Error \code{ieee-754-not-implemented-item}}
+
+\DSupertypes{}
+
+\code{ieee-754-not-implemented-item}, \code{error},
+\code{cl:arithmetic-error}, \ldots, \code{T}
 
 
 
