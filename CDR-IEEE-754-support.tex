@@ -124,7 +124,7 @@ floating point computations.
 
 \section{Introduction}
 
-The ANSI \CL{} Specification \cite{ANSIHyperSpec} hints at possible
+The ANSI \CL{} Specification \cite{1996:ANSIHyperSpec} hints at possible
 compliance with IEEE ``Floating Points'' (in retrospect, IEEE~754) in
 the description of the \code{*features*} variable, where:
 \begin{description}
@@ -138,11 +138,12 @@ the description of the \code{*features*} variable, where:
 Alas, the actual state of ``compliance'' among different
 implementations varies wildly, with some implementations publicizing
 the \code{:ieee-floating-point} feature while providing an unclear
-subset of features\footnote{We talk of the sin and not of the sinner;
+subset of features\footnote{We speak of the sin and not of the sinner;
   you can check for yourself what happens in the various
   implementations.}.  This is in contrast with the current state of
 affairs in other languages and languages ecosystems; especially
-languages designed and built \emph{after} the publication of IEEE~754.
+languages designed and built \emph{after} the publication of IEEE~754
+\cite{2008:IEEE-754}.
 
 \vspace*{3mm}
 
@@ -150,19 +151,29 @@ The goal of this document is to address some of this state of affairs
 by providing a specification for a minimalistic subset of
 names,\marginnote{Not very ``minimalistic'' anymore\ldots}
 functions and macros to be used in conjunction with IEEE~754
-concepts.  Two issues especially will 
+concepts.  The following issues will especially 
 be addressed:
 \begin{itemize}
 \item Names for \code{NaN}s and ``infinities''.
+  
+\item Functions and macros to handle with the underlying
+  \emph{floating point environment} and the interplay between IEEE~754
+  notion of \emph{signalling} vs.~the \CL{} notion of
+  \clterm{condition signalling}.
+  
 \item Functions and macros to handle \emph{rounding modes}; with
   special care devoted to incentivate non-invasive, yet informative,
   implementations.
+  
+\item Clarifying the behavior of the \CL{} set of mathematical
+  functions (cfr.,~Section~12.2 of \cite{1996:ANSIHyperSpec}) with respect
+  to the specification contained herein.
 \end{itemize}
 
 \vspace*{3mm}
 
 Most of the content of this document borrows ideas from
-\cite{IEEE-754}, \cite{C18}, and the documentation of
+\cite{2008:IEEE-754}, \cite{2018:C18}, and the documentation of
 several \CL{} implementations.
 
 
@@ -232,12 +243,12 @@ facilities (described below) that allow a \CL{} programmer to actually
 decide how to use IEEE~754 compliant code.  Most important, and
 possibly most annoying, this specification must define \emph{symbols}
 that corresponds to (some of) the operations described in
-\cite{IEEE-754}, in order to provide the programmer with some
+\cite{2008:IEEE-754}, in order to provide the programmer with some
 certainty about the behavior of floating point operations.
 
 All in all, this specification is grafting onto the \CL{}
 specification some functionality which was fully defined after the
-publication of \cite{ANSIHyperSpec}.
+publication of \cite{1996:ANSIHyperSpec}.
 
 
 
@@ -373,7 +384,7 @@ An \emph{implementation-dependent value}.
 
 The value \code{NAN} holds a representation of a ``not a number''
 object.  The object can either be a \emph{quiet} or a
-\emph{signalling} \code{NAN} (see~\cite{IEEE-754}).
+\emph{signalling} \code{NAN} (see~\cite{2008:IEEE-754}).
 
 
 \DExamples{}
@@ -567,14 +578,37 @@ Of course, the condition \code{division-by-zero} may also be signaled
 by floating point operations.
 
 
-The following entries specify an interface similar the \CLang{} Library
-interface to the \emph{Floating Point Environment} provided by
-\verb|<fenv.h>| \cite{C18}.
+The entries in Section~\ref{sect:fpe-dictionary} specify an interface
+similar the \CLang{} Library interface to the \emph{Floating Point
+  Environment} provided by \verb|<fenv.h>| \cite{2018:C18}.
 
 
+\subsubsection{Interaction Between the ``Low Level'' IEEE~754
+  ``Signalling'' Machinery and \CL{} Condition Handling}
+
+The IEEE~754 specification (Section~7 of \cite{2008:IEEE-754}) appears to
+imply that the actual handling of ``exceptional'' situations should
+follow the steps below.  Given an operation $f(x, \ldots)$.
+
+\begin{enumerate}
+\item Check the arguments of $f$ for special cases regarding
+  \clieeeterm{NaN}s and \clieeeterm{infinities}.
+\item Decide whether a \clieeeterm{IEEE exception} should be
+  \emph{signalled}.
+  \begin{enumerate}
+  \item Handle the exception \emph{by default}.
+  \item Raise the flags to indicate what exception was signalled (and
+    handled by default).
+  \end{enumerate}
+\end{enumerate}
 
 
+\subsubsection{Floating Point Exception Handling Dictionary}
+\label{sect:fpe-dictionary}
 
+The following are the defined symbols (variables, constants, functions
+and macros) pertaining to the handling of the low-level
+\clieeeterm{floating point environment}.
 
 \DDictionaryItem{Type \code{fpe-exception}}
 
@@ -720,10 +754,10 @@ with the corresponding flag set.
 
 \DExamples{}
 
-The following example (adapted from \cite{C18}) shows how a piece of
+The following example (adapted from \cite{2018:C18}) shows how a piece of
 code may decide how to \code{signal} either
 \code{floating-point-invalid-operation} or
-\code{floating-point-overflow} (cfr., \cite{ANSIHyperSpec}.)
+\code{floating-point-overflow} (cfr., \cite{1996:ANSIHyperSpec}.)
 
 \begin{alltt}
 (let ((fpe-excps \textcolor{blue}{(fpe-test-exceptions :overflow :invalid)}))
@@ -779,10 +813,10 @@ result.  If the \varname{excps} is empty, then the function returns
 
 \DExamples{}
 
-The following example (adapted from \cite{C18}) shows how a piece of
+The following example (adapted from \cite{2018:C18}) shows how a piece of
 code may decide how to \code{signal} either
 \code{floating-point-invalid-operation} or
-\code{floating-point-overflow} (cfr., \cite{ANSIHyperSpec}.)
+\code{floating-point-overflow} (cfr., \cite{1996:ANSIHyperSpec}.)
 
 \begin{alltt}
 (let ((fpe-excps (fpe-test-exceptions :overflow :invalid)))
@@ -820,12 +854,12 @@ apply also in the case of \code{fpe-check-exceptions}.
 
 \subsection{Floating Point Environment}
 
-The \CLang{} specification \cite{C18}, Section~7.6, defines the \emph{Floating
+The \CLang{} specification \cite{2018:C18}, Section~7.6, defines the \emph{Floating
   Point Environment} for a \CLang{} implementation.  Various \CL{}
 implementations provide access to the floating point environment, but
 with a wide range of interfaces, which boils down tho the assumed
 representation of the \CLang{} \code{fenv\_t} type, described in
-\cite{C18}.
+\cite{2018:C18}.
 
 This specification describes an interface which should accomodate the
 current -- at the tie of this writing -- treatment of the floating
@@ -1168,7 +1202,7 @@ point rounding.
 
 \DNotes{}
 
-The keywords used correspond to the \CLang{} Library \cite{C18}
+The keywords used correspond to the \CLang{} Library \cite{2018:C18}
 \textbf{\code{FLT\_ROUNDS}} values of:
 
 \vspace*{3mm}
@@ -1291,7 +1325,7 @@ the function CL:* may not respect the new rounding mode :POSITIVE-INFINITY.}
 
 A \CL{} implementation or a \CL{} library implementing this
 specification will provide the following \emph{non-computational
-  operations} (to follow the language of Section~5 of \cite{IEEE-754})
+  operations} (to follow the language of Section~5 of \cite{2008:IEEE-754})
 alongside some \CL{} features to allow for read-time (cfr.,
 \emph{translation-time}) evaluations.
 
@@ -1330,7 +1364,7 @@ If this function returns non-\code{NIL}, so will
 
 \DNotes{}
 
-\cite{IEEE-754} specifies two predicates \code{is754version1985} and
+\cite{2008:IEEE-754} specifies two predicates \code{is754version1985} and
 \code{is754version2008}, but they imply conformance to the full
 IEEE~754 standard.
 
@@ -1409,7 +1443,7 @@ mandated behavior.
 \DDescription{}
 
 This function returns a non-\code{NIL} value if the mathematical
-operations in the ANSI \CL{} standard \cite{ANSIHyperSpec} respect the
+operations in the ANSI \CL{} standard \cite{1996:ANSIHyperSpec} respect the
 IEEE~745 specification.
 
 \DNotes{}
@@ -1432,7 +1466,7 @@ non-\code{NIL} value.
 \subsection{Numeric Operations}
 
 The following \CL{} operations, broken down according to the
-classification in Section~12.1.1 of \cite{ANSIHyperSpec} are exported
+classification in Section~12.1.1 of \cite{1996:ANSIHyperSpec} are exported
 form the \code{CL-MATH-IEEE-2019} package
 (cfr.,~\ref{sect:package}).
 
@@ -1444,8 +1478,8 @@ each of them signal an ``not implemented'' error;\\
 see \code{ieee-754-not-implemented-item}.
 
 The list of operations
-recommended by \cite{IEEE-754} is more extensive than the list of
-operations provided by \CL{} (cfr., Table~9.1 in \cite{IEEE-754}).
+recommended by \cite{2008:IEEE-754} is more extensive than the list of
+operations provided by \CL{} (cfr., Table~9.1 in \cite{2008:IEEE-754}).
 %
 The tables referenced below provide correspondances for the \CL{} functions,
 especially regarding the exceptions (conditions) that must be
@@ -1459,7 +1493,7 @@ environment in effect when the operation is executed.
 \paragraph{Underflow and Overflow.}  The operations listed signal
 \code{cl:floating-point-overflow} and
 \code{cl:floating-point-underflow} according to the rules established
-in \cite{IEEE-754} and Section~12.1.4.3 of \cite{ANSIHyperSpec}.
+in \cite{2008:IEEE-754} and Section~12.1.4.3 of \cite{1996:ANSIHyperSpec}.
 
 
 
@@ -1473,7 +1507,7 @@ in \cite{IEEE-754} and Section~12.1.4.3 of \cite{ANSIHyperSpec}.
       * & 1+ & \ldots \\
       + & 1- & \ldots \\
       - & incf & conjugate\\
-      / & decf & \ldots \\
+      / & decf & \\
     \end{tabular}
   \end{tt}
   \caption{The basic \CL{} arithmetic operations}
@@ -1482,10 +1516,17 @@ in \cite{IEEE-754} and Section~12.1.4.3 of \cite{ANSIHyperSpec}.
 
 \noindent
 Each of the functions in Table~\ref{table:cl-arit-ops} must be further
-specified with respect to \cite{ANSIHyperSpec} in order to adhere to
+specified with respect to \cite{1996:ANSIHyperSpec} in order to adhere to
 the requirements of IEEE~754.  The descriptions and the references for
 each function further specify the standard \CL{} behavior with respect
 to \emph{NaN}s, \emph{infinities} and floating point exceptions.
+
+\vspace*{3mm}
+
+\noindent
+Note that the \code{gcd}, and \code{lcm} functions are not
+present in the above table, which corresponds to Figure~12-1 of
+\cite{1996:ANSIHyperSpec}.
 
 
 \DDictionaryItem{Functions \code{+}, \code{*}}
@@ -1510,20 +1551,20 @@ to \emph{NaN}s, \emph{infinities} and floating point exceptions.
 The dyadic versions of the functions \code{+}, and \code{*}, when operating on
 floating point numbers (or numbers that eventually are converted to
 floating point numbers according to \CL{} float contagion rules -- cfr.,
-Section~12.1.4 of \cite{ANSIHyperSpec}) assume the behavior of the
-underlying IEEE~754 specification \cite{IEEE-754}.  It is assumed that
+Section~12.1.4 of \cite{1996:ANSIHyperSpec}) assume the behavior of the
+underlying IEEE~754 specification \cite{2008:IEEE-754}.  It is assumed that
 the multiple argument versions are eventually built upon the dyadic
 ones (zero and one argument versions can be seen as special cases from
 the point of view of this specification).
 
 The dyadic versions of the functions \code{+}, and \code{*} behave
 according to the IEEE~754 operations described in Section~5.4.1 of
-\cite{IEEE-754}, which is assumed to be the usual behavior specified
-for \CL{} by \cite{ANSIHyperSpec} when \varname{a} and \varname{b} are
+\cite{2008:IEEE-754}, which is assumed to be the usual behavior specified
+for \CL{} by \cite{1996:ANSIHyperSpec} when \varname{a} and \varname{b} are
 not \emph{NaN}s or \emph{infinities}.
 
 \noindent
-The operations from \cite{IEEE-754} are:
+The operations from \cite{2008:IEEE-754} are:
 
 \vspace*{3mm}
 
@@ -1538,10 +1579,10 @@ where \textit{formatOf} describes the resulting floating point
 format.  As already mentioned, the actual floating point format of
 \varname{result} is dictated by the \CL{} standard.
 
-When \code{+}, or \code{*} is called with either \varname{a} or \varname{b} being a
-\emph{quiet NaN}, and neither is a \emph{signalling NaN} then
-\varname{result} is a (quiet) \code{NAN}.  No error (floating point
-exception) is signalled in this case.
+When \code{+}, or \code{*} is called with either \varname{a} or
+\varname{b} being a \emph{quiet NaN}, and neither is a
+\emph{signalling NaN} then \varname{result} is a (quiet) \code{NAN}.
+No error (floating point exception) is signalled in this case.
 
 When \code{+} is called with \varname{a} being an 
 \clieeeterm{infinity} and \varname{b} being a finite \clterm{number}
@@ -1599,20 +1640,20 @@ There are different exceptional situations to be considered.
 The dyadic version of the function \code{-}, when operating on
 floating point numbers (or numbers that eventually are converted to
 floating point numbers according to \CL{} float contagion rules -- cfr.,
-Section~12.1.4 of \cite{ANSIHyperSpec}) assume the behavior of the
-underlying IEEE~754 specification \cite{IEEE-754}.  It is assumed that
+Section~12.1.4 of \cite{1996:ANSIHyperSpec}) assume the behavior of the
+underlying IEEE~754 specification \cite{2008:IEEE-754}.  It is assumed that
 the multiple argument versions are eventually built upon the dyadic
 ones (the one argument version can be seen as a special case from
 the point of view of this specification).
 
 The dyadic version of the functions \code{-} behaves
 according to the IEEE~754 operations described in Section~5.4.1 of
-\cite{IEEE-754}, which is assumed to be the usual behavior specified
-for \CL{} by \cite{ANSIHyperSpec} when \varname{a} and \varname{b} are
+\cite{2008:IEEE-754}, which is assumed to be the usual behavior specified
+for \CL{} by \cite{1996:ANSIHyperSpec} when \varname{a} and \varname{b} are
 not \emph{NaN}s or \emph{infinities}.
 
 \noindent
-The operation from \cite{IEEE-754} is:
+The operation from \cite{2008:IEEE-754} is:
 
 \vspace*{3mm}
 
@@ -1681,21 +1722,21 @@ There are different exceptional situations to be considered.
 The dyadic version of the function \code{/}, when operating on
 floating point numbers (or numbers that eventually are converted to
 floating point numbers according to \CL{} float contagion rules -- cfr.,
-Section~12.1.4 of \cite{ANSIHyperSpec}) assume the behavior of the
-underlying IEEE~754 specification \cite{IEEE-754}.  It is assumed that
+Section~12.1.4 of \cite{1996:ANSIHyperSpec}) assume the behavior of the
+underlying IEEE~754 specification \cite{2008:IEEE-754}.  It is assumed that
 the multiple argument versions are eventually built upon the dyadic
 ones (the one argument version can be seen as a special case from
 the point of view of this specification).
 
 The dyadic version of the functions \code{/} behaves
 according to the IEEE~754 operations described in Section~5.4.1 of
-\cite{IEEE-754}, which is assumed to be the usual behavior specified
-for \CL{} by \cite{ANSIHyperSpec} when \varname{a} and \varname{b} are
+\cite{2008:IEEE-754}, which is assumed to be the usual behavior specified
+for \CL{} by \cite{1996:ANSIHyperSpec} when \varname{a} and \varname{b} are
 not \emph{NaN}s or \emph{infinities}.
 
 
 \noindent
-The operation from \cite{IEEE-754} is:
+The operation from \cite{2008:IEEE-754} is:
 
 \vspace*{3mm}
 
@@ -1748,7 +1789,8 @@ There are different exceptional situations to be considered.
   with \varname{n} being a \clieeeterm{zero}, then the
   \clname{cl:division-by-zero} error is signalled.
 
-\item If some of \varname{a}, \varname{b}, or any element of a non-empty
+\item If some of \varname{a}, \varname{b}, or a
+  ny element of a non-empty
   \varname{numbers} is not a \CL{} \clterm{number} then the function
   will signal a \clname{cl:type-error}.
 \end{enumerate}
@@ -1775,7 +1817,7 @@ The monadic version of the function \code {/} behaves as \code{(/ 1}
 
 The functions \code{1+}, \code{1-}, behave
 as the \CL{} counterparts on non-\clieeeterm{NaN}s and
-non-\clieeeterm{infinities} (see \cite{ANSIHyperSpec}).
+non-\clieeeterm{infinities} (see \cite{1996:ANSIHyperSpec}).
 
 The functions \code{1+}, \code{1-} return a \clieeeterm{quiet NaN} as \varname{result}
 when \varname{n} is a \clieeeterm{quiet NaN}; they return an
@@ -1818,7 +1860,7 @@ There are different exceptional situations to be considered.
 
 The macros \code{incf} and \code{decf} behave
 as the \CL{} counterparts on non-\clieeeterm{NaN}s and
-non-\clieeeterm{infinities} (see \cite{ANSIHyperSpec}).
+non-\clieeeterm{infinities} (see \cite{1996:ANSIHyperSpec}).
 
 The macros \code{incf} and \code{decf} return a \clieeeterm{quiet NaN}
 as \varname{result} when \varname{place} or \varname{d} is a
@@ -1856,6 +1898,28 @@ The function \code{conjugate} behaves like the corresponding
 \code{cl:conjugate} function, when \varname{n} is a \clterm{real}
 number that is not a \clieeeterm{NaN}.
 
+\noindent
+When \varname{n} is a \clieeeterm{quiet NaN} then \varname{c} ia a
+\clieeeterm{quiet NaN}.
+
+\DExceptional{}
+
+When \varname{n} is a \clieeeterm{signalling NaN} then the
+\clname{cl:floating-point-invalid-operation} error is signalled.
+
+When \varname{n} is a \clterm{complex number}, then \code{conjugate}
+can signal the same set of conditions as if computing
+\code{(- (cl:imagpart} \varname{n}\code{))} while constricting the result
+\varname{c}.
+
+The function \code{conjugate} signals a \code{type-error} if
+\varname{n} is not a \clterm{number}.
+
+
+\DSeeAlso{}
+
+\code{-}.
+
 
 
 
@@ -1866,22 +1930,93 @@ number that is not a \clieeeterm{NaN}.
 
 \begin{tt}
   \begin{tabular}{lll}
-    abs & cos & signum\\
+    \#| abs |\# & cos & signum\\
     acos &  cosh &  sin\\
     acosh & exp  &  sinh\\
     asin &  expt &  sqrt\\
     asinh & isqrt &  tan\\
     atan &  log &   tanh\\
     atanh & phase & \\
-    cis & & \\
+    cis & \#| pi |\# & \\
   \end{tabular}
 \end{tt}
 
 \vspace*{3mm}
 
 \noindent
-Note that the \code{pi} constant is not present in the above table, 
-which corresponds to Figure~12-2 of \cite{ANSIHyperSpec}.
+The above table corresponds to Figure~12-2 of \cite{1996:ANSIHyperSpec}.
+The ``commented'' entries will not be described as they either don't
+operate on floating point numbers or do not have a semantic different
+from the \CL{} standard.
+
+\noindent
+The listed \CL{} functions have correspondances in the \cite{2008:IEEE-754}
+specification, but with some key differences, e.g., \code{cl:log} returns
+a \clterm{complex number} for negative values.  In the following each
+function will be further specified to comply with the \cite{2008:IEEE-754}
+standard.
+
+\vspace*{3mm}
+
+The following functions will also be specified for completeness,
+according to Section~9 of \cite{2008:IEEE-754}.
+
+
+\DDictionaryItem{Functions \code{asin}, \code{acos}, \code{atan}}
+
+\DSyntax{}
+
+\code{asin} \varname{n} \RArrow \varname{radians}\\
+\code{acos} \varname{n} \RArrow \varname{radians}\\
+\code{atan} \varname{n1} \code{\&optional} \varname{n2} \RArrow
+\varname{radians}
+
+\DArgsNValues{}
+
+\varname{n}, \varname{n1}, \varname{n2} -- A \clieeeterm{floating
+  point number}\\
+\varname{radians} -- A \clieeeterm{floating point number}
+
+\DDescription{}
+
+The functions \code{asin}, \code{acos}, \code{atan} compute the the
+arc sine, arc cosine and arc tangent of a number.  Their behavior is
+the one described in \cite{1996:ANSIHyperSpec} for regular floating point
+numbers.
+
+The functions return a \clieeeterm{quiet NaN} if \varname{n},
+\varname{n1}, or \varname{n2} is a \clieeeterm{quiet NaN}.
+
+The behavior of \code{asin}, \code{acos}, and \code{atan} in case of
+\clterm{complex} arguments is also the one described in
+\cite{1996:ANSIHyperSpec}.
+
+\DNotes{}
+
+The functions \code{asin} and \code{acos} do not signal a
+\code{cl:floating-point-invalid-operation} when \varname{n} is a
+\clterm{real} outside the $[-1, 1]$ interval; they quietly return a
+\clterm{complex} number.
+
+
+
+\DExceptional{}
+
+If \varname{n}, \varname{n1}, or \varname{n2} is a
+\clieeeterm{signalling NaN}, then \code{asin}, \code{acos} and
+\code{atan} signal the\\
+\clname{cl:floating-point-invalid-operation} error.
+
+According to \cite{2008:IEEE-754} there are several issues to be
+considered.
+
+If \varname{n}, \varname{n1}, or \varname{n2} are not \clterm{number}s
+a \code{type-error} is signalled by \code{acos}, \code{asin}, and
+\code{atan}.  If \varname{n1} and \varname{n2} are both supplied to
+\code{atan}, and they are not both \clterm{real} numbers, then a
+\code{type-error} is signalled.
+
+
 
 
 \subsubsection*{Numeric Comparison and Predicates}
@@ -1901,11 +2036,11 @@ which corresponds to Figure~12-2 of \cite{ANSIHyperSpec}.
 \noindent
 Note that the \code{evenp} and \code{oddp} functions are not present
 in the above table,  which corresponds to Figure~12-3 of
-\cite{ANSIHyperSpec}.
+\cite{1996:ANSIHyperSpec}.
 
 \paragraph{Correspondances with IEEE-754.} The list of operations
-recommended by \cite{IEEE-754} is more extensive than the list of
-operations provided by \CL{} (cfr., Table~9.1 in \cite{IEEE-754}).
+recommended by \cite{2008:IEEE-754} is more extensive than the list of
+operations provided by \CL{} (cfr., Table~9.1 in \cite{2008:IEEE-754}).
 The tables referenced below provide correspondances for the \CL{} functions,
 especially regarding the exceptions (conditions) that must be
 signalled.
@@ -1932,24 +2067,28 @@ signalled.
 \code{cl:arithmetic-error}, \ldots, \code{T}
 
 
+\nocite{2012:LIA1,2001:LIA2,2004:LIA3}
+\nocite{1994:ANSICL}
 
+\bibliographystyle{plain}
+\bibliography{CDR-CL-LIA}
 
-\begin{thebibliography}{9}
+% \begin{thebibliography}{9}
 
-\bibitem{IEEE-754}
-  \textit{{IEEE} Standard for Floating-Point Arithmetic}, IEEE Std
-  754$^{\mathrm{tm}}$-2008, IEEE Computer Society, 2008.
+% \bibitem{IEEE-754}
+%   \textit{{IEEE} Standard for Floating-Point Arithmetic}, IEEE Std
+%   754$^{\mathrm{tm}}$-2008, IEEE Computer Society, 2008.
   
-\bibitem{C18}
-  \textit{Programming languages -- C},
-  International Standard \emph{ISO/IEC 9899-2018}, 2018.
+% \bibitem{C18}
+%   \textit{Programming languages -- C},
+%   International Standard \emph{ISO/IEC 9899-2018}, 2018.
   
-\bibitem{ANSIHyperSpec}
-  \textit{The \CL{} Hyperspec},
-  published online at\\
-  \texttt{http://www.lisp.org/HyperSpec/FrontMatter/index.html}, 1994.
+% \bibitem{ANSIHyperSpec}
+%   \textit{The \CL{} Hyperspec},
+%   published online at\\
+%   \texttt{http://www.lisp.org/HyperSpec/FrontMatter/index.html}, 1994.
 
-\end{thebibliography}
+% \end{thebibliography}
 
 
 \appendix
