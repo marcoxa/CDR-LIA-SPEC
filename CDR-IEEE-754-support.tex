@@ -25,6 +25,8 @@
 
 \newcommand{\Lisp}{\textsf{Lisp}}
 \newcommand{\CL}{\textsf{Common~Lisp}}
+\newcommand{\Quicklisp}{\textsf{Quicklisp}}
+
 \newcommand{\CLang}{\textsf{C}}
 \newcommand{\Java}{\textsc{Java}}
 
@@ -41,8 +43,7 @@
 \end{em}\end{small}}}
 
 \newcommand{\undecided}[2]{%
-  \vspace*{3mm}\noindent\fbox{\textbf{TBD: #1}{\ }\newline
-    \begin{em}#2\end{em}}}
+  \vspace*{3mm}\noindent\fbox{\textbf{TBD: #1}{\ }\newline\emph{#2}}}
 
 
 
@@ -68,6 +69,12 @@
 \newcommand{\RArrow}{$\Rightarrow$}
 
 
+%%% Useful Names.
+
+\newcommand{\IEEEFPStd}{IEEE-754}
+\newcommand{\IECFPStd}{IEC-60559}
+
+
 %%% ANSI-Spec Like Macros.
 
 % \newcommand{\DDictionaryItem}[1]{\subsection{#1}\vspace*{-9pt}\hrulefill}
@@ -88,18 +95,19 @@
 
 
 \title{
-\LARGE{\bfseries Support for (a subset of) IEEE~745 in \CL{}}}
+\LARGE{\bfseries A Palimpsest of ``Language Independent Arithmetic'' in \CL{}}}
 
-% \author{
-% Marco Antoniotti\\
-% Dipartimento di Informatica, Sistemistica e Comunicazione\\
-% Universit\`{a} degli Studi di Milano Bicocca\\
-% Viale Sarca 336, U14, Milan (MI), \textsc{Italy}\\
-% \vspace{2mm}
-% \texttt{mantoniotti} at \texttt{common-lisp.net},
-% \texttt{marco.antoniotti} at \texttt{unimib.it}}
+\author{
+  Marco Antoniotti\\
+  Dipartimento di Informatica, Sistemistica e Comunicazione\\
+  Universit\`{a} degli Studi di Milano Bicocca\\
+  Viale Sarca 336, U14, Milan (MI), \textsc{Italy}\\
+  \vspace{2mm}
+  \texttt{marco.antoniotti} at \texttt{unimib.it},
+  \texttt{mantoniotti} at \texttt{common-lisp.net}}
 
-\author{TBD}
+
+% \author{TBD}
 
 %\date{}
 
@@ -111,21 +119,28 @@
 \maketitle
 
 \begin{abstract}
-This document presents a set of names and functions that aim at
-providing a common ground for the support of (a subset of) IEEE~754 in
-\CL{}.
+  This document presents a set of names, functions and macros that aim
+  at providing a common ground for the support of the \IEEEFPStd{}
+  \cite{2008:IEEE-754} and of the \emph{Language Independent
+    Arithmetic} (LIA) standards \cite{2012:LIA1,2001:LIA2,2004:LIA3}
+  in \CL{}.
 
-The set of names and functions (and ancillary information) is intented
-to be minimalistic; essentially for IEEE~754 constants (e.g.,
-\code{NaN}) and some functionalities that are needed to control
-floating point computations.
+  The set of names and functions (and ancillary information) is
+  intended to be minimalistic; essentially for \IEEEFPStd{} constants
+  (e.g., \code{NaN}) and some functionalities that are needed to
+  control floating point computations.
 \end{abstract}
 
+\newpage
+
+\tableofcontents
+
+\newpage
 
 \section{Introduction}
 
 The ANSI \CL{} Specification \cite{1996:ANSIHyperSpec} hints at possible
-compliance with IEEE ``Floating Points'' (in retrospect, IEEE~754) in
+compliance with IEEE ``Floating Points'' (in retrospect, \IEEEFPStd{}) in
 the description of the \code{*features*} variable, where:
 \begin{description}
 \item[\code{:ieee-floating-point}]
@@ -134,30 +149,44 @@ the description of the \code{*features*} variable, where:
   \emph{IEEE Standard for Binary Floating-Point Arithmetic}. 
 \end{description}
 
+After the publication of the \CL{} standard \cite{1994:ANSICL}, other
+standards were published by IEEE and ISO/IEC specifying the
+Application Programming Interface (API) for, by then well establishes,
+commonly used arithmetic and mathematical operations.  These
+specifications are the \emph{IEEE Standard for Floating-Point
+  Arithmetic} (\IEEEFPStd{}) \cite{2008:IEEE-754} specification (which
+will be referred as \IEEEFPStd{} in this text) and the \emph{ISO/IEC
+  Information technology -- Language independent arithmetic}
+\cite{2012:LIA1,2001:LIA2,2004:LIA3} (in three parts, which will be
+referred as LIA1, LIA2 and LIA3, or simply LIA, in this text).
+
+\vspace*{3mm}
+
 \noindent
-Alas, the actual state of ``compliance'' among different
-implementations varies wildly, with some implementations publicizing
-the \code{:ieee-floating-point} feature while providing an unclear
-subset of features\footnote{We speak of the sin and not of the sinner;
-  you can check for yourself what happens in the various
+Alas, the actual state of ``compliance'' with these specifications,
+among different \CL{} implementations varies wildly, especially the
+LIA ones, with some implementations publicizing the
+\code{:ieee-floating-point} feature while providing an unclear subset
+of functionalities of features\footnote{We speak of the sin and not of
+  the sinner; you can check for yourself what happens in the various
   implementations.}.  This is in contrast with the current state of
-affairs in other languages and languages ecosystems; especially
-languages designed and built \emph{after} the publication of IEEE~754
-\cite{2008:IEEE-754}.
+affairs in other languages and language ecosystems; especially
+languages designed and built \emph{after} the publication of the
+\IEEEFPStd{} and LIA documents.
 
 \vspace*{3mm}
 
 The goal of this document is to address some of this state of affairs
 by providing a specification for a minimalistic subset of
 names,\marginnote{Not very ``minimalistic'' anymore\ldots}
-functions and macros to be used in conjunction with IEEE~754
+functions and macros to be used in conjunction with \IEEEFPStd{}
 concepts.  The following issues will especially 
 be addressed:
 \begin{itemize}
 \item Names for \code{NaN}s and ``infinities''.
   
 \item Functions and macros to handle with the underlying
-  \emph{floating point environment} and the interplay between IEEE~754
+  \emph{floating point environment} and the interplay between \IEEEFPStd{}
   notion of \emph{signalling} vs.~the \CL{} notion of
   \clterm{condition signalling}.
   
@@ -168,12 +197,17 @@ be addressed:
 \item Clarifying the behavior of the \CL{} set of mathematical
   functions (cfr.,~Section~12.2 of \cite{1996:ANSIHyperSpec}) with respect
   to the specification contained herein.
+
+\item Providing a clear set of functionalities to handle
+  \emph{exceptional situations} and a clear definition of the behavior
+  of each operator and function with respect the \IEEEFPStd{} and LIA
+  specifications.
 \end{itemize}
 
 \vspace*{3mm}
 
-Most of the content of this document borrows ideas from
-\cite{2008:IEEE-754}, \cite{2018:C18}, and the documentation of
+The content of this document borrows ideas from the \CLang{}
+specification \cite{2018:C18}, and the documentation of
 several \CL{} implementations.
 
 
@@ -182,7 +216,7 @@ several \CL{} implementations.
 It is understood that different \CL{} implementations already have
 made some assumptions about the \emph{floating point environment} they
 are dealing with.  In particular, the implementation of several \CL{}
-math functions may be sensitive (or totally insensitive) to the
+math functions may be sensitive to the
 setting of \emph{rounding modes}.  E.g., it is quite possible that all
 \CL{} implementations quietly assume a \emph{round to nearest} mode in
 the implementation of the \CL{} standard floating point operations.
@@ -240,7 +274,7 @@ order to comply.
 
 Therefore, in order to be self-contained, this specification provides
 facilities (described below) that allow a \CL{} programmer to actually
-decide how to use IEEE~754 compliant code.  Most important, and
+decide how to use \IEEEFPStd{} compliant code.  Most important, and
 possibly most annoying, this specification must define \emph{symbols}
 that corresponds to (some of) the operations described in
 \cite{2008:IEEE-754}, in order to provide the programmer with some
@@ -254,17 +288,29 @@ publication of \cite{1996:ANSIHyperSpec}.
 
 \section{Description}
 
-The IEEE~754 standard introduces a number of ``names'' for certain
-special values: \code{NaN}s and infinities, as an example.  Several
-\CL{} implementations provide such concepts, alas, not in a consensual
-way.  The goal of this document is to provide such a minimal
-consensus.
+The \IEEEFPStd{} and LIA standards introduce a number of ``names'' for
+certain special values: \code{NaN}s and infinities, as an example.
+Several \CL{} implementations provide such concepts; alas, not in a
+consensual way.  Moreover, the standards introduce ways to handle
+\emph{exceptional situations}. At the time of this writing, the \CL{}
+programmer does not have much control over \emph{how} to exploit the
+richness of the specifications.
 
-\subsection{\code{CL-MATH-IEEE-2019} Package}
+The goal of this document is to provide a minimal
+consensus to give the \CL{} programmer ways to be able to work with
+facilities in line with the \IEEEFPStd{} (\IECFPStd{}) and LIA
+standards.  The specifications contained in this document are as
+\textsf{common-lisp}-ish as possibile, re-using as much the style and
+naming conventions established in the ANSI~\CL{} Specification
+\cite{1994:ANSICL,1996:ANSIHyperSpec}.
+
+
+
+\subsection{\code{CL-MATH-LIA-2019} Package}
 \label{sect:package}
 
 The implementations of this specification will provide a package named
-(or nicknamed) \code{CL-MATH-IEEE-2019}.  All the symbols named in the rest
+(or nicknamed) \code{CL-MATH-LIA-2019}.  All the symbols named in the rest
 of the document are \code{export}ed from the above mentioned package.
 
 
@@ -272,8 +318,188 @@ of the document are \code{export}ed from the above mentioned package.
 \undecided{Features or APIs?}{Should \emph{features} or \emph{APIs} be
   provided to allow selective checks of this specification?}
 
+\subsection{Floating Point Numbers}
 
-\section{IEEE~754 \CL{}-related Dictionary}
+This document contains a small number of simple facilities that appear
+to be present in most \CL{} implementations or that are available as
+libraries.  E.g., this document describes a \code{make-float} function
+and a \code{parse-float} function, which has been available as a
+separate library for quite some time in the community\footnote{The
+  \code{parse-float} function and ancillary ones can be downloaded
+  from \Quicklisp{} \cite{2008:Beane:Quicklisp}.}.
+
+
+\subsection{Special Values}
+
+This document provides specifications for \IEEEFPStd{}/\IECFPStd{}
+\emph{special values} like \emph{infinities} (e.g.,
+\code{single-float-positive-infinity}) and \emph{not-a-number}
+(\code{NAN}).  This specification defines all these names.
+
+\subsubsection{``Continuation'' and ``Exceptional'' Values}
+
+The LIA specifications ensure that certain special values are passed
+on as \emph{continuation} values downstream a computation.  This often
+happens in conjunction with a \emph{notification}, that is, in
+presence of an \emph{exceptional} situation (cfr.,
+Section~\ref{sect:notifications}).
+
+This specification clarifies when and \emph{how} such continuation
+values are passed on -- the most common example being
+\clieeeterm{quiet NaNs}.  This specification also clarifies when and
+how \emph{exceptional values} are to be considered; also,
+\clieeeterm{infinities} and \clieeeterm{NaN}s used as
+\emph{continuation values} are not to be intended as exceptional
+values (cfr., \cite{2012:LIA1} Section~4.2.3, 4.2.8, 4.2.9).
+
+
+
+\subsection{Rounding Modes}
+
+One of the functionalities described in \IEEEFPStd{} (\IECFPStd{}) is
+the control of \emph{rounding modes}.  Rounding modes control is
+important in some numerical applications and libraries.  E.g., they
+are necessary to build \emph{interval arithmetic} libraires (cfr.,
+\checkcite{Interval Arithmetic}).
+
+The \CLang{} standard interface for floating point rounding modes
+control (cfr., \cite{C18} Section~7.6.3) provides the \code{fgetround}
+and \code{fsetround} functions that can get and set the rounding mode;
+the rounding modes being defined as \code{FE\_DOWNWARD},
+\code{FE\_TONEAREST},\\
+\code{FE\_TOWARDZERO} and \code {FE\_UPWARD} (which are \CLang{}
+macros).  In order to change the rounding mode of (floating point)
+operations, a \CLang{} programmer invokes the \code{fsetround}
+function manually establishing a new state of the processing
+machinery.
+
+Within \CL{}, a programmer expects a number of facilities to simplify
+coding.  To this end, apart from the expected definition of a
+\code{rounding-mode} type defined as
+\begin{alltt}
+(member :indeterminable
+        :zero
+        :nearest
+        :positive-infinity
+        :negative-infinity)
+\end{alltt}
+and of the corresponding \code{get-rounding-mode} and
+\code{set-rounding-mode}, this document also defines the macros
+\code{with-rounding-mode}, \code{round-to-zero}, \code{round-to-near},
+\code{round-upward}, and \code{round-downward}.  Their intende use is
+to localize and automate the establishing of a given rounding mode for
+a piece of code.
+
+\vspace*{3mm}
+
+\noindent
+As an example, consider the following code snippet:
+\begin{alltt}
+CL prompt> \codeprompt{(round-upward (* 2 21.0))}
+\textit{42.0}
+\end{alltt}
+In this case the intent of the programmer is to ensure that the
+rounding mode in effect while executing the multiplication is
+\emph{toward positive infinity}.  Upon returning its value, the
+\code{round-upward} macro, the rounding mode is reset to the value
+before its invokation.
+
+\subsubsection{Default Rounding Mode}
+
+All \CL{} implementations appear to assume that the floating point
+rounding mode is set to \emph{round to nearest}.  Hence this
+specification states that the default rounding mode is set \emph{round
+  to nearest}.
+
+\subsubsection{Interaction with the \CL{} Reader}
+
+The \CL{} reader builds floating point numbers according to the rules
+specified in \cite{1994:ANSICL}.  This specification states that the
+\CL{} reader subsystem is not affected by changes of the rounding
+mode.  That is,
+\begin{alltt}
+CL prompt> \codeprompt{(round-upward (read))}
+42.0
+\textit{42.0}
+\end{alltt}
+will produce a \code{42.0} result that is rounded according to the
+standard rules of the \CL{} reader standard floating point parsing
+rules, overriding the \code{round-upward} settings.
+
+
+
+\subsection{Notifications and Exception Handling}
+\label{sect:notifications}
+
+The floating point and complex arithmetic exceptional situation
+handling machinery described in
+\cite{2012:LIA1,2001:LIA2,2004:LIA3,2008:IEEE-754} (e.g.,
+\cite{2001:LIA2} Section~6, \emph{Notification}) balances three
+viewpoints that different engineers have.
+
+\begin{itemize}
+\item The hardware instruction set designer\footnote{Just a label; it
+    is used for the purpose of illustration.}.
+\item The programming language designer.
+\item The specification implementor.
+\end{itemize}
+
+The \CL{} ANSI Specification provides the following conditions that
+may be raised by an implementation (in an \emph{implementation
+  dependent} way) in conjunction with floating point operations.
+\begin{description}
+\item \code{floating-point-invalid-operation},
+\item \code{floating-point-inexact},
+\item \code{floating-point-overflow},
+\item \code{floating-point-underflow}.
+\end{description}
+Of course, the condition \code{division-by-zero} may also be signaled
+by floating point operations.
+
+
+The entries in Section~\ref{sect:fpe-dictionary} specify an interface
+similar the \CLang{} Library interface to the \emph{Floating Point
+  Environment} provided by \verb|<fenv.h>| \cite{2018:C18}.
+
+
+\subsubsection{Interaction Between the ``Low Level'' \IEEEFPStd{} and LIA
+  ``Signalling'' Machinery and \CL{} Condition Handling}
+
+The \IEEEFPStd{} and LIA specifications (cfr., Section~7 of
+\cite{2008:IEEE-754} and Sections~4.1.3, 4.1.4 and~6 of
+\cite{2012:LIA1}) appear to imply that the actual handling of
+``exceptional'' situations should follow the steps below.  Given an
+operation $f(x, \ldots)$.
+
+\begin{enumerate}
+\item Check the arguments of $f$ for special cases regarding
+  \clieeeterm{NaN}s and \clieeeterm{infinities}.
+\item Decide whether a \clieeeterm{IEEE exception} should be
+  \emph{signalled}.
+  \begin{enumerate}
+  \item Handle the exception \emph{by default}.
+  \item Raise the flags to indicate what exception was signalled (and
+    handled by default).
+  \end{enumerate}
+\end{enumerate}
+
+The specifications also assume that the \emph{notification} of an
+\emph{exceptional situation} should either be recorded ``somewhere''
+(in the \CLang{} specification, Section~7.6, in an object of type
+\code{fenv\_t}) and that ``catastrophic'' events should ensue from HW
+traps and signals.
+
+The specifications indicate that a language \emph{may} provide
+alternative modes of ``handling'' such exceptions, acknowledging the
+presence of ``exception handling'' machinery in most modern languages
+\missingpart{Reference to specs ``Alternate Exception Handling''};
+and \CL{} is not an exception, if not for the much richer set of
+features that it provides with its ``Condition System''.
+
+
+
+
+\section{\IEEEFPStd{} and LIA \CL{}-related Dictionary}
 
 \subsection{Floats, Infinities and NaNs}
 
@@ -443,8 +669,8 @@ whenever \varname{x} is a (representation of an IEEE) NaN.  Otherwise
 it returns \code{NIL}. The \emph{quiet} and \emph{signalling} versions
 operate similarly.
 
-
-\subsubsection*{Example:}
+\DExamples{}
+%\subsubsection*{Example:}
 
 \begin{alltt}
 CL prompt> \codeprompt{(is-nan nan)}
@@ -563,47 +789,10 @@ CL prompt> \codeprompt{(is-infinity "NaN")}
 
 
 
-\subsection{Low Level Exception Handling}
-
-The \CL{} ANSI Specification provides the following conditions that
-may be raised by an implementation (in an \emph{implementation
-  dependent} way) in conjunction with floating point operations.
-\begin{description}
-\item \code{floating-point-invalid-operation},
-\item \code{floating-point-inexact},
-\item \code{floating-point-overflow},
-\item \code{floating-point-underflow}.
-\end{description}
-Of course, the condition \code{division-by-zero} may also be signaled
-by floating point operations.
 
 
-The entries in Section~\ref{sect:fpe-dictionary} specify an interface
-similar the \CLang{} Library interface to the \emph{Floating Point
-  Environment} provided by \verb|<fenv.h>| \cite{2018:C18}.
 
-
-\subsubsection{Interaction Between the ``Low Level'' IEEE~754
-  ``Signalling'' Machinery and \CL{} Condition Handling}
-
-The IEEE~754 specification (Section~7 of \cite{2008:IEEE-754}) appears to
-imply that the actual handling of ``exceptional'' situations should
-follow the steps below.  Given an operation $f(x, \ldots)$.
-
-\begin{enumerate}
-\item Check the arguments of $f$ for special cases regarding
-  \clieeeterm{NaN}s and \clieeeterm{infinities}.
-\item Decide whether a \clieeeterm{IEEE exception} should be
-  \emph{signalled}.
-  \begin{enumerate}
-  \item Handle the exception \emph{by default}.
-  \item Raise the flags to indicate what exception was signalled (and
-    handled by default).
-  \end{enumerate}
-\end{enumerate}
-
-
-\subsubsection{Floating Point Exception Handling Dictionary}
+\subsection{Floating Point Exception Handling Dictionary}
 \label{sect:fpe-dictionary}
 
 The following are the defined symbols (variables, constants, functions
@@ -1180,15 +1369,15 @@ number of numerical algorithms and data structures. The following
 entries provide access to the IEEE facilities.
 
 
-\DDictionaryItem{Type \code{rounding-modes}}
+\DDictionaryItem{Type \code{rounding-mode}}
 
 \DSupertypes{}
 
-\code{rounding-modes}, \ldots, \code{T}
+\code{rounding-mode}, \ldots, \code{T}
 
 \DDescription{}
 
-The \code{rounding-modes} type is defined to be:
+The \code{rounding-mode} type is defined to be:
 \begin{alltt}
 (member :indeterminable
         :zero
@@ -1318,9 +1507,24 @@ the function CL:* may not respect the new rounding mode :POSITIVE-INFINITY.}
 \textit{42.0}
 \end{alltt}
 
+\DDictionaryItem{Macros \code{round-to-zero}, \code{round-to-near},
+  \code{round-upward},\\
+  \code{round-downward}}
+
+\DSyntax{}
+
+\code{round-to-zero} \code{\&body} \varname{body}
+$\Rightarrow$ \varname{results}\\
+\code{round-to-near} \code{\&body} \varname{body}
+$\Rightarrow$ \varname{results}\\
+\code{round-upward} \code{\&body} \varname{body}
+$\Rightarrow$ \varname{results}\\
+\code{round-downward} \code{\&body} \varname{body}
+$\Rightarrow$ \varname{results}
 
 
-\section{Floating Point IEEE~754 Respecting Operations}
+
+\section{Floating Point \IEEEFPStd{} Respecting Operations}
 \label{sect:fp-operations}
 
 A \CL{} implementation or a \CL{} library implementing this
@@ -1330,7 +1534,7 @@ alongside some \CL{} features to allow for read-time (cfr.,
 \emph{translation-time}) evaluations.
 
 
-\subsection{Non-computational \CL{} Enviroment IEEE-754 Queries}
+\subsection{Non-computational \CL{} Enviroment \IEEEFPStd{} Queries}
 
 \DDictionaryItem{Function \code{is-cdr-ieee-754-conformant}}
 
@@ -1366,7 +1570,7 @@ If this function returns non-\code{NIL}, so will
 
 \cite{2008:IEEE-754} specifies two predicates \code{is754version1985} and
 \code{is754version2008}, but they imply conformance to the full
-IEEE~754 standard.
+\IEEEFPStd{} standard.
 
 
 
@@ -1424,7 +1628,7 @@ $\Rightarrow$ \varname{result}
 
 This function returns a non-\code{NIL} value if the \CL{}
 implementation or the \CL{} library provides separate implementations
-of the \emph{computational operations} that do conform to the IEEE~754
+of the \emph{computational operations} that do conform to the \IEEEFPStd{}
 mandated behavior.
 
 
@@ -1517,7 +1721,7 @@ in \cite{2008:IEEE-754} and Section~12.1.4.3 of \cite{1996:ANSIHyperSpec}.
 \noindent
 Each of the functions in Table~\ref{table:cl-arit-ops} must be further
 specified with respect to \cite{1996:ANSIHyperSpec} in order to adhere to
-the requirements of IEEE~754.  The descriptions and the references for
+the requirements of \IEEEFPStd{}.  The descriptions and the references for
 each function further specify the standard \CL{} behavior with respect
 to \emph{NaN}s, \emph{infinities} and floating point exceptions.
 
@@ -1552,13 +1756,13 @@ The dyadic versions of the functions \code{+}, and \code{*}, when operating on
 floating point numbers (or numbers that eventually are converted to
 floating point numbers according to \CL{} float contagion rules -- cfr.,
 Section~12.1.4 of \cite{1996:ANSIHyperSpec}) assume the behavior of the
-underlying IEEE~754 specification \cite{2008:IEEE-754}.  It is assumed that
+underlying \IEEEFPStd{} specification \cite{2008:IEEE-754}.  It is assumed that
 the multiple argument versions are eventually built upon the dyadic
 ones (zero and one argument versions can be seen as special cases from
 the point of view of this specification).
 
 The dyadic versions of the functions \code{+}, and \code{*} behave
-according to the IEEE~754 operations described in Section~5.4.1 of
+according to the \IEEEFPStd{} operations described in Section~5.4.1 of
 \cite{2008:IEEE-754}, which is assumed to be the usual behavior specified
 for \CL{} by \cite{1996:ANSIHyperSpec} when \varname{a} and \varname{b} are
 not \emph{NaN}s or \emph{infinities}.
@@ -1641,13 +1845,13 @@ The dyadic version of the function \code{-}, when operating on
 floating point numbers (or numbers that eventually are converted to
 floating point numbers according to \CL{} float contagion rules -- cfr.,
 Section~12.1.4 of \cite{1996:ANSIHyperSpec}) assume the behavior of the
-underlying IEEE~754 specification \cite{2008:IEEE-754}.  It is assumed that
+underlying \IEEEFPStd{} specification \cite{2008:IEEE-754}.  It is assumed that
 the multiple argument versions are eventually built upon the dyadic
 ones (the one argument version can be seen as a special case from
 the point of view of this specification).
 
 The dyadic version of the functions \code{-} behaves
-according to the IEEE~754 operations described in Section~5.4.1 of
+according to the \IEEEFPStd{} operations described in Section~5.4.1 of
 \cite{2008:IEEE-754}, which is assumed to be the usual behavior specified
 for \CL{} by \cite{1996:ANSIHyperSpec} when \varname{a} and \varname{b} are
 not \emph{NaN}s or \emph{infinities}.
@@ -1723,13 +1927,13 @@ The dyadic version of the function \code{/}, when operating on
 floating point numbers (or numbers that eventually are converted to
 floating point numbers according to \CL{} float contagion rules -- cfr.,
 Section~12.1.4 of \cite{1996:ANSIHyperSpec}) assume the behavior of the
-underlying IEEE~754 specification \cite{2008:IEEE-754}.  It is assumed that
+underlying \IEEEFPStd{} specification \cite{2008:IEEE-754}.  It is assumed that
 the multiple argument versions are eventually built upon the dyadic
 ones (the one argument version can be seen as a special case from
 the point of view of this specification).
 
 The dyadic version of the functions \code{/} behaves
-according to the IEEE~754 operations described in Section~5.4.1 of
+according to the \IEEEFPStd{} operations described in Section~5.4.1 of
 \cite{2008:IEEE-754}, which is assumed to be the usual behavior specified
 for \CL{} by \cite{1996:ANSIHyperSpec} when \varname{a} and \varname{b} are
 not \emph{NaN}s or \emph{infinities}.
@@ -2038,7 +2242,7 @@ Note that the \code{evenp} and \code{oddp} functions are not present
 in the above table,  which corresponds to Figure~12-3 of
 \cite{1996:ANSIHyperSpec}.
 
-\paragraph{Correspondances with IEEE-754.} The list of operations
+\paragraph{Correspondances with \IEEEFPStd{}.} The list of operations
 recommended by \cite{2008:IEEE-754} is more extensive than the list of
 operations provided by \CL{} (cfr., Table~9.1 in \cite{2008:IEEE-754}).
 The tables referenced below provide correspondances for the \CL{} functions,
