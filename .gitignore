@@ -4,6 +4,7 @@
 *.dvi
 *.bbl
 *.blg
+*.toc
 *.c
 CDR-IEEE-754-support.synctex.gz
 cleqcmp.html
