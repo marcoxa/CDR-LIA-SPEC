@@ -13,6 +13,8 @@
 \usepackage{color}
 \usepackage[margin=4cm]{geometry}
 
+\usepackage{makeidx}
+
 % \usepackage[OT1]{fontenc}
 % \usepackage{bold-extra}
 % \renewcommand{\ttdefault}{cmt}
@@ -25,6 +27,14 @@
 
 \newcommand{\Lisp}{\textsf{Lisp}}
 \newcommand{\CL}{\textsf{Common~Lisp}}
+
+\newcommand{\CMUCL}{\textsf{CMUCL}}
+\newcommand{\SBCL}{\textsf{SBCL}}
+\newcommand{\CCL}{\textsf{CCL}}
+\newcommand{\ACL}{\textsf{ACL}}
+\newcommand{\ABCL}{\textsf{ABCL}}
+
+
 \newcommand{\Quicklisp}{\textsf{Quicklisp}}
 
 \newcommand{\CLang}{\textsf{C}}
@@ -65,6 +75,7 @@
 \newcommand{\clname}[1]{\texttt{#1}}
 
 \newcommand{\codeprompt}[1]{\textcolor{blue}{\textbf{#1}}}
+\newcommand{\codelia}[1]{\textcolor{blue}{#1}}
 
 \newcommand{\RArrow}{$\Rightarrow$}
 
@@ -101,9 +112,8 @@
   Marco Antoniotti\\
   Dipartimento di Informatica, Sistemistica e Comunicazione\\
   Universit\`{a} degli Studi di Milano Bicocca\\
-  Viale Sarca 336, U14, Milan (MI), \textsc{Italy}\\
-  \vspace{2mm}
-  \texttt{marco.antoniotti} at \texttt{unimib.it},
+  Viale Sarca 336, U14, Milan (MI), \textsc{Italy}\\[2mm]
+  \texttt{marco.antoniotti} at \texttt{unimib.it},\\
   \texttt{mantoniotti} at \texttt{common-lisp.net}}
 
 
@@ -114,9 +124,14 @@
 
 %\includeonly{}
 
+
+\makeindex
+
+
 \begin{document}
 
 \maketitle
+
 
 \begin{abstract}
   This document presents a set of names, functions and macros that aim
@@ -159,6 +174,15 @@ will be referred as \IEEEFPStd{} in this text) and the \emph{ISO/IEC
   Information technology -- Language independent arithmetic}
 \cite{2012:LIA1,2001:LIA2,2004:LIA3} (in three parts, which will be
 referred as LIA1, LIA2 and LIA3, or simply LIA, in this text).
+
+\vspace*{3mm}
+
+\noindent
+The LIA specifications also contain Annexes specifying \emph{language
+  bindings}, including \CL{} (cfr., LIA1, Annex~D).  They also specify
+how a language definition should handle \emph{exceptional situations}
+(cfr., LIA1, Section~6), which has consequences for \CL{} described
+below.
 
 \vspace*{3mm}
 
@@ -209,6 +233,12 @@ be addressed:
 The content of this document borrows ideas from the \CLang{}
 specification \cite{2018:C18}, and the documentation of
 several \CL{} implementations.
+
+\paragraph{Note.} In the following, the examples shown try to be
+specific for a given implementation; that is, whenever a behavior is
+referring to a specific implementation (even when illustrating a
+generic behavior), the ``prompt'' will refer to that implementation --
+\code{LW>}, \code{SBCL>}, etc. etc.
 
 
 \subsection{Impact on Current \CL{} Implementations}
@@ -363,7 +393,7 @@ are necessary to build \emph{interval arithmetic} libraires (cfr.,
 \checkcite{Interval Arithmetic}).
 
 The \CLang{} standard interface for floating point rounding modes
-control (cfr., \cite{C18} Section~7.6.3) provides the \code{fgetround}
+control (cfr., \cite{2018:C18} Section~7.6.3) provides the \code{fgetround}
 and \code{fsetround} functions that can get and set the rounding mode;
 the rounding modes being defined as \code{FE\_DOWNWARD},
 \code{FE\_TONEAREST},\\
@@ -423,7 +453,7 @@ CL prompt> \codeprompt{(round-upward (read))}
 \textit{42.0}
 \end{alltt}
 will produce a \code{42.0} result that is rounded according to the
-standard rules of the \CL{} reader standard floating point parsing
+standard rules of the \CL{} reader floating point parsing
 rules, overriding the \code{round-upward} settings.
 
 
@@ -433,9 +463,21 @@ rules, overriding the \code{round-upward} settings.
 
 The floating point and complex arithmetic exceptional situation
 handling machinery described in
-\cite{2012:LIA1,2001:LIA2,2004:LIA3,2008:IEEE-754} (e.g.,
-\cite{2001:LIA2} Section~6, \emph{Notification}) balances three
-viewpoints that different engineers have.
+\cite{2012:LIA1,2001:LIA2,2004:LIA3,2008:IEEE-754}, more specifically,
+\cite{2012:LIA1} Section~6, \emph{Notification}.  Three main
+notification modalities are described in LIA1:
+\begin{itemize}
+\item \emph{Notification by recording in indicators} (NRI -- LIA1,
+  Section~6.2.1).
+\item \emph{Notification by alteration of control flow} (NACF -- LIA1,
+  Section~6.2.2).
+\item \emph{Notification by termination with message} (NTM -- LIA1,
+  Section~6.2.3).
+\end{itemize}
+
+\noindent
+These notification machineries balance three viewpoints that different
+engineers have.
 
 \begin{itemize}
 \item The hardware instruction set designer\footnote{Just a label; it
@@ -456,10 +498,54 @@ may be raised by an implementation (in an \emph{implementation
 Of course, the condition \code{division-by-zero} may also be signaled
 by floating point operations.
 
+The LIA1 specification, Annex~D, proposes that \CL{} defined the
+arithmetic exception handling using the Condition System, i.e., using
+the NACF notification approach.  This document specifies that
+\textbf{both} alternatives NRI and NACF are actually available to the
+programmer\footnote{\CMUCL{} and \SBCL{} already provide
+  both modes, although in a non fully documented way. In fact:
+
+\begin{alltt}
+CMUCL> \codeprompt{(/ 42 0.0)}
+
+Arithmetic error DIVISION-BY-ZERO signalled.
+Operation was /, operands (42.0 0.0).
+   [Condition of type DIVISION-BY-ZERO]
+
+Restarts:
+  0: [ABORT] Return to Top-Level.
+
+Debug  (type H for help)
+\end{alltt}
+  The above is the behavior implied by LIA1 for \CL{}.  However,
+  \CMUCL{} (and \SBCL{}) provide also direct manipulation of the
+  underlying \emph{floating point environment}.  In that case, it
+  appears that \CMUCL{} and \SBCL{} do offer the NRI machinery.
+\begin{alltt}
+SBCL> \codeprompt{(sb-int:with-float-traps-masked (:divide-by-zero) (/ 3 0.0))}
+\textit{\#.SB-EXT:SINGLE-FLOAT-POSITIVE-INFINITY}
+
+SBCL> \codeprompt{(sb-int:get-floating-point-modes)}\\
+\textit{(:TRAPS (:OVERFLOW :INVALID :DIVIDE-BY-ZERO)\\
+  :ROUNDING-MODE :NEAREST\\
+  :CURRENT-EXCEPTIONS NIL\\
+  :ACCRUED-EXCEPTIONS NIL\\
+  :FAST-MODE NIL\\
+  :PRECISION :53-BIT)}
+\end{alltt}
+In the case above, the division by zero is not raised or recorded and
+the expected ``continuation value'' is returned (in this case the
+\code{short-float} $\infty$).
+}.
+This causes issues in the interplay between the NRI and the NACF
+exception handling methods, but it gives the programmer all the fine
+control it is needed
 
 The entries in Section~\ref{sect:fpe-dictionary} specify an interface
 similar the \CLang{} Library interface to the \emph{Floating Point
   Environment} provided by \verb|<fenv.h>| \cite{2018:C18}.
+
+
 
 
 \subsubsection{Interaction Between the ``Low Level'' \IEEEFPStd{} and LIA
@@ -489,12 +575,145 @@ The specifications also assume that the \emph{notification} of an
 \code{fenv\_t}) and that ``catastrophic'' events should ensue from HW
 traps and signals.
 
-The specifications indicate that a language \emph{may} provide
+The LIA specifications indicate that a language \emph{may} provide
 alternative modes of ``handling'' such exceptions, acknowledging the
 presence of ``exception handling'' machinery in most modern languages
-\missingpart{Reference to specs ``Alternate Exception Handling''};
+\missingpart{Reference to specs ``Alternate Exception Handling'' --
+  LIA1, Section~6, Annex~D};
 and \CL{} is not an exception, if not for the much richer set of
-features that it provides with its ``Condition System''.
+features that it provides with its ``Condition System''.  As a matter
+of fact, LIA1 indicates that \CL{} should define such an ``alternate
+exception handling'' based on the standard Condition System.
+
+In the following, this specification will state exactly what kind of
+behavior the various functions and macros will follow.  In general, a
+\CL{} \emph{condition} will be \emph{signalled} when either the \CL{}
+standard already mandates so (e.g., in the case of
+\code{cl:division-by-zero}) or when the LIA specification implies that
+the ``continuation value'' and the recording of the exception proposed
+are really a stopgap measure\footnote{This may be seen as somewhat
+  arbitrary.  This interpretation is warranted, as the main goal of
+  the present document is to narrow down as much as possible
+  alternative behaviors -- read: \emph{implementation dependent}
+  ones. \textbf{This footnote may be inconsistent with LIA1, Annex~D,
+    w.r.t., \CL{}.}}.
+
+\subsubsection{Specialized Handling of LIA-related Exceptions}
+
+This document specifies a simple macro, built on top of the standard
+\CL{} condition handling machinery to quickly handle LIA-related
+exceptions, that is, the standard \CL{} \code{floating-point-invalid-operation},
+\code{floating-point-inexact},\\
+\code{floating-point-overflow}, and
+\code{floating-point-underflow} conditions.  This macro provides for
+a simplified \clieeeterm{alternative exception handling}
+\checkref{Alternative Exception Handling}.
+
+The macro is named \code{trap-math} and has the following
+simple syntax:
+\begin{alltt}
+  (trap-math (&key \textit{before} \textit{after}) <\textit{expr}> <\textit{handler}>* )
+\end{alltt}
+In the simplest case \code{trap-math} is a no-op, with
+respect to the behavior of the math operations in \code{<\textit{expr}>}.
+\begin{alltt}
+CL prompt> \codeprompt{(trap-math (* 2 21.0))}
+\textit{42.0}
+\end{alltt}
+\ldots but:
+\begin{alltt}
+LW prompt> \codeprompt{(trap-math (/ 40 0.0))}
+
+Error: Division-by-zero caused by / of (40.0 0.0).
+  1 (continue) Return a value to use.
+  2 Supply new arguments to use.
+  3 (abort) Return to top loop level 0.
+
+Type :b for backtrace or :c <option number> to proceed.
+Type :bug-form "<subject>" for a bug report template or :? for other options.
+\end{alltt}
+On the other hand, the following example produces the LIA and \CLang{} result
+(assuming that\\
+\code{*read-default-float-format*} was \code{single-float}).
+\begin{alltt}
+CL prompt> \codeprompt{(trap-math (/ 40 0.0)
+               (division-by-zero () :continue))}
+\textit{INFS}
+\color{red}{;;; ... or \textit{1S++0}, or \textit{SINGLE-FLOAT-POSITIVE-INFINITY}.}
+\end{alltt}
+What the macro wants to convey is the fact that when
+\code{division-by-zero} is caught (thus invoking the
+\code{<\textit{handler}>} above), we can simply \emph{continue} with
+the \emph{continuation value} that is associated to the operation that
+actually signalled the condition; note that this may be different from
+the usual \CL{} behavior -- \code{division-by-zero} a case in point.
+
+Other ``actions'' available, besides \code{:continue}, are
+\begin{itemize}
+\item\code{:default} the behavior of the operation that signalled
+  the condition is the default one. In the example above, the
+  \code{division-by-zero} condition is re-signalled, i.e., passed
+  on, but for other operations it may be different; in most cases this
+  will be a no-op with respect to the specification.
+    
+\item\code{:clear} the low level exceptions stored in the
+  \emph{floating point environment} are cleared\footnote{Cfr.,
+    the \CLang{} standard function \code{feclearexcept},
+    Section~7.6.2.1 of \cite{2018:C18}.}.
+
+\item\code{(:continue <\textit{expr}>)} the value(s) returned by
+  \code{\textit{expr}} are used as \emph{continuation value(s)}.
+\end{itemize}
+The \code{:default} and the \code{:continue} forms (also the
+\code{:continue} with ``values'') are mutually exclusive.  The effect
+of \code{:clear} is described hereafter. See the full documentation of
+the macro \code{trap-math} for more details.
+
+\paragraph{LIA Exceptions in the Floating Point Environment.} Whenever
+an exception ``happens'', the corresponding flag is \emph{raised}
+(i.e., stored in the \emph{floating point environment} and remains
+available for further analysis by the program; at least when using the
+\CLang{} library, which has been the inspiration for this
+specification.  In \CL{} some operations do signal a
+\clterm{condition} which may or may not be handled by the program.
+The choice of this specification is to state that the signaling of a
+\CL{} condition, say \code{cl:division-by-zero} does also raise the
+corresponding \clieeeterm{floating point exception flag}.  Moreover,
+unless some special machinery is used (cfr., the
+\code{trap-math} macro) the handling of a \CL{} condition
+(say, \code{cl:floating-point-invalid-operation}) by
+\code{handler-case} or similar facilities \emph{does not clear} the
+floating point environment flags (unless done explicitly by the
+handler code).
+
+\missingpart{Should I have an argument for ``before'' and
+  ``after'' operations in \code{trap-math}?  Like
+  \code{:restore-on-exit} \code{:clear-on-exit} \code{clear-on-entry}
+  \code{preserve-on-entry}}
+
+\noindent
+As an example consider the following code snippet.
+\begin{alltt}
+(defun boom (x)
+    (declare (type single-float x))
+    (handler-case 
+        (/ x 0)
+      (division-by-zero (e)
+        (format *error-output* "Boom ~S.~%" e)))
+\end{alltt}
+After this function is run, the result will be \code{NIL} \emph{and} the
+floating point environment will still have the \code{divZero} flag raised.
+That is, the following interaction should be expected:
+\begin{alltt}
+CL prompt> \codeprompt{(boom 42.0s0)}
+
+Boom #<Condition DIVISION-BY-ZERO>
+\textit{NIL}
+
+CL prompt> \codeprompt{(fpe-test-exceptions :division-by-zero)}
+\textit{T}
+\end{alltt}
+
 
 
 
@@ -503,7 +722,7 @@ features that it provides with its ``Condition System''.
 
 \subsection{Floats, Infinities and NaNs}
 
-\DDictionaryItem{Function \code{make-float}}
+\DDictionaryItem{Function \index{\code{make-float}}}
 
 \DSyntax{}
 
@@ -546,10 +765,10 @@ implementations.
 
 
 \DDictionaryItem{Functions
-  \code{make-short-float},
-  \code{make-single-float},\\
-  \code{make-double-float},
-  \code{make-long-float}}
+  \index{\code{make-short-float}},
+  \index{\code{make-single-float}},\\
+  \index{\code{make-double-float}},
+  \index{\code{make-long-float}}}
 
 \DSyntax{}
 
@@ -599,7 +818,7 @@ Implementations may supply a larger set of these functions, e.g.,
 \code{make-quad-float}.
 
 
-\DDictionaryItem{Values \code{NAN}}
+\DDictionaryItem{Values \index{\code{NAN}}}
 
 \subsubsection*{Value:}
 
@@ -645,9 +864,10 @@ It is also understood that, \code{(numberp nan)} should return \code{T}.
 \code{is-signalling-nan}, \code{signalling-nan-p}.
 
 
-\DDictionaryItem{Functions \code{is-nan}, \code{nanp},
-  \code{is-quiet-nan}, \code{quiet-nan-p},\\\code{is-signalling-nan},
-  \code{signalling-nan-p}}
+\DDictionaryItem{Functions \index{\code{is-nan}}, \index{\code{nanp}},
+  \index{\code{is-quiet-nan}},
+  \index{\code{quiet-nan-p}},\\\index{\code{is-signalling-nan}}, 
+  \index{\code{signalling-nan-p}}}
 
 \DSyntax{}
 
@@ -689,22 +909,26 @@ CL prompt> \codeprompt{(is-nan "NaN")}
 
 
 \DDictionaryItem{Constant Variables\\
-  \code{long-float-positive-infinity},
-  \code{long-float-negative-infinity},\\
-  \code{double-float-positive-infinity},
-  \code{double-float-negative-infinity},\\
-  \code{single-float-positive-infinity},
-  \code{single-float-negative-infinity},\\
-  \code{short-float-positive-infinity},
-  \code{short-float-negative-infinity},\\
-  \code{+infL0}, 
-  \code{-infL0},
-  \code{+infD0}, 
-  \code{-infD0},
-  \code{+infF0}, 
-  \code{-infF0},
-  \code{+infS0}, 
-  \code{-infS0},
+  \index{\code{long-float-positive-infinity}},
+  \index{\code{long-float-negative-infinity}},\\
+  \index{\code{double-float-positive-infinity}},
+  \index{\code{double-float-negative-infinity}},\\
+  \index{\code{single-float-positive-infinity}},
+  \index{\code{single-float-negative-infinity}},\\
+  \index{\code{short-float-positive-infinity}},
+  \index{\code{short-float-negative-infinity}},\\
+  \index{\code{infL}}
+  \index{\code{infD}}
+  \index{\code{infF}}
+  \index{\code{infS}}  
+  % \index{\code{+infL0}}, 
+  % \index{\code{-infL0}},
+  % \index{\code{+infD0}}, 
+  % \index{\code{-infD0}},
+  % \index{\code{+infF0}}, 
+  % \index{\code{-infF0}},
+  % \index{\code{+infS0}}, 
+  % \index{\code{-infS0}},
   }
 
 \subsubsection*{Value:}
@@ -799,7 +1023,7 @@ The following are the defined symbols (variables, constants, functions
 and macros) pertaining to the handling of the low-level
 \clieeeterm{floating point environment}.
 
-\DDictionaryItem{Type \code{fpe-exception}}
+\DDictionaryItem{Type \index{\code{fpe-exception}}}
 
 \DSupertypes{}
 
@@ -823,7 +1047,7 @@ supported by an implementation.
 \code{fpe-exceptions-set}, \code{+fpe-all-exceptions+}.
 
 
-\DDictionaryItem{Type \code{fpe-exceptions-set}}
+\DDictionaryItem{Type \index{\code{fpe-exceptions-set}}}
 
 \DSupertypes{}
 
@@ -843,7 +1067,7 @@ underlying implementation.
 
 
 
-\DDictionaryItem{Constant Value \code{+fpe-all-exceptions+}}
+\DDictionaryItem{Constant Value \index{\code{+fpe-all-exceptions+}}}
 
 \subsubsection*{Value:}
 
@@ -864,9 +1088,9 @@ are supported by the implementation.
 \code{supported-exception-p}.
 
 
-\DDictionaryItem{Functions \code{supported-exception-p},\\
-  \code{all-supported-exceptions-p},
-  \code{some-supported-exceptions-p}}
+\DDictionaryItem{Functions \index{\code{supported-exception-p}},\\
+  \index{\code{all-supported-exceptions-p}},
+  \index{\code{some-supported-exceptions-p}}}
 
 \DSyntax{}
 
@@ -931,20 +1155,20 @@ $\Rightarrow$ \varname{excp-set}
 
 \DArgsNValues{}
 
-\varname{excps} -- A list of \code{fpe-exception} items.\\
-\varname{excp-set} -- An object of type \code{fpe-exception-set}.
+\varname{excps} -- A list of \index{\code{fpe-exception}} items.\\
+\varname{excp-set} -- An object of type \index{\code{fpe-exception-set}}.
 
 \DDescription{}
 
 The function tests which of the \varname{excps} is set (i.e., whether
 the corresponding flag is set in the underlying floating point
-environment) and returns an object of type \code{fpe-exception-set}
+environment) and returns an object of type \index{\code{fpe-exception-set}}
 with the corresponding flag set.
 
 \DExamples{}
 
 The following example (adapted from \cite{2018:C18}) shows how a piece of
-code may decide how to \code{signal} either
+code may decide how to \index{\code{signal}} either
 \code{floating-point-invalid-operation} or
 \code{floating-point-overflow} (cfr., \cite{1996:ANSIHyperSpec}.)
 
@@ -2297,20 +2521,182 @@ signalled.
 
 \appendix
 
+\section{Example Programs}
+
+This section corresponds to Annex~F of \cite{2012:LIA1}.  The programs
+are \CL{} renditions of the programs listed there.  Note that some of
+the programs are writable in standard \CL{}.
+
+\subsection{Verifying Platform Acceptability}
+
+Soppose some code should be executed only is the single float
+precision is at least 1 part in a million.  The code below can be used
+to bail out before executing it.
+\begin{alltt}
+    (when (< (/ single-float-epsilon) 1.0e6)
+        (format *error-output*
+                "The SINGLE-FLOAT type has insufficient precision.")
+        (abort 'arithmetic-error))
+    ...
+\end{alltt}
+
+\noindent
+A range test on the bounds of the single float type.
+\begin{alltt}
+    (when (or (< most-positive-single-float 1.0e30)
+              (> least-positive-single-float 1.0e-10))
+        ...)
+\end{alltt}
+
+\noindent
+Checking for $\frac{1}{2}$ulp.
+\begin{alltt}
+    (when (/= \codelia{single-float-rounding-error} 0.5) ...)
+\end{alltt}
+
+\noindent
+Conditional execution of code depending on conformance can be done in
+two ways.
+\begin{alltt}
+    #+ieee-floating-point 
+    (some-code) 
+\end{alltt}
+or\ldots
+\begin{alltt}
+    (when (\codelia{ieee-floating-point}) \textbf{CHECK THIS WRT SPEC ABOVE!}
+        (some-code))
+\end{alltt}
+
+
+\subsection{Selecting Alternative Code}
+
+Being able to control rounding can be useful.
+\begin{alltt}
+    (cond ((\codelia{iec-559}) \textbf{CHECK THIS WRT SPEC ABOVE!}
+           (\codelia{round-upward} 
+              \textit{\ldots calc})
+           (\codelia{round-downward}
+              \textit{\ldots calc})
+           (\codelia{round-to-nearest}
+              \textit{\ldots calc})
+           )
+          (t
+           \textit{\ldots calc}))
+\end{alltt}
+
+\subsection{Terminating a Loop}
+
+\begin{alltt}
+    (defconstant n 6.0s0) \textcolor{red}{; Max ulp difference for loop termination.}
+
+    (loop for prev-approx of type single-float
+          = (first-guess <\textit{input}>)
+          then approx
+
+          for approx of type single-float
+          = (next-quess <\textit{input}> prev-approx)
+
+          while (> (abs (- approx prev-approx))
+                   (* n (\codelia{ulp} approx)))
+          finally (return approx))
+\end{alltt}
+
+
+\subsection{Estimating Error}
+
+\begin{alltt}
+    (let ((a (make-array 100 :element-type 'double-float))
+          (b (make-array 100 :element-type 'double-float))
+          (dot 0.0d0)
+          (dotmax 0.0d0)
+          (loss 0)
+         )
+      (declare (type (array 100 double-float) a b)
+               (type double-float dot dotmax)
+               (type integer loss))
+     
+      (dotimes (i 100)
+         (incf dot (* (aref a i) (aref b i)))
+         (setf dotmax (max (abs dot) dotmax)))
+
+      (setf loss (- (nth-value 1 (decode-float dotmax)) \textcolor{red}{; `exponent'.}
+                    (nth-value 1 (decode-float dot))))
+      (when (> loss (/ (float-digits dot) 2))
+         (warn "Half the precision may be lost."))
+      )
+\end{alltt}
+
+
+\subsection{Saving Exception State}
+
+This is easy given the macros defined in the document.  There are a
+few ways of doing this.
+
+\begin{alltt}
+    (\codelia{trap-math} ((\codelia{:before :save :clear})
+                          (\codelia{:after :merge})
+       \textit{\ldots run desired code \ldots}
+       \textit{\ldots examine indicators \ldots}
+       \textit{\ldots clear some indicators \ldots}
+       )
+\end{alltt}
+or\ldots
+\begin{alltt}
+    (let ((saved-flags (\codelia{fpe-test-exceptions +fpe-all-exceptions+})))
+       (unwind-protect
+           (progn (\codelia{fpe-clear-expections +fpe-all-exceptions+})
+                  \textit{\ldots run desired code \ldots}
+                  \textit{\ldots examine indicators \ldots}
+                  \textit{\ldots clear some indicators \ldots}
+                  )
+         (\codelia{fpe-raise-excpt-flags} saved-flags)))
+\end{alltt}
+
+
+\subsection{Fast versus Accurate}
+
+\begin{alltt}
+    (\codelia{trap-math} ((\codelia{:before :save :clear})
+                (\codelia{:after :merge})
+      (fast-solution input)
+      (cl:floating-point-overflow ()
+         \codelia{:clear}
+         (\codelia{:continue} (reliable-solution input)))
+      )
+\end{alltt}
+
+
+\subsection{High Precision Multiply}
+
+\begin{alltt}
+    (let* ((x1 (\codelia{round-float} x (/ (float-digits x) 2)))
+           (x2 (- x x1))
+           (y1 (\codelia{round-float} y (/ (float-digits y) 2)))
+           (y2 (- y y2))
+           \ldots
+           )
+      (declare (type double-float x1 x2 y1 y2 \ldots))
+
+      \ldots
+      )
+\end{alltt}
+
 \section{Copying and License}
 
 This work may be distributed and/or modified under the conditions of
-the \emph{LaTeX Project Public License} (LPPL), either version 1.3 of this license
-or (at your option) any later version. The latest version of this
-license is in \texttt{http://www.latex-project.org/lppl.txt} and version 1.3 or
-later is part of all distributions of LaTeX version 2005/12/01 or
-later.
+the \emph{LaTeX Project Public License} (LPPL), either version 1.3 of
+this license or (at your option) any later version. The latest version
+of this license is in \texttt{http://www.latex-project.org/lppl.txt}
+and version 1.3 or later is part of all distributions of LaTeX version
+2005/12/01 or later.
 
 \noindent
 This work has the LPPL maintenance status `maintained'.
 
 \noindent
 The Current Maintainer of this work is Marco Antoniotti.
+
+\printindex
 
 \end{document}
 
