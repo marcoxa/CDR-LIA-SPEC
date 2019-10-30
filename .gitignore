@@ -5,6 +5,12 @@
 *.bbl
 *.blg
 *.toc
+*.idx
+*.ilg
+*.ind
 *.c
+_region_.prv/*
+_region_.tex
 CDR-IEEE-754-support.synctex.gz
 cleqcmp.html
+divz
