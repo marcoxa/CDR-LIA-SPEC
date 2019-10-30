@@ -12,6 +12,7 @@
 \usepackage{tabulary}
 \usepackage{color}
 \usepackage[margin=4cm]{geometry}
+% \usepackage[linktocpage=true]{hyperref} % Causes some problems.
 
 \usepackage{makeidx}
 
@@ -38,7 +39,8 @@
 \newcommand{\Quicklisp}{\textsf{Quicklisp}}
 
 \newcommand{\CLang}{\textsf{C}}
-\newcommand{\Java}{\textsc{Java}}
+\newcommand{\Java}{\textsc{\textsf{Java}}}
+\newcommand{\Fortran}{\textsc{\textsf{Fortran}}}
 
 \newcommand{\checkcite}[1]{{\textbf{[Missing Citation: #1]}}}
 \newcommand{\checkref}[1]{{\textbf{[Missing Reference: #1]}}}
@@ -80,6 +82,7 @@
 \newcommand{\RArrow}{$\Rightarrow$}
 
 
+
 %%% Useful Names.
 
 \newcommand{\IEEEFPStd}{IEEE-754}
@@ -99,6 +102,13 @@
 \newcommand{\DExceptional}{\subsubsection*{Exceptional Situations:}}
 \newcommand{\DNotes}{\subsubsection*{Notes:}}
 \newcommand{\DSeeAlso}{\subsubsection*{See Also:}}
+\newcommand{\DValues}{\subsubsection*{Values:}}
+
+
+%%% Spec special names.
+
+\newcommand{\CLLIAPKG}{\code{CL-MATH-LIA-2019}}
+
 
 
 
@@ -336,11 +346,11 @@ naming conventions established in the ANSI~\CL{} Specification
 
 
 
-\subsection{\code{CL-MATH-LIA-2019} Package}
+\subsection{\CLLIAPKG{} Package}
 \label{sect:package}
 
 The implementations of this specification will provide a package named
-(or nicknamed) \code{CL-MATH-LIA-2019}.  All the symbols named in the rest
+(or nicknamed) \CLLIAPKG{}.  All the symbols named in the rest
 of the document are \code{export}ed from the above mentioned package.
 
 
@@ -386,7 +396,7 @@ values (cfr., \cite{2012:LIA1} Section~4.2.3, 4.2.8, 4.2.9).
 
 \subsection{Rounding Modes}
 
-One of the functionalities described in \IEEEFPStd{} (\IECFPStd{}) is
+One of the functionalities described in \IEEEFPStd{} (\IECFPStd{}) and LIA is
 the control of \emph{rounding modes}.  Rounding modes control is
 important in some numerical applications and libraries.  E.g., they
 are necessary to build \emph{interval arithmetic} libraires (cfr.,
@@ -539,13 +549,55 @@ the expected ``continuation value'' is returned (in this case the
 }.
 This causes issues in the interplay between the NRI and the NACF
 exception handling methods, but it gives the programmer all the fine
-control it is needed
+control it is needed to handle many potential numerical
+issues. Incidentally, note that LIA1 provides an example about how
+\Fortran{} may provide some compiler directives to choose between NRI
+and NTM (cfr., LIA1, Annex E).
+\begin{alltt}
+!LIA\$  NOTIFICATION=RECORDING
+!LIA\$  NOTIFICATION=TERMINATE
+\end{alltt}
 
-The entries in Section~\ref{sect:fpe-dictionary} specify an interface
+In order to select and introspect what kind of exception handling
+regime is selected in a given computation\footnote{In this
+  specification, no mention of \emph{threading model} is made;
+  however, it is assumed that an implementation can make all the
+  dynamical behavior of numerical computations ``thread safe''.}, this
+specification provides the following API.
+\begin{itemize}
+\item An enumerated type for NRI, NACF and NTM: %\\
+  \code{arithmetic-exception-notification-style}.
+  \begin{alltt}
+    (deftype \codelia{arithmetic-exception-notification-style} ()
+      (member :recording    \textcolor{red}{; I.e., NRI.}
+              :error        \textcolor{red}{; I.e., NACF.}
+              :termination  \textcolor{red}{; I.e., NTM.}
+              ))
+  \end{alltt}
+\item A set of functions and macros to retrieve and set the current
+  notification style.
+  \begin{description}
+  \item \code{current-notification-style}: a function that retrieves
+    the, as the name implies, the current notification style.
+  \item \code{set-notification-style}: a function that sets the
+    notification style.
+  \item \code{with-notification-style}: a macro that temporarily sets
+    the notification style and ensures to restore the one in effect
+    before its invocation.
+  \end{description}
+\item A ``mirroring'' in package \CLLIAPKG{} of the ANSI CL floating
+  point exceptions in order to accommodate the notion of
+  \emph{continuation values}.  This will amount to have the mirrored
+  ANSI CL floating point exceptions have a \code{continuation-value}
+  slot with a associated initarg and reader (of the same name).
+\end{itemize}
+
+\vspace*{2mm}
+
+\noindent
+Finally, the entries in Section~\ref{sect:fpe-dictionary} specify an interface
 similar the \CLang{} Library interface to the \emph{Floating Point
   Environment} provided by \verb|<fenv.h>| \cite{2018:C18}.
-
-
 
 
 \subsubsection{Interaction Between the ``Low Level'' \IEEEFPStd{} and LIA
@@ -612,17 +664,17 @@ a simplified \clieeeterm{alternative exception handling}
 The macro is named \code{trap-math} and has the following
 simple syntax:
 \begin{alltt}
-  (trap-math (&key \textit{before} \textit{after}) <\textit{expr}> <\textit{handler}>* )
+  (trap-math (&key \textit{notify-by} \textit{before} \textit{after}) <\textit{expr}> <\textit{handler}>* )
 \end{alltt}
 In the simplest case \code{trap-math} is a no-op, with
 respect to the behavior of the math operations in \code{<\textit{expr}>}.
 \begin{alltt}
-CL prompt> \codeprompt{(trap-math (* 2 21.0))}
+CL prompt> \codeprompt{(trap-math () (* 2 21.0))}
 \textit{42.0}
 \end{alltt}
 \ldots but:
 \begin{alltt}
-LW prompt> \codeprompt{(trap-math (/ 40 0.0))}
+LW prompt> \codeprompt{(trap-math () (/ 40 0.0))}
 
 Error: Division-by-zero caused by / of (40.0 0.0).
   1 (continue) Return a value to use.
@@ -636,7 +688,7 @@ On the other hand, the following example produces the LIA and \CLang{} result
 (assuming that\\
 \code{*read-default-float-format*} was \code{single-float}).
 \begin{alltt}
-CL prompt> \codeprompt{(trap-math (/ 40 0.0)
+CL prompt> \codeprompt{(trap-math () (/ 40 0.0)
                (division-by-zero () :continue))}
 \textit{INFS}
 \color{red}{;;; ... or \textit{1S++0}, or \textit{SINGLE-FLOAT-POSITIVE-INFINITY}.}
@@ -647,6 +699,10 @@ What the macro wants to convey is the fact that when
 the \emph{continuation value} that is associated to the operation that
 actually signalled the condition; note that this may be different from
 the usual \CL{} behavior -- \code{division-by-zero} a case in point.
+
+The macro \code{try-math} also makes provisions to set a local \emph{notification
+  style} (cfr., the keyword argument \textit{\code{style}} as per the
+macro \code{with-notification-style}.
 
 Other ``actions'' available, besides \code{:continue}, are
 \begin{itemize}
@@ -720,9 +776,79 @@ CL prompt> \codeprompt{(fpe-test-exceptions :division-by-zero)}
 
 \section{\IEEEFPStd{} and LIA \CL{}-related Dictionary}
 
+\subsection{Integers}
+
+%%% LIA1 requires some operations for "integers", but in CL there are
+%%% "integers" and "fixnums".
+
+\DDictionaryItem{Constant \code{bounded-fixnum}}
+\index{B!\code{bounded-fixnum}}
+
+\DValues{}
+
+The value is \code{T}.
+
+\DDescription{}
+
+This constant indicates that the \CL{} datatype \code{fixnum} is
+bounded (with bounds \code{most-positive-fixnum} and
+\code{most-negative-fixnum}).
+
+\DNotes{}
+
+This is the parameter \textit{bounded}$_I$ required in LIA1
+\cite{2012:LIA1}.
+
+\DSeeAlso{}
+
+\code{bounded-integer},
+%
+\code{minimum-fixnum},
+\code{most-negative-fixnum},\\
+\code{maximum-fixnum},
+\code{most-positive-fixnum},\\
+%
+\code{minumum-integer},
+\code{maximum-integer}.
+
+
+\DDictionaryItem{Constants \code{minimum-fixnum}, \code{maximum-fixnum}}
+\index{M!\code{minimum-fixnum}}
+\index{M!\code{maximum-fixnum}}
+
+\DValues{}
+
+The value of \code{minimum-fixnum} is \code{most-negative-fixnum}.\\
+The value of \code{maximum-fixnum} is \code{most--fixnum}.
+
+\DDescription{}
+
+These constants represent the minimum and maximum \code{fixnum}s
+available in an implementation.
+
+\DNotes{}
+
+These are the parameters \textit{minint}$_I$ and \textit{maxint}$_I$
+required in LIA1 \cite{2012:LIA1}.  Their values are the obvious \CL{}
+counterparts.
+
+\DSeeAlso{}
+
+\code{bounded-fixnum},
+\code{bounded-integer},\\
+%
+\code{most-negative-fixnum},\\
+\code{most-positive-fixnum},\\
+%
+\code{minumum-integer},
+\code{maximum-integer}.
+
+
+
 \subsection{Floats, Infinities and NaNs}
 
-\DDictionaryItem{Function \index{\code{make-float}}}
+\DDictionaryItem{Function \code{make-float}}
+\index{M!\code{make-float}}
 
 \DSyntax{}
 
@@ -765,10 +891,10 @@ implementations.
 
 
 \DDictionaryItem{Functions
-  \index{\code{make-short-float}},
-  \index{\code{make-single-float}},\\
-  \index{\code{make-double-float}},
-  \index{\code{make-long-float}}}
+  \index{M!\code{make-short-float}},
+  \index{M!\code{make-single-float}},\\
+  \index{M!\code{make-double-float}},
+  \index{M!\code{make-long-float}}}
 
 \DSyntax{}
 
@@ -818,7 +944,7 @@ Implementations may supply a larger set of these functions, e.g.,
 \code{make-quad-float}.
 
 
-\DDictionaryItem{Values \index{\code{NAN}}}
+\DDictionaryItem{Values \index{N!\code{NAN}}}
 
 \subsubsection*{Value:}
 
@@ -864,10 +990,10 @@ It is also understood that, \code{(numberp nan)} should return \code{T}.
 \code{is-signalling-nan}, \code{signalling-nan-p}.
 
 
-\DDictionaryItem{Functions \index{\code{is-nan}}, \index{\code{nanp}},
-  \index{\code{is-quiet-nan}},
-  \index{\code{quiet-nan-p}},\\\index{\code{is-signalling-nan}}, 
-  \index{\code{signalling-nan-p}}}
+\DDictionaryItem{Functions \index{I!\code{is-nan}}, \index{N!\code{nanp}},
+  \index{I!\code{is-quiet-nan}},
+  \index{Q!\code{quiet-nan-p}},\\\index{I!\code{is-signalling-nan}}, 
+  \index{S!\code{signalling-nan-p}}}
 
 \DSyntax{}
 
@@ -909,26 +1035,26 @@ CL prompt> \codeprompt{(is-nan "NaN")}
 
 
 \DDictionaryItem{Constant Variables\\
-  \index{\code{long-float-positive-infinity}},
-  \index{\code{long-float-negative-infinity}},\\
-  \index{\code{double-float-positive-infinity}},
-  \index{\code{double-float-negative-infinity}},\\
-  \index{\code{single-float-positive-infinity}},
-  \index{\code{single-float-negative-infinity}},\\
-  \index{\code{short-float-positive-infinity}},
-  \index{\code{short-float-negative-infinity}},\\
-  \index{\code{infL}}
-  \index{\code{infD}}
-  \index{\code{infF}}
-  \index{\code{infS}}  
-  % \index{\code{+infL0}}, 
-  % \index{\code{-infL0}},
-  % \index{\code{+infD0}}, 
-  % \index{\code{-infD0}},
-  % \index{\code{+infF0}}, 
-  % \index{\code{-infF0}},
-  % \index{\code{+infS0}}, 
-  % \index{\code{-infS0}},
+  \index{I!Infinities!\code{long-float-positive-infinity}},
+  \index{I!Infinities!\code{long-float-negative-infinity}},\\
+  \index{I!Infinities!\code{double-float-positive-infinity}},
+  \index{I!Infinities!\code{double-float-negative-infinity}},\\
+  \index{I!Infinities!\code{single-float-positive-infinity}},
+  \index{I!Infinities!\code{single-float-negative-infinity}},\\
+  \index{I!Infinities!\code{short-float-positive-infinity}},
+  \index{I!Infinities!\code{short-float-negative-infinity}},\\
+  \index{I!Infinities!\code{infL}}
+  \index{I!Infinities!\code{infD}}
+  \index{I!Infinities!\code{infF}}
+  \index{I!Infinities!\code{infS}}  
+  % \index{I!Infinities!\code{+infL0}}, 
+  % \index{I!Infinities!\code{-infL0}},
+  % \index{I!Infinities!\code{+infD0}}, 
+  % \index{I!Infinities!\code{-infD0}},
+  % \index{I!Infinities!\code{+infF0}}, 
+  % \index{I!Infinities!\code{-infF0}},
+  % \index{I!Infinities!\code{+infS0}}, 
+  % \index{I!Infinities!\code{-infS0}},
   }
 
 \subsubsection*{Value:}
@@ -977,7 +1103,7 @@ A possible implementation would be the following:
 \end{alltt}
 
 
-\DDictionaryItem{Functions \code{is-infinity}, \code{infinityp}}
+\DDictionaryItem{Functions \index{I!\code{is-infinity}}, \index{I!\code{infinityp}}}
 
 \DSyntax{}
 
@@ -1023,7 +1149,7 @@ The following are the defined symbols (variables, constants, functions
 and macros) pertaining to the handling of the low-level
 \clieeeterm{floating point environment}.
 
-\DDictionaryItem{Type \index{\code{fpe-exception}}}
+\DDictionaryItem{Type \index{F!\code{fpe-exception}}}
 
 \DSupertypes{}
 
@@ -1047,7 +1173,7 @@ supported by an implementation.
 \code{fpe-exceptions-set}, \code{+fpe-all-exceptions+}.
 
 
-\DDictionaryItem{Type \index{\code{fpe-exceptions-set}}}
+\DDictionaryItem{Type \index{F!\code{fpe-exceptions-set}}}
 
 \DSupertypes{}
 
@@ -1067,7 +1193,7 @@ underlying implementation.
 
 
 
-\DDictionaryItem{Constant Value \index{\code{+fpe-all-exceptions+}}}
+\DDictionaryItem{Constant Value \index{*!\code{+fpe-all-exceptions+}}}
 
 \subsubsection*{Value:}
 
@@ -1088,9 +1214,9 @@ are supported by the implementation.
 \code{supported-exception-p}.
 
 
-\DDictionaryItem{Functions \index{\code{supported-exception-p}},\\
-  \index{\code{all-supported-exceptions-p}},
-  \index{\code{some-supported-exceptions-p}}}
+\DDictionaryItem{Functions \index{S!\code{supported-exception-p}},\\
+  \index{A!\code{all-supported-exceptions-p}},
+  \index{S!\code{some-supported-exceptions-p}}}
 
 \DSyntax{}
 
@@ -1146,7 +1272,7 @@ is not of type \code{fpe-exception} or if \varname{exceptions} contains
 objects not of type \code{fpe-exception}.
 
 
-\DDictionaryItem{fpe-test-exceptions}
+\DDictionaryItem{Function \index{F!\code{fpe-test-exceptions}}}
 
 \DSyntax{}
 
@@ -1155,20 +1281,20 @@ $\Rightarrow$ \varname{excp-set}
 
 \DArgsNValues{}
 
-\varname{excps} -- A list of \index{\code{fpe-exception}} items.\\
-\varname{excp-set} -- An object of type \index{\code{fpe-exception-set}}.
+\varname{excps} -- A list of \code{fpe-exception} items.\\
+\varname{excp-set} -- An object of type \code{fpe-exception-set}.
 
 \DDescription{}
 
 The function tests which of the \varname{excps} is set (i.e., whether
 the corresponding flag is set in the underlying floating point
-environment) and returns an object of type \index{\code{fpe-exception-set}}
+environment) and returns an object of type \code{fpe-exception-set}
 with the corresponding flag set.
 
 \DExamples{}
 
 The following example (adapted from \cite{2018:C18}) shows how a piece of
-code may decide how to \index{\code{signal}} either
+code may decide how to \emph{handle} either
 \code{floating-point-invalid-operation} or
 \code{floating-point-overflow} (cfr., \cite{1996:ANSIHyperSpec}.)
 
@@ -1204,7 +1330,7 @@ code may have already cleared the flags.
 
 
 
-\DDictionaryItem{fpe-check-exceptions}
+\DDictionaryItem{Function \index{F!\code{fpe-check-exceptions}}}
 
 \DSyntax{}
 
@@ -1279,7 +1405,8 @@ current -- at the tie of this writing -- treatment of the floating
 point environment provided by various \CL{} implementations.
 
 
-\DDictionaryItem{Type \code{floating-point-environment}}
+
+\DDictionaryItem{Type \index{F!\code{floating-point-environment}}}
 
 \DSupertypes{}
 
@@ -1293,9 +1420,9 @@ the type of arguments being used by the functions comprising the
 interface.
 
 
-\DDictionaryItem{Accessors \code{fpe-traps}, \code{fpe-rounding-mode},
-  \code{fpe-current-exceptions}, \code{fpe-accrued-exceptions},
-  \code{fpe-precision}, \code{fpe-fast-mode-p}}
+\DDictionaryItem{Accessors \index{F!\code{fpe-traps}}, \index{F!\code{fpe-rounding-mode}},
+  \index{F!\code{fpe-current-exceptions}}, \index{F!\code{fpe-accrued-exceptions}},
+  \index{F!\code{fpe-precision}}, \index{F!\code{fpe-fast-mode-p}}}
 
 \DSyntax{}
 
@@ -1330,7 +1457,7 @@ See also Section~\ref{sect:rounding} (below.)
 \code{fpe-exception-set}. 
 
 
-\DDictionaryItem{Function \code{set-floating-point-environment}}
+\DDictionaryItem{Function \index{S!\code{set-floating-point-environment}}}
 
 \DSyntax{}
 
@@ -1406,7 +1533,7 @@ hardware is not fully supported.  When this happens
 \code{get-floating-point-environment}.
 
 
-\DDictionaryItem{Function \code{get-floating-point-environment}}
+\DDictionaryItem{Function \index{G!\code{get-floating-point-environment}}}
 
 \DSyntax{}
 
@@ -1444,7 +1571,7 @@ SBCL> \codeprompt{(get-floating-point-environment)}
 \code{set-floating-point-environment}.
 
 
-\DDictionaryItem{Function \code{default-floating-point-environment}}
+\DDictionaryItem{Function \index{D!\code{default-floating-point-environment}}}
 
 \DSyntax{}
 
@@ -1489,7 +1616,7 @@ the same (or \code{equalp}) value.
 
 
 \newpage
-\DDictionaryItem{Macro \code{with-floating-point-environment}}
+\DDictionaryItem{Macro \index{W!\code{with-floating-point-environment}}}
 
 \DSyntax{}
 
@@ -1593,7 +1720,7 @@ number of numerical algorithms and data structures. The following
 entries provide access to the IEEE facilities.
 
 
-\DDictionaryItem{Type \code{rounding-mode}}
+\DDictionaryItem{Type \index{R!\code{rounding-mode}}}
 
 \DSupertypes{}
 
@@ -1635,7 +1762,7 @@ type \code{rounding-modes} with other keywords representing
 \emph{implementation dependent} rounding modes.
 
 
-\DDictionaryItem{Function \code{get-rounding-mode}}
+\DDictionaryItem{Function \index{G!\code{get-rounding-mode}}}
 
 \DSyntax{}
 
@@ -1657,7 +1784,7 @@ determined.
  \code{rounding-modes}.
 
 
-\DDictionaryItem{Function \code{set-rounding-mode}}
+\DDictionaryItem{Function \index{S!\code{set-rounding-mode}}}
 
 \DSyntax{}
 
@@ -1680,7 +1807,7 @@ rounding mode before the the call is returned with \varname{success}
 \code{NIL}.\marginnote{Should it instead signal an error?}
 
 
-\DDictionaryItem{Macro \code{with-rounding-mode}}
+\DDictionaryItem{Macro \index{W!\code{with-rounding-mode}}}
 
 \DSyntax{}
 
@@ -1731,9 +1858,9 @@ the function CL:* may not respect the new rounding mode :POSITIVE-INFINITY.}
 \textit{42.0}
 \end{alltt}
 
-\DDictionaryItem{Macros \code{round-to-zero}, \code{round-to-near},
-  \code{round-upward},\\
-  \code{round-downward}}
+\DDictionaryItem{Macros \index{R!\code{round-to-zero}}, \index{R!\code{round-to-near}},
+  \index{R!\code{round-upward}},\\
+  \index{R!\code{round-downward}}}
 
 \DSyntax{}
 
@@ -1760,7 +1887,7 @@ alongside some \CL{} features to allow for read-time (cfr.,
 
 \subsection{Non-computational \CL{} Enviroment \IEEEFPStd{} Queries}
 
-\DDictionaryItem{Function \code{is-cdr-ieee-754-conformant}}
+\DDictionaryItem{Function \index{I!\code{is-cdr-ieee-754-conformant}}}
 
 \DSyntax{}
 
@@ -1798,7 +1925,7 @@ If this function returns non-\code{NIL}, so will
 
 
 
-\DDictionaryItem{Function \code{is-cdr-ieee-745-constants-providing}}
+\DDictionaryItem{Function \index{I!\code{is-cdr-ieee-745-constants-providing}}}
 
 \DSyntax{}
 
@@ -1816,7 +1943,7 @@ implementation or the \CL{} library only provides the names of the
 constants naming NaNs and infinities.
 
 
-\DDictionaryItem{Function \code{is-cdr-ieee-745-environment-providing}}
+\DDictionaryItem{Function \index{I!\code{is-cdr-ieee-745-environment-providing}}}
 
 \DSyntax{}
 
@@ -1836,7 +1963,7 @@ accessing and manipulating floating point exceptions
 point environment.
 
 
-\DDictionaryItem{Function \code{is-cdr-ieee-745-operation-providing}}
+\DDictionaryItem{Function \index{I!\code{is-cdr-ieee-745-operation-providing}}}
 
 \DSyntax{}
 
@@ -1856,7 +1983,7 @@ of the \emph{computational operations} that do conform to the \IEEEFPStd{}
 mandated behavior.
 
 
-\DDictionaryItem{Function \code{is-cl-using-cdr-ieee-745}}
+\DDictionaryItem{Function \index{I!\code{is-cl-using-cdr-ieee-745}}}
 
 \DSyntax{}
 
@@ -1881,15 +2008,16 @@ presence of the \code{ieee-floating-point} feature in
 \code{*features*}.
 
 
-\DDictionaryItem{Features \code{:cdr-ieee-745-constants-providing},\\
-  \code{:cdr-ieee-745-environment-providing} and\\
-  \code{:cdr-ieee-745-operation-providing}}
+\DDictionaryItem{Features \index{*!\code{:cdr-ieee-745-constants-providing}},\\
+  \index{*!\code{:cdr-ieee-745-environment-providing}} and\\
+  \index{*!\code{:cdr-ieee-745-operation-providing}}}
 
 \DDescription{}
 
 These features are present in the \code{*features*} list whenever the
 corresponding function, \code{is-}\emph{feature} returns a
 non-\code{NIL} value.
+
 
 \subsection{Numeric Operations}
 
@@ -2487,7 +2615,7 @@ signalled.
   \end{tabulary}
 \end{table}
 
-\DDictionaryItem{Error \code{ieee-754-not-implemented-item}}
+\DDictionaryItem{Error \index{I!\code{ieee-754-not-implemented-item}}}
 
 \DSupertypes{}
 
