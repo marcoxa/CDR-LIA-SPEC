@@ -107,7 +107,7 @@
 
 %%% Spec special names.
 
-\newcommand{\CLLIAPKG}{\code{CL-MATH-LIA-2019}}
+\newcommand{\CLLIAPKG}{\code{CL-MATH-LIA-2020}}
 
 
 
@@ -325,6 +325,7 @@ specification some functionality which was fully defined after the
 publication of \cite{1996:ANSIHyperSpec}.
 
 
+\newpage
 
 \section{Description}
 
@@ -538,8 +539,8 @@ SBCL> \codeprompt{(sb-int:with-float-traps-masked (:divide-by-zero) (/ 3 0.0))}
 SBCL> \codeprompt{(sb-int:get-floating-point-modes)}\\
 \textit{(:TRAPS (:OVERFLOW :INVALID :DIVIDE-BY-ZERO)\\
   :ROUNDING-MODE :NEAREST\\
-  :CURRENT-EXCEPTIONS NIL\\
-  :ACCRUED-EXCEPTIONS NIL\\
+  :CURRENT-EXCEPTION NIL\\
+  :ACCRUED-EXCEPTION NIL\\
   :FAST-MODE NIL\\
   :PRECISION :53-BIT)}
 \end{alltt}
@@ -566,9 +567,9 @@ regime is selected in a given computation\footnote{In this
 specification provides the following API.
 \begin{itemize}
 \item An enumerated type for NRI, NACF and NTM: %\\
-  \code{arithmetic-exception-notification-style}.
+  \code{arithmetic-notification-notification-style}.
   \begin{alltt}
-    (deftype \codelia{arithmetic-exception-notification-style} ()
+    (deftype \codelia{arithmetic-notification-notification-style} ()
       (member :recording    \textcolor{red}{; I.e., NRI.}
               :error        \textcolor{red}{; I.e., NACF.}
               :termination  \textcolor{red}{; I.e., NTM.}
@@ -766,13 +767,12 @@ CL prompt> \codeprompt{(boom 42.0s0)}
 Boom #<Condition DIVISION-BY-ZERO>
 \textit{NIL}
 
-CL prompt> \codeprompt{(fpe-test-exceptions :division-by-zero)}
+CL prompt> \codeprompt{(fpe-test-notifications :division-by-zero)}
 \textit{T}
 \end{alltt}
 
 
-
-
+\newpage
 
 \section{\IEEEFPStd{} and LIA \CL{}-related Dictionary}
 
@@ -781,6 +781,7 @@ CL prompt> \codeprompt{(fpe-test-exceptions :division-by-zero)}
 %%% LIA1 requires some operations for "integers", but in CL there are
 %%% "integers" and "fixnums".
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Constant \code{bounded-fixnum}}
 \index{B!\code{bounded-fixnum}}
 
@@ -796,8 +797,8 @@ bounded (with bounds \code{most-positive-fixnum} and
 
 \DNotes{}
 
-This is the parameter \textit{bounded}$_I$ required in LIA1
-\cite{2012:LIA1}.
+This is the parameter \textit{bounded}$_I$ with $I$ equal to
+\code{fixnum}, required in LIA1 \cite{2012:LIA1}.
 
 \DSeeAlso{}
 
@@ -812,14 +813,96 @@ This is the parameter \textit{bounded}$_I$ required in LIA1
 \code{maximum-integer}.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Constant \code{bounded-integer}}
+\index{B!\code{bounded-integer}}
+
+\DValues{}
+
+The value is \code{NIL}.
+
+\DDescription{}
+
+This constant indicates that the \CL{} datatype \code{integer} is
+unbounded.
+
+\DNotes{}
+
+This is the parameter \textit{bounded}$_I$, with $I$ equal to
+\code{integer} required in LIA1 \cite{2012:LIA1}.
+
+\DSeeAlso{}
+
+\code{bounded-fixnum},
+%
+\code{minimum-fixnum},
+\code{most-negative-fixnum},\\
+\code{maximum-fixnum},
+\code{most-positive-fixnum},\\
+%
+\code{minumum-integer},
+\code{maximum-integer}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Constant \code{has-infinity-fixnum}}
+\index{H!\code{has-infinity-fixnum}}
+
+\DValues{}
+
+The value is \code{NIL}.
+
+\DDescription{}
+
+This constant indicates that the \CL{} datatype \code{fixnum} does not
+include infinities.
+
+\DNotes{}
+
+This is the parameter \textit{hasinf}$_I$ with $I$ equal to
+\code{fixnum}, required in LIA1 \cite{2012:LIA1}.
+
+\DSeeAlso{}
+
+\code{bounded-fixnum}, \code{bounded-integer}, \code{has-infinity-integer}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Constant \code{has-infinity-integer}}
+\index{H!\code{has-infinity-integer}}
+
+\DValues{}
+
+The value is \code{NIL}.\marginnote{Or should it be \code{T}? In this
+  case, there will be several consequences; how is an integer infinity
+represented? What is the ``continuation value'' for a division by
+zero?}
+
+\DDescription{}
+
+This constant indicates that the \CL{} datatype \code{integer} does not
+include infinities.
+
+\DNotes{}
+
+This is the parameter \textit{hasinf}$_I$ with $I$ equal to
+\code{integer}, required in LIA1 \cite{2012:LIA1}.
+
+\DSeeAlso{}
+
+\code{bounded-fixnum}, \code{bounded-integer}, \code{has-infinity-fixnum}.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Constants \code{minimum-fixnum}, \code{maximum-fixnum}}
 \index{M!\code{minimum-fixnum}}
 \index{M!\code{maximum-fixnum}}
 
 \DValues{}
 
-The value of \code{minimum-fixnum} is \code{most-negative-fixnum}.\\
-The value of \code{maximum-fixnum} is \code{most--fixnum}.
+The value of \code{minimum-fixnum} is \code{cl:most-negative-fixnum}.\\
+The value of \code{maximum-fixnum} is \code{cl:most-positive-fixnum}.
 
 \DDescription{}
 
@@ -828,9 +911,9 @@ available in an implementation.
 
 \DNotes{}
 
-These are the parameters \textit{minint}$_I$ and \textit{maxint}$_I$
-required in LIA1 \cite{2012:LIA1}.  Their values are the obvious \CL{}
-counterparts.
+These are the parameters \textit{minint}$_I$ and \textit{maxint}$_I$,
+with $I$ equal to \code{fixnum}, required in LIA1 \cite{2012:LIA1}.
+Their values are the obvious \CL{} counterparts.
 
 \DSeeAlso{}
 
@@ -844,9 +927,43 @@ counterparts.
 \code{maximum-integer}.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Constants \code{minimum-integer}, \code{maximum-integer}}
+\index{M!\code{minimum-integer}}
+\index{M!\code{maximum-integer}}
 
+\DValues{}
+
+The value of \code{minimum-integer} is $-\infty$.\\
+The value of \code{maximum-integer} is $+\infty$\marginnote{The values
+  are, for the time being, arbitrary.  They could be made equal to the
+  floating point infinities, with all the necessary consequences.}
+
+\DDescription{}
+
+These constants represent the minimum and maximum \code{integers},
+which are usually limited by actual memory constraints.
+
+\DNotes{}
+
+These are the parameters \textit{minint}$_I$ and \textit{maxint}$_I$,
+with $I$ equal to \code{integer}, required in LIA1 \cite{2012:LIA1}.
+
+\DSeeAlso{}
+
+\code{bounded-fixnum},
+\code{bounded-integer},\\
+%
+\code{minumum-fixnum},
+\code{maximum-fixnum}.
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Floats, Infinities and NaNs}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Function \code{make-float}}
 \index{M!\code{make-float}}
 
@@ -883,18 +1000,22 @@ The function signals a \code{type-error} if either \varname{bytes} or
 
 \code{NAN}.
 
-
 \DNotes{}
 
 This function is, in one form or another, already present in \CL{}
 implementations.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Functions
-  \index{M!\code{make-short-float}},
-  \index{M!\code{make-single-float}},\\
-  \index{M!\code{make-double-float}},
-  \index{M!\code{make-long-float}}}
+  \code{make-short-float},
+  \code{make-single-float},\\
+  \code{make-double-float},
+  \code{make-long-float}}
+\index{M!\code{make-short-float}}
+\index{M!\code{make-single-float}}
+\index{M!\code{make-double-float}}
+\index{M!\code{make-long-float}}
 
 \DSyntax{}
 
@@ -933,7 +1054,7 @@ the type described above
 
 \DSeeAlso{}
 
-\code{NAN}, \code{make-float}.
+\code{NAN}, \code{Q-NAN}, \code{S-NAN}, \code{make-float}.
 
 \DNotes{}
 
@@ -944,18 +1065,24 @@ Implementations may supply a larger set of these functions, e.g.,
 \code{make-quad-float}.
 
 
-\DDictionaryItem{Values \index{N!\code{NAN}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Variables \code{NAN}, \code{S-NAN}, \code{Q-NAN}}
+\index{N!NaNs!\code{NAN}}
+\index{N!NaNs!\code{S-NAN}}
+\index{N!NaNs!\code{Q-NAN}}
 
-\subsubsection*{Value:}
+\DValues{}
 
-An \emph{implementation-dependent value}.
+All \emph{implementation-dependent values}.
 
 
 \DDescription{}
 
-The value \code{NAN} holds a representation of a ``not a number''
-object.  The object can either be a \emph{quiet} or a
-\emph{signalling} \code{NAN} (see~\cite{2008:IEEE-754}).
+The values \code{NAN}, \code{Q-NAN}, and \code{S-NAN} hold a
+representation of a ``not a number'' object.  The object can either be
+a \emph{quiet} (\code{Q-NAN}) or a \emph{signalling} (\code{S-NAN})
+\emph{NaN} (see~\cite{2008:IEEE-754}).  \code{NAN} ia always a
+\emph{quiet NaN}.
 
 
 \DExamples{}
@@ -990,10 +1117,19 @@ It is also understood that, \code{(numberp nan)} should return \code{T}.
 \code{is-signalling-nan}, \code{signalling-nan-p}.
 
 
-\DDictionaryItem{Functions \index{I!\code{is-nan}}, \index{N!\code{nanp}},
-  \index{I!\code{is-quiet-nan}},
-  \index{Q!\code{quiet-nan-p}},\\\index{I!\code{is-signalling-nan}}, 
-  \index{S!\code{signalling-nan-p}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Functions \code{is-nan}, \code{nanp},\\
+  \code{is-quiet-nan},
+  \code{quiet-nan-p},\\
+  \code{is-signalling-nan},
+  \code{signalling-nan-p}
+}
+\index{I!\code{is-nan}}
+\index{N!\code{nanp}}
+\index{I!\code{is-quiet-nan}}
+\index{Q!\code{quiet-nan-p}}
+\index{I!\code{is-signalling-nan}} 
+\index{S!\code{signalling-nan-p}}
 
 \DSyntax{}
 
@@ -1033,41 +1169,51 @@ CL prompt> \codeprompt{(is-nan "NaN")}
 \end{alltt}
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Constant Variables\\
-  \index{I!Infinities!\code{long-float-positive-infinity}},
-  \index{I!Infinities!\code{long-float-negative-infinity}},\\
-  \index{I!Infinities!\code{double-float-positive-infinity}},
-  \index{I!Infinities!\code{double-float-negative-infinity}},\\
-  \index{I!Infinities!\code{single-float-positive-infinity}},
-  \index{I!Infinities!\code{single-float-negative-infinity}},\\
-  \index{I!Infinities!\code{short-float-positive-infinity}},
-  \index{I!Infinities!\code{short-float-negative-infinity}},\\
-  \index{I!Infinities!\code{infL}}
-  \index{I!Infinities!\code{infD}}
-  \index{I!Infinities!\code{infF}}
-  \index{I!Infinities!\code{infS}}  
-  % \index{I!Infinities!\code{+infL0}}, 
-  % \index{I!Infinities!\code{-infL0}},
-  % \index{I!Infinities!\code{+infD0}}, 
-  % \index{I!Infinities!\code{-infD0}},
-  % \index{I!Infinities!\code{+infF0}}, 
-  % \index{I!Infinities!\code{-infF0}},
-  % \index{I!Infinities!\code{+infS0}}, 
-  % \index{I!Infinities!\code{-infS0}},
-  }
+  \code{long-float-positive-infinity},
+  \code{long-float-negative-infinity},\\
+  \code{double-float-positive-infinity},
+  \code{double-float-negative-infinity},\\
+  \code{single-float-positive-infinity},
+  \code{single-float-negative-infinity},\\
+  \code{short-float-positive-infinity},
+  \code{short-float-negative-infinity},\\
+  \code{infL},
+  \code{infD},
+  \code{infF},
+  \code{infS}
+}
+\index{I!Infinities!\code{long-float-positive-infinity}}
+\index{I!Infinities!\code{long-float-negative-infinity}}
+\index{I!Infinities!\code{double-float-positive-infinity}}
+\index{I!Infinities!\code{double-float-negative-infinity}}
+\index{I!Infinities!\code{single-float-positive-infinity}}
+\index{I!Infinities!\code{single-float-negative-infinity}}
+\index{I!Infinities!\code{short-float-positive-infinity}}
+\index{I!Infinities!\code{short-float-negative-infinity}}
+\index{I!Infinities!\code{infL}}
+\index{I!Infinities!\code{infD}}
+\index{I!Infinities!\code{infF}}
+\index{I!Infinities!\code{infS}}  
+% \index{I!Infinities!\code{+infL0}}, 
+% \index{I!Infinities!\code{-infL0}},
+% \index{I!Infinities!\code{+infD0}}, 
+% \index{I!Infinities!\code{-infD0}},
+% \index{I!Infinities!\code{+infF0}}, 
+% \index{I!Infinities!\code{-infF0}},
+% \index{I!Infinities!\code{+infS0}}, 
+% \index{I!Infinities!\code{-infS0}},
 
-\subsubsection*{Value:}
+\DValues{}
 
 The value of each of these constants is
 \emph{implementation-dependent}.
-
 
 \DDescription{}
 
 The value of each of these constants must conform with the format
 (i.e., the floating point type) codified in the name.
-
 
 \DExamples{}
 
@@ -1103,7 +1249,10 @@ A possible implementation would be the following:
 \end{alltt}
 
 
-\DDictionaryItem{Functions \index{I!\code{is-infinity}}, \index{I!\code{infinityp}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Functions \code{is-infinity}, \code{infinityp}}
+\index{I!\code{is-infinity}}
+\index{I!\code{infinityp}}
 
 \DSyntax{}
 
@@ -1138,51 +1287,61 @@ CL prompt> \codeprompt{(is-infinity "NaN")}
 \end{alltt}
 
 
+\newpage
 
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Floating Point Exception Handling Dictionary}
 \label{sect:fpe-dictionary}
 
 The following are the defined symbols (variables, constants, functions
 and macros) pertaining to the handling of the low-level
-\clieeeterm{floating point environment}.
+\clieeeterm{floating point environment}.  The term \emph{notification}
+is often used in lieu of \emph{exceptional value} (cfr., \cite{2012:LIA1})
+in order to minimize confusion.  In particular the term is used for
+names pertaining the NRI notification modality (see Section
+\ref{sect:notifications}).
 
-\DDictionaryItem{Type \index{F!\code{fpe-exception}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Type \code{fpe-notification}}
+\index{F!\code{fpe-notification}}
 
 \DSupertypes{}
 
-\code{fpe-exception}, \ldots, \code{T}
+\code{fpe-notification}, \ldots, \code{T}
 
 \DDescription{}
 
-The \code{fpe-exception} type is defined to be:
+The \code{fpe-notification} type is defined to be:
 \begin{alltt}
-(member :divide-by-zero
+(member :divide-by-zero :infinitary
         :inexact
         :invalid
+        :underflow
         :overflow
-        :underflow)
+        :absolute-precision-underflow
+        )
 \end{alltt}
-The meaning of these values correspond to a the possible exceptions
-supported by an implementation.
+The meaning of these values correspond to a the possible
+\emph{exceptional values} supported by an implementation.
 
 \DSeeAlso{}
 
-\code{fpe-exceptions-set}, \code{+fpe-all-exceptions+}.
+\code{fpe-notification-set}, \code{+fpe-all-notification+}.
 
 
-\DDictionaryItem{Type \index{F!\code{fpe-exceptions-set}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Type \code{fpe-notification-set}}
+  \index{F!\code{fpe-notification-set}}
 
 \DSupertypes{}
 
-\code{fpe-exceptions-set}, \ldots, \code{T}.
+\code{fpe-notification-set}, \ldots, \code{T}.
 
 \DDescription{}
 
 Objects of this type have an \emph{implementation dependent}
-representation. They represent sets of \code{fpe-exception} objects.
+representation. They represent sets of \code{fpe-notification} objects.
 
 \DNotes{}
 
@@ -1191,48 +1350,52 @@ The actual implementation may be a \code{list} or an
 underlying implementation.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Constant Variable \code{+fpe-all-notifications+}}
+\index{*!\code{+fpe-all-notifications+}}
 
+\DValues{}
 
-\DDictionaryItem{Constant Value \index{*!\code{+fpe-all-exceptions+}}}
-
-\subsubsection*{Value:}
-
-A value of type \code{fpe-exception-set}.
+A value of type \code{fpe-notification-set}.
 
 \DDescription{}
 
-The value \code{+fpe-all-exceptions+} holds a representation the set of
-exceptions -- whose members are of type \code{fpe-exception} -- that
+The value \code{+fpe-all-notifications+} holds a representation the set of
+exceptions -- whose members are of type \code{fpe-notification} -- that
 are supported by the implementation.
 
 
 \DSeeAlso{}
 
-\code{fpe-exception}, \code{fpe-exception-set},
-\code{all-supported-exceptions-p},\\
-\code{some-supported-exceptions-p},
-\code{supported-exception-p}.
+\code{fpe-notification}, \code{fpe-notification-set},
+\code{all-supported-notifications-p},\\
+\code{some-supported-notifications-p},
+\code{supported-notification-p}.
 
 
-\DDictionaryItem{Functions \index{S!\code{supported-exception-p}},\\
-  \index{A!\code{all-supported-exceptions-p}},
-  \index{S!\code{some-supported-exceptions-p}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Functions \code{supported-notification-p},\\
+  \code{all-supported-notifications-p},
+  \code{some-supported-notifications-p}}
+\index{S!\code{supported-notification-p}}
+\index{A!\code{all-supported-notifications-p}}
+\index{S!\code{some-supported-notifications-p}}
 
 \DSyntax{}
 
-\code{supported-exception-p}
+\code{supported-notification-p}
 \varname{exception} $\Rightarrow$ \textit{boolean}\\
-\code{all-supported-exceptions-p} \code{\&rest}
+\code{all-supported-notifications-p} \code{\&rest}
 \varname{exceptions} $\Rightarrow$ \textit{boolean}\\
-\code{some-supported-exceptions-p} \code{\&rest}
+\code{some-supported-notifications-p} \code{\&rest}
 \varname{exceptions} $\Rightarrow$ \textit{boolean}
 
 \DArgsNValues{}
 
 \varname{exception} -- a \CL{} object of type 
-\code{fpe-exception}.\\
+\code{fpe-notification}.\\
 \varname{exceptions} -- a list of \CL{} objects each of type 
-\code{fpe-exception}.
+\code{fpe-notification}.
 
 
 \DDescription{}
@@ -1240,55 +1403,57 @@ are supported by the implementation.
 The functions returns a true value if the exceptions passed as
 arguments are supported by the implementation.
 
-The function \code{supported-exception-p} returns true if 
+The function \code{supported-notification-p} returns true if 
 \varname{exception} is supported by the implementation, and \code{NIL}
 otherwise.
 
-The function \code{all-supported-exceptions-p} returns true if all the
+The function \code{all-supported-notifications-p} returns true if all the
 elements in \varname{exceptions} are supported by the implementation,
 and \code{NIL} otherwise.
 
-The function \code{some-supported-exceptions-p} returns true if any the
+The function \code{some-supported-notifications-p} returns true if any the
 elements in \varname{exceptions} is supported by the implementation,
 and \code{NIL} otherwise.
 
 \DExamples{}
 
 \begin{alltt}
-CL prompt> \codeprompt{(supported-exception-p :divide-by-zero)}
+CL prompt> \codeprompt{(supported-notification-p :divide-by-zero)}
 \textit{T} \textcolor{red}{; Or could be be NIL.}
 
-CL prompt> \codeprompt{(some-supported-exceptions-p :divide-by-zero :inexact)}
+CL prompt> \codeprompt{(some-supported-notifications-p :divide-by-zero :inexact)}
 \textit{T} \textcolor{red}{; Assuming the previous operation returned true.}
 
-CL prompt> \codeprompt{(all-supported-exception-p :divide-by-zero :inexact)}
+CL prompt> \codeprompt{(all-supported-notification-p :divide-by-zero :inexact)}
 \textit{NIL} \textcolor{red}{; Or could be be T.}
 \end{alltt}
 
 \DExceptional{}
 
 The functions signal a \code{type-error} if \varname{exception}
-is not of type \code{fpe-exception} or if \varname{exceptions} contains
-objects not of type \code{fpe-exception}.
+is not of type \code{fpe-notification} or if \varname{exceptions} contains
+objects not of type \code{fpe-notification}.
 
 
-\DDictionaryItem{Function \index{F!\code{fpe-test-exceptions}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Function \code{fpe-test-notifications}}
+\index{F!\code{fpe-test-notifications}}
 
 \DSyntax{}
 
-\code{fpe-test-exceptions} \code{\&rest} \varname{excps}
+\code{fpe-test-notifications} \code{\&rest} \varname{excps}
 $\Rightarrow$ \varname{excp-set}
 
 \DArgsNValues{}
 
-\varname{excps} -- A list of \code{fpe-exception} items.\\
-\varname{excp-set} -- An object of type \code{fpe-exception-set}.
+\varname{excps} -- A list of \code{fpe-notification} items.\\
+\varname{excp-set} -- An object of type \code{fpe-notification-set}.
 
 \DDescription{}
 
 The function tests which of the \varname{excps} is set (i.e., whether
 the corresponding flag is set in the underlying floating point
-environment) and returns an object of type \code{fpe-exception-set}
+environment) and returns an object of type \code{fpe-notification-set}
 with the corresponding flag set.
 
 \DExamples{}
@@ -1299,17 +1464,17 @@ code may decide how to \emph{handle} either
 \code{floating-point-overflow} (cfr., \cite{1996:ANSIHyperSpec}.)
 
 \begin{alltt}
-(let ((fpe-excps \textcolor{blue}{(fpe-test-exceptions :overflow :invalid)}))
-   (when (fpe-check-exceptions :invalid)
+(let ((fpe-excps \textcolor{blue}{(fpe-test-notifications :overflow :invalid)}))
+   (when (fpe-check-notifications :invalid)
      (signal 'cl:floating-point-invalid-operation))
-   (when (fpe-check-exceptions :overflow)
+   (when (fpe-check-notifications :overflow)
      (signal 'cl:floating-point-overflow))
    )
 \end{alltt}
 
 \DNotes{}
 
-The \code{fpe-test-exceptions} function accesses the current floating
+The \code{fpe-test-notifications} function accesses the current floating
 point environment.  \CL{} implementations may have made different
 choices about if, when, and how to signal the standard \CL{} floating
 point conditions.  That is, the above example may or may not work in a
@@ -1321,26 +1486,25 @@ code may have already cleared the flags.
 
 \DSeeAlso{}
 
-\code{fpe-exception}, \code{fpe-exception-set},
-\code{fpe-check-exceptions},\\
+\code{fpe-notification}, \code{fpe-notification-set},
+\code{fpe-check-notifications},\\
 \code{cl:floating-point-invalid-operation},
 \code{cl:floating-point-overflow}.
 
 
-
-
-
-\DDictionaryItem{Function \index{F!\code{fpe-check-exceptions}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Function \code{fpe-check-notifications}}
+\index{F!\code{fpe-check-notifications}}
 
 \DSyntax{}
 
-\code{fpe-check-exceptions} \varname{excp-set} \code{\&rest} \varname{excps}
+\code{fpe-check-notifications} \varname{excp-set} \code{\&rest} \varname{excps}
 $\Rightarrow$ \varname{result}
 
 \DArgsNValues{}
 
-\varname{excp-set} -- An object of type \code{fpe-exception-set}\\
-\varname{excps} -- A list of \code{fpe-exception} items.\\
+\varname{excp-set} -- An object of type \code{fpe-notification-set}\\
+\varname{excps} -- A list of \code{fpe-notification} items.\\
 \varname{result} -- A boolean.
 
 \DDescription{}
@@ -1358,10 +1522,10 @@ code may decide how to \code{signal} either
 \code{floating-point-overflow} (cfr., \cite{1996:ANSIHyperSpec}.)
 
 \begin{alltt}
-(let ((fpe-excps (fpe-test-exceptions :overflow :invalid)))
-   (when \textcolor{blue}{(fpe-check-exceptions :invalid)}
+(let ((fpe-excps (fpe-test-notifications :overflow :invalid)))
+   (when \textcolor{blue}{(fpe-check-notifications :invalid)}
      (signal 'cl:floating-point-invalid-operation))
-   (when \textcolor{blue}{(fpe-check-exceptions :overflow)}
+   (when \textcolor{blue}{(fpe-check-notifications :overflow)}
      (signal 'cl:floating-point-overflow))
    )
 \end{alltt}
@@ -1372,26 +1536,23 @@ Note that the value returned when \varname{excps} is empty is nor what
 \CL{} users may expect from a function that looks like a call to
 \code{(and)}.
 
-The notes about \code{fpe-test-exceptions} regarding the example above
-apply also in the case of \code{fpe-check-exceptions}.
-
+The notes about \code{fpe-test-notifications} regarding the example above
+apply also in the case of \code{fpe-check-notifications}.
 
 
 \DSeeAlso{}
 
-\code{fpe-exception}, \code{fpe-exception-set},
-\code{fpe-test-exceptions},\\
+\code{fpe-notification}, \code{fpe-notification-set},
+\code{fpe-test-notifications},\\
 \code{cl:floating-point-invalid-operation},
 \code{cl:floating-point-overflow}.
 
 
+\newpage
 
-
-
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Floating Point Environment}
+\label{sect:floating-point-env}
 
 The \CLang{} specification \cite{2018:C18}, Section~7.6, defines the \emph{Floating
   Point Environment} for a \CLang{} implementation.  Various \CL{}
@@ -1405,8 +1566,9 @@ current -- at the tie of this writing -- treatment of the floating
 point environment provided by various \CL{} implementations.
 
 
-
-\DDictionaryItem{Type \index{F!\code{floating-point-environment}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Type \code{}}
+\index{F!\code{floating-point-environment}}
 
 \DSupertypes{}
 
@@ -1420,16 +1582,28 @@ the type of arguments being used by the functions comprising the
 interface.
 
 
-\DDictionaryItem{Accessors \index{F!\code{fpe-traps}}, \index{F!\code{fpe-rounding-mode}},
-  \index{F!\code{fpe-current-exceptions}}, \index{F!\code{fpe-accrued-exceptions}},
-  \index{F!\code{fpe-precision}}, \index{F!\code{fpe-fast-mode-p}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Accessors
+  \code{fpe-traps},
+  \code{fpe-rounding-mode},
+  \code{fpe-current-notifications},
+  \code{fpe-accrued-notifications},
+  \code{fpe-precision},
+  \code{fpe-fast-mode-p},
+}
+\index{F!\code{fpe-traps}}      % Change to FPE-NOTIFICATIONS
+\index{F!\code{fpe-rounding-mode}}
+\index{F!\code{fpe-current-notifications}}
+\index{F!\code{fpe-accrued-notifications}}
+\index{F!\code{fpe-precision}}
+\index{F!\code{fpe-fast-mode-p}}
 
 \DSyntax{}
 
 \code{fpe-traps} \varname{fpe} $\Rightarrow$ \varname{traps}\\
 \code{fpe-rounding-mode} \varname{fpe} $\Rightarrow$ \varname{rounding-mode}\\
-\code{fpe-current-exceptions} \varname{fpe} $\Rightarrow$ \varname{exceptions}\\
-\code{fpe-accrued-exceptions} \varname{fpe} $\Rightarrow$ \varname{exceptions}\\
+\code{fpe-current-notifications} \varname{fpe} $\Rightarrow$ \varname{exceptions}\\
+\code{fpe-accrued-notifications} \varname{fpe} $\Rightarrow$ \varname{exceptions}\\
 \code{fpe-precision} \varname{fpe} $\Rightarrow$ \varname{precision}\\
 \code{fpe-fast-mode-p} \varname{fpe} $\Rightarrow$ \varname{result}
 
@@ -1437,7 +1611,7 @@ interface.
 
 \varname{fpe} -- An object of type \code{floating-point-environment}.\\
 \varname{rounding-mode} -- A member of the type \code{rounding-mode}.\\
-\varname{exceptions} -- An object of type \code{fpe-exception-set}.\\
+\varname{exceptions} -- An object of type \code{fpe-notification-set}.\\
 \varname{precision} -- One of the one of the integers 24, 53 and 64.\\
 \varname{result} -- A \emph{boolean}.
 
@@ -1454,10 +1628,12 @@ See also Section~\ref{sect:rounding} (below.)
 \DSeeAlso{}
 
 \code{floating-point-environment}, \code{rounding-mode},
-\code{fpe-exception-set}. 
+\code{fpe-notification-set}. 
 
 
-\DDictionaryItem{Function \index{S!\code{set-floating-point-environment}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Function \code{set-floating-point-environment}}
+\index{S!\code{set-floating-point-environment}}
 
 \DSyntax{}
 
@@ -1465,7 +1641,7 @@ See also Section~\ref{sect:rounding} (below.)
 \code{set-floating-point-environment} \= \code{\&key}\\
 \>\varname{traps}\\
 \>\varname{rounding-mode}\\
-\>\varname{current-exceptions}\\
+\>\varname{current-notifications}\\
 \>\varname{precision}\\
 \>\code{\&allow-other-keys}\\
 $\Rightarrow$ \varname{modes}
@@ -1478,7 +1654,7 @@ $\Rightarrow$ \varname{modes}
 traps.\\
 \varname{rounding-mode} -- The rounding mode to use when the result is
 not exact.\\
-\varname{current-exceptions} -- The argument is used to set the current
+\varname{current-notifications} -- The argument is used to set the current
 set of exceptions.\\
 \varname{precision} -- An integer.\\
 \varname{modes} -- An a-list containing the current floating
@@ -1503,7 +1679,7 @@ following.
   \code{:positive-infinity}, \code{:negative-infinity} and
   \code{:zero}.
 
-\item \varname{current-exceptions} is used to set the exception flags. The
+\item \varname{current-notifications} is used to set the exception flags. The
   main use is setting the accrued exceptions to \code{NIL} to clear
   them.
 
@@ -1533,7 +1709,9 @@ hardware is not fully supported.  When this happens
 \code{get-floating-point-environment}.
 
 
-\DDictionaryItem{Function \index{G!\code{get-floating-point-environment}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Function \code{get-floating-point-environment}}
+\index{G!\code{get-floating-point-environment}}
 
 \DSyntax{}
 
@@ -1560,7 +1738,7 @@ usable as an \code{apply} last argument for
 SBCL> \codeprompt{(get-floating-point-environment)}
 \textit{(:TRAPS (:OVERFLOW :INVALID :DIVIDE-BY-ZERO)
  :ROUNDING-MODE :NEAREST
- :CURRENT-EXCEPTIONS (:INEXACT)
+ :CURRENT-NOTIFICATIONS (:INEXACT)
  :FAST-MODE NIL
  :PRECISION :53-BIT)}
 \end{alltt}
@@ -1571,7 +1749,9 @@ SBCL> \codeprompt{(get-floating-point-environment)}
 \code{set-floating-point-environment}.
 
 
-\DDictionaryItem{Function \index{D!\code{default-floating-point-environment}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Function \code{default-floating-point-environment}}
+\index{D!\code{default-floating-point-environment}}
 
 \DSyntax{}
 
@@ -1598,7 +1778,7 @@ floating point environment in use by the implementation.
 SBCL> \codeprompt{(default-floating-point-environment)}
 \textit{(:TRAPS (:OVERFLOW :INVALID :DIVIDE-BY-ZERO)
  :ROUNDING-MODE :NEAREST
- :CURRENT-EXCEPTIONS (:INEXACT)
+ :CURRENT-NOTIFICATIONS (:INEXACT)
  :FAST-MODE NIL
  :PRECISION :53-BIT)}
 \textcolor{red}{;;; The format of the result for SBCL is incidental.
@@ -1616,14 +1796,16 @@ the same (or \code{equalp}) value.
 
 
 \newpage
-\DDictionaryItem{Macro \index{W!\code{with-floating-point-environment}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Macro \code{with-floating-point-environment}}
+\index{W!\code{with-floating-point-environment}}
 
 \DSyntax{}
 
 % \code{with-floating-point-environment} (\textit{\code{\&key}}
 % \varname{traps}
 % \varname{rounding-mode}
-% \varname{current-exceptions}
+% \varname{current-notifications}
 % \varname{precision}
 % \varname{\code{\&allow-other-keys}}) \code{\&body} \varname{body}
 % $\Rightarrow$ \varname{results}
@@ -1632,7 +1814,7 @@ the same (or \code{equalp}) value.
 \code{with-floating-point-environment} \=(\=\code{\&key}\\
 \>\>                                \varname{traps}\\
 \>\>                                \varname{rounding-mode}\\
-\>\>                                \varname{current-exceptions}\\
+\>\>                                \varname{current-notifications}\\
 \>\>                                \varname{precision}\\
 \>\>                                \code{\&allow-other-keys})\\
 \> \code{\&body} \varname{body}\\
@@ -1648,7 +1830,7 @@ $\Rightarrow$ \varname{results}
 traps.\\
 \varname{rounding-mode} -- The rounding mode to use when the result is
 not exact.\\
-\varname{current-exceptions} -- The argument is used to set the current
+\varname{current-notifications} -- The argument is used to set the current
 set of exceptions.\\
 \varname{precision} -- An integer.\\
 \varname{results} -- One or more \CL{} objects.
@@ -1676,7 +1858,7 @@ can take are the following:
   \code{:positive-infinity}, \code{:negative-infinity} and
   \code{:zero}.
 
-\item \varname{current-exceptions} is used to set the exception flags. The
+\item \varname{current-notifications} is used to set the exception flags. The
   main use is setting the accrued exceptions to \code{NIL} to clear
   them.
 
@@ -1711,7 +1893,9 @@ described by the specified arguments, it then issues a warning.
 \code{with-rounding-mode}.
 
 
+\newpage
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Rounding}
 \label{sect:rounding}
 
@@ -1720,7 +1904,8 @@ number of numerical algorithms and data structures. The following
 entries provide access to the IEEE facilities.
 
 
-\DDictionaryItem{Type \index{R!\code{rounding-mode}}}
+\DDictionaryItem{Type \code{rounding-mode}}
+\index{R!\code{rounding-mode}}
 
 \DSupertypes{}
 
@@ -1762,7 +1947,9 @@ type \code{rounding-modes} with other keywords representing
 \emph{implementation dependent} rounding modes.
 
 
-\DDictionaryItem{Function \index{G!\code{get-rounding-mode}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Function \code{get-rounding-mode}}
+\index{G!\code{get-rounding-mode}}
 
 \DSyntax{}
 
@@ -1781,10 +1968,12 @@ determined.
 
 \DSeeAlso{}
 
- \code{rounding-modes}.
+\code{rounding-modes}.
 
 
-\DDictionaryItem{Function \index{S!\code{set-rounding-mode}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\DDictionaryItem{Function \code{set-rounding-mode}}
+\index{S!\code{set-rounding-mode}}
 
 \DSyntax{}
 
@@ -1807,7 +1996,9 @@ rounding mode before the the call is returned with \varname{success}
 \code{NIL}.\marginnote{Should it instead signal an error?}
 
 
-\DDictionaryItem{Macro \index{W!\code{with-rounding-mode}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Macro \code{with-rouding-mode}}
+\index{W!\code{with-rounding-mode}}
 
 \DSyntax{}
 
@@ -1858,9 +2049,14 @@ the function CL:* may not respect the new rounding mode :POSITIVE-INFINITY.}
 \textit{42.0}
 \end{alltt}
 
-\DDictionaryItem{Macros \index{R!\code{round-to-zero}}, \index{R!\code{round-to-near}},
-  \index{R!\code{round-upward}},\\
-  \index{R!\code{round-downward}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Macros \code{round-to-zero}, \code{round-to-near},\\
+  \code{round-upward}, \code{round-downward}}
+\index{R!\code{round-to-zero}}
+\index{R!\code{round-to-near}}
+\index{R!\code{round-upward}}
+\index{R!\code{round-downward}}
 
 \DSyntax{}
 
@@ -1874,7 +2070,9 @@ $\Rightarrow$ \varname{results}\\
 $\Rightarrow$ \varname{results}
 
 
+\newpage
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Floating Point \IEEEFPStd{} Respecting Operations}
 \label{sect:fp-operations}
 
@@ -2019,6 +2217,9 @@ corresponding function, \code{is-}\emph{feature} returns a
 non-\code{NIL} value.
 
 
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Numeric Operations}
 
 The following \CL{} operations, broken down according to the
@@ -2052,7 +2253,9 @@ environment in effect when the operation is executed.
 in \cite{2008:IEEE-754} and Section~12.1.4.3 of \cite{1996:ANSIHyperSpec}.
 
 
+\newpage
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Arithmetic Operations}
 \label{sect:arith-ops}
 
@@ -2477,10 +2680,9 @@ The function \code{conjugate} signals a \code{type-error} if
 \code{-}.
 
 
+\newpage
 
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Exponential, Logarithms and Trigonometry Operations}
 \label{sect:transc-ops}
 
@@ -2573,8 +2775,9 @@ a \code{type-error} is signalled by \code{acos}, \code{asin}, and
 \code{type-error} is signalled.
 
 
+\newpage
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection*{Numeric Comparison and Predicates}
 
 \begin{tt}
@@ -2770,9 +2973,9 @@ few ways of doing this.
 \end{alltt}
 or\ldots
 \begin{alltt}
-    (let ((saved-flags (\codelia{fpe-test-exceptions +fpe-all-exceptions+})))
+    (let ((saved-flags (\codelia{fpe-test-notifications +fpe-all-notifications+})))
        (unwind-protect
-           (progn (\codelia{fpe-clear-expections +fpe-all-exceptions+})
+           (progn (\codelia{fpe-clear-expections +fpe-all-notifications+})
                   \textit{\ldots run desired code \ldots}
                   \textit{\ldots examine indicators \ldots}
                   \textit{\ldots clear some indicators \ldots}
