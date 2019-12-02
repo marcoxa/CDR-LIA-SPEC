@@ -567,9 +567,9 @@ regime is selected in a given computation\footnote{In this
 specification provides the following API.
 \begin{itemize}
 \item An enumerated type for NRI, NACF and NTM: %\\
-  \code{arithmetic-notification-notification-style}.
+  \code{arithmetic-notification-style}.
   \begin{alltt}
-    (deftype \codelia{arithmetic-notification-notification-style} ()
+    (deftype \codelia{arithmetic-notification-style} ()
       (member :recording    \textcolor{red}{; I.e., NRI.}
               :error        \textcolor{red}{; I.e., NACF.}
               :termination  \textcolor{red}{; I.e., NTM.}
@@ -2069,6 +2069,24 @@ $\Rightarrow$ \varname{results}\\
 \code{round-downward} \code{\&body} \varname{body}
 $\Rightarrow$ \varname{results}
 
+\DArgsNValues{}
+
+\varname{body} -- a sequence of forms; i.e., an implicit \code{progn}.\\
+\varname{results} -- the value(s) returned by \varname{body}.
+
+\DDescription{}
+
+The macros evaluate \varname{body} within an environment where the
+rounding mode is set to to the macro's namesake.  The rounding mode is
+reset to the one surrounding the macro call upon returning or raising
+a condition (as in \code{unwind-protect}).
+
+\DExceptional{}
+
+None \marginnote{Maybe signal error if the roundng mode cannot be set?}
+
+
+
 
 \newpage
 
@@ -2085,7 +2103,9 @@ alongside some \CL{} features to allow for read-time (cfr.,
 
 \subsection{Non-computational \CL{} Enviroment \IEEEFPStd{} Queries}
 
-\DDictionaryItem{Function \index{I!\code{is-cdr-ieee-754-conformant}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Function \code{is-cdr-ieee-754-conformant}}
+\index{I!\code{is-cdr-ieee-754-conformant}}
 
 \DSyntax{}
 
@@ -2113,8 +2133,6 @@ If this function returns non-\code{NIL}, so will
 \code{is-cdr-ieee-754-environment-providing} and
 \code{is-cdr-ieee-745-operation-providing}.
 
-
-
 \DNotes{}
 
 \cite{2008:IEEE-754} specifies two predicates \code{is754version1985} and
@@ -2122,8 +2140,9 @@ If this function returns non-\code{NIL}, so will
 \IEEEFPStd{} standard.
 
 
-
-\DDictionaryItem{Function \index{I!\code{is-cdr-ieee-745-constants-providing}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Function \code{is-cdr-ieee-745-constants-providing}}
+\index{I!\code{is-cdr-ieee-745-constants-providing}}
 
 \DSyntax{}
 
@@ -2141,7 +2160,9 @@ implementation or the \CL{} library only provides the names of the
 constants naming NaNs and infinities.
 
 
-\DDictionaryItem{Function \index{I!\code{is-cdr-ieee-745-environment-providing}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Function \code{is-cdr-ieee-745-environment-providing}}
+\index{I!\code{is-cdr-ieee-745-environment-providing}}
 
 \DSyntax{}
 
@@ -2161,7 +2182,9 @@ accessing and manipulating floating point exceptions
 point environment.
 
 
-\DDictionaryItem{Function \index{I!\code{is-cdr-ieee-745-operation-providing}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Function \code{is-cdr-ieee-745-operation-providing}}
+\index{I!\code{is-cdr-ieee-745-operation-providing}}
 
 \DSyntax{}
 
@@ -2181,7 +2204,9 @@ of the \emph{computational operations} that do conform to the \IEEEFPStd{}
 mandated behavior.
 
 
-\DDictionaryItem{Function \index{I!\code{is-cl-using-cdr-ieee-745}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Function \code{is-cl-using-cdr-ieee-745}}
+\index{I!\code{is-cl-using-cdr-ieee-745}}
 
 \DSyntax{}
 
@@ -2206,9 +2231,13 @@ presence of the \code{ieee-floating-point} feature in
 \code{*features*}.
 
 
-\DDictionaryItem{Features \index{*!\code{:cdr-ieee-745-constants-providing}},\\
-  \index{*!\code{:cdr-ieee-745-environment-providing}} and\\
-  \index{*!\code{:cdr-ieee-745-operation-providing}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Features \code{:cdr-ieee-745-constants-providing},\\
+  \code{:cdr-ieee-745-environment-providing} and\\
+  \code{:cdr-ieee-745-operation-providing}}
+\index{*!\code{:cdr-ieee-745-constants-providing}}
+\index{*!\code{:cdr-ieee-745-environment-providing}}
+\index{*!\code{:cdr-ieee-745-operation-providing}}
 
 \DDescription{}
 
@@ -2288,7 +2317,10 @@ present in the above table, which corresponds to Figure~12-1 of
 \cite{1996:ANSIHyperSpec}.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Functions \code{+}, \code{*}}
+\index{*!\code{+}}
+\index{*!\code{*}}
 
 \DSyntax{}
 
@@ -2378,8 +2410,71 @@ There are different exceptional situations to be considered.
 \end{enumerate}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Functions \code{+.<}, \code{+.>}}
+\index{*!\code{+.<}}
+\index{*!\code{+.>}}
 
+
+\code{+.<} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{+.>} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{+.<} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+\code{+.>} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+
+\DArgsNValues{}
+
+\varname{a}, \varname{b}, \varname{result} -- Floating Point numbers.\\
+\varname{numbers} -- A, possibly empty, list of numbers.\\
+\varname{n} -- A number.
+
+\DDescription{}
+
+The functions  \code{+.<} and \code{+.>} perform sums as per \code{+}
+but they establish a \emph{donward} and, respectively a
+\emph{upward} rounding mode before perfmorming the operation.
+
+\DNotes{}
+
+LIA1 suggests to call these operations \code{<+} and \code{+>}, but
+then the symmetric subtraction ones hoard the the symbols \code{<-}
+and \code{->}, which are surely used more often than not for some
+specialized library.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Functions \code{*.<}, \code{*.>}}
+\index{*!\code{*.<}}
+\index{*!\code{*.>}}
+
+
+\code{*.<} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{*.>} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{*.<} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+\code{*.>} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+
+\DArgsNValues{}
+
+\varname{a}, \varname{b}, \varname{result} -- Floating Point numbers.\\
+\varname{numbers} -- A, possibly empty, list of numbers.\\
+\varname{n} -- A number.
+
+\DDescription{}
+
+The functions  \code{*.<} and \code{*.>} perform mutiplications as per \code{*}
+but they establish a \emph{donward} and, respectively a
+\emph{upward} rounding mode before perfmorming the operation.
+
+\DNotes{}
+
+LIA1 suggests to call these operations \code{<*} and \code{*>}, but
+then the symmetric subtraction ones hoard the the symbols \code{<-}
+and \code{->}, which are surely used more often than not for some
+specialized library.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Function \code{-}}
+\index{*!\code{-}}
 
 \DSyntax{}
 
@@ -2391,8 +2486,6 @@ There are different exceptional situations to be considered.
 \varname{a}, \varname{b}, \varname{result} -- Floating Point numbers.\\
 \varname{numbers} -- A, possibly empty, list of numbers.\\
 \varname{n} -- A number.
-
-
 
 \DDescription{}
 
@@ -2461,7 +2554,40 @@ There are different exceptional situations to be considered.
 \end{enumerate}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Functions \code{-.<}, \code{-.>}}
+\index{*!\code{-.<}}
+\index{*!\code{-.>}}
+
+
+\code{-.<} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{-.>} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{-.<} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+\code{-.>} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+
+\DArgsNValues{}
+
+\varname{a}, \varname{b}, \varname{result} -- Floating Point numbers.\\
+\varname{numbers} -- A, possibly empty, list of numbers.\\
+\varname{n} -- A number.
+
+\DDescription{}
+
+The functions  \code{-.<} and \code{-.>} perform subtractions as per \code{-}
+but they establish a \emph{donward} and, respectively a
+\emph{upward} rounding mode before perfmorming the operation.
+
+\DNotes{}
+
+LIA1 suggests to call these operations \code{<-} and \code{->}, but the symbols \code{<-}
+and \code{->} get ``used up'', which amy cuase some readability issues
+as thet are surely used more often than not for some specialized
+library.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Function \code{/}}
+\index{*!\code{/}}
 
 \DSyntax{}
 
@@ -2559,7 +2685,42 @@ The monadic version of the function \code {/} behaves as \code{(/ 1}
 \varname{n}\code{)} with respect to exceptions being signalled.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Functions \code{/.<}, \code{/.>}}
+\index{*!\code{/.<}}
+\index{*!\code{/.>}}
+
+
+\code{/.<} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{/.>} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{/.<} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+\code{/.>} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+
+\DArgsNValues{}
+
+\varname{a}, \varname{b}, \varname{result} -- Floating Point numbers.\\
+\varname{numbers} -- A, possibly empty, list of numbers.\\
+\varname{n} -- A number.
+
+\DDescription{}
+
+The functions  \code{/.<} and \code{/.>} perform division as per \code{/}
+but they establish a \emph{donward} and, respectively a
+\emph{upward} rounding mode before perfmorming the operation.
+
+\DNotes{}
+
+LIA1 suggests to call these operations \code{</} and \code{/>}, but
+then the symmetric subtraction ones hoard the the symbols \code{<-}
+and \code{->}, which are surely used more often than not for some
+specialized library.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Functions \code{1+}, \code{1-}}
+\index{*!\code{1+}}
+\index{*!\code{1-}}
 
 \DSyntax{}
 
@@ -2601,7 +2762,10 @@ There are different exceptional situations to be considered.
 \code{+}, \code{-}.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Macros \code{incf}, \code{decf}}
+\index{I!\code{incf}}
+\index{D!\code{decf}}
 
 \DSyntax{}
 
@@ -2641,7 +2805,9 @@ point \code{1.0}, depending on the floating point format of
 \code{+}, \code{-}, \code{1+}, \code{1-}.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Function \code{conjugate}}
+\index{C!\code{conjugate}}
 
 \DSyntax{}
 
@@ -2720,7 +2886,11 @@ The following functions will also be specified for completeness,
 according to Section~9 of \cite{2008:IEEE-754}.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Functions \code{asin}, \code{acos}, \code{atan}}
+\index{A!\code{asin}}
+\index{A!\code{acos}}
+\index{A!\code{atan}}
 
 \DSyntax{}
 
@@ -2756,8 +2926,6 @@ The functions \code{asin} and \code{acos} do not signal a
 \clterm{real} outside the $[-1, 1]$ interval; they quietly return a
 \clterm{complex} number.
 
-
-
 \DExceptional{}
 
 If \varname{n}, \varname{n1}, or \varname{n2} is a
@@ -2782,49 +2950,365 @@ a \code{type-error} is signalled by \code{acos}, \code{asin}, and
 
 \begin{tt}
   \begin{tabular}{lll}
-    /= &  >= & \\
-    < &   & plusp\\
-    <= &  max & zerop\\
-    = & min & \\
-    > & minusp & \\
+    /= &  >=     & oddp\\
+    <  &  evenp  & plusp\\
+    <= &  max    & zerop\\
+    =  &  min    & \\
+    >  &  minusp & \\
   \end{tabular}
 \end{tt}
 
-\vspace*{3mm}
-
 \noindent
-Note that the \code{evenp} and \code{oddp} functions are not present
-in the above table,  which corresponds to Figure~12-3 of
+The table above corresponds to Figure~12-3 of
+\cite{1996:ANSIHyperSpec}.  The LIA specifications require more
+operators than those listed above.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Function \code{=}, \code{/=}}
+\index{*!\code{=}}
+\index{*!\code{/=}}
+
+\DSyntax{}
+
+\code{=} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+\code{=} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}\\
+\code{/=} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+\code{/=} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}
+
+\DArgsNValues{}
+
+\varname{a} \varname{b} -- Numbers.\\
+\varname{bs} -- A list of numbers.\\
+\varname{boolean} -- a \clterm{generalized boolean}.
+
+\DDescription{}
+
+The dyadic version of \code{=} (and \code{/=}) performs an arthimetic
+equality (inequality) test between \varname{a} and \varname{b}.  The
+monadic and n-adic versions are built upon the dyadic one as per the
+regular \CL{} description in \cite{1996:ANSIHyperSpec}.
+
+It is assumed that \varname{a} and \varname{b} are converted (as per
+the \emph{contagion rules} of \CL{}) to be of the same type.
+Therefore the following cases can be be considered as per the LIA
+specifications.
+
+\begin{description}
+\item If \varname{a} and \varname{b} are either finite integers, finite
+floating point numbers, or finite complex numbers then the result is
+\varname{true} (respectively, \varname{false}) if the two numbers are
+equal (respectively, different) in the mathematical sense.  In the
+LIA spec this is the result of $\mathit{eq}_T(a, b) \equiv a = b$ or
+$\mathit{neq}_T(a, b) \equiv a \neq b$ for an
+appropriate $T$.  This is the standard \CL{} case.
+
+\item If \varname {a} and \varname {b} are \clieeeterm{infinities} then
+\code{=} returns \varname{true} (respectively \varname{false}) if they
+are both positive or both negative; otherwise it returns
+\varname{false} (respectively \varname{true}).
+
+\item If either \varname {a} or \varname {b} is a \clieeeterm{quiet NaN},
+and, respectively, \varname {b} and \varname {a} is not a
+\clieeeterm{signaling NaN}, then the result is \varname{false}.
+
+\item Complex numbers are checked recursively on the real and imaginary
+parts.
+\end{description}
+
+\DExceptional{}
+
+If either \varname {a} or \varname {b} is a \clieeeterm{signaling
+  NaN}, then, under the notification NACF regime, the indicator
+\code{:invalid} is recorded and the
+\code{floating-point-invalid-operation} is signalled (with
+\emph{continuation value} \code{NIL} recorded); otherwise, under the
+NRI notification regine, the indicator \code{invalid} is recorded and
+\code{NIL} (\varname{false}) is returned as \emph{continuation value}.
+
+For complex numbers, the recording and signaling operations (under NRI
+and NACF) happens if the condition above applied to either of the real
+or the imaginary parts of \varname{a} and \varname{b}.
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \DDictionaryItem{Function \code{=}}
+% \index{*!\code{=}}
+
+% \DSyntax{}
+
+% \code{=} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+% \code{=} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}
+
+% \DArgsNValues{}
+
+% \varname{a} \varname{b} -- Numbers.\\
+% \varname{bs} -- A list of numbers.\\
+% \varname{boolean} -- a \clterm{generalized boolean}.
+
+% \DDescription{}
+
+% The dyadic version of \code{=} performs an arthimetic equality test
+% between \varname{a} and \varname{b}.  The monadic and n-adic versions are built upon
+% the dyadic one as per the regular \CL{} description in
+% \cite{1996:ANSIHyperSpec}.
+
+% It is assumed that \varname{a} and \varname{b} are converted (as per
+% the \emph{contagion rules} of \CL{}) to be of the same type.
+% Therefore the following cases can be be considered as per the LIA
+% specifications.
+
+% \begin{description}
+% \item If \varname{a} and \varname{b} are either finite integers, finite
+% floating point numbers, or finite complex numbers then the result is
+% \varname{true} if the two numbers are equal in the mathematical sense.  In the
+% LIA spec this is the result of $\mathit{eq}_T(a, b) \equiv a = b$ for an
+% appropriate $T$.  This is the standard \CL{} case.
+
+% \item If \varname {a} and \varname {b} are \clieeeterm{infinities} then
+% \code{=} returns \varname{true} if they are both positive or both
+% negative; otherwise it returns \varname{false}.
+
+% \item If either \varname {a} or \varname {b} is a \clieeeterm{quiet NaN},
+% and, respectively, \varname {b} and \varname {a} is not a
+% \clieeeterm{signaling NaN}, then the result is \varname{false}.
+
+% \item Complex numbers are checked recursively on the real and imaginary
+% parts.
+% \end{description}
+
+% \DExceptional{}
+
+% If either \varname {a} or \varname {b} is a \clieeeterm{signaling
+%   NaN}, then, under the notification NACF regime, the indicator
+% \code{:invalid} is recorded and the
+% \code{floating-point-invalid-operation} is signalled (with
+% \emph{continuation value} \code{NIL} recorded); otherwise, under the
+% NRI notification regine, the indicator \code{invalid} is recorded and
+% \code{NIL} (\varname{false}) is returned as \emph{continuation value}.
+
+% For complex numbers, the recording and signaling operations (under NRI
+% and NACF) happens if the condition above applied to either of the real
+% or the imaginary parts of \varname{a} and \varname{b}.
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \DDictionaryItem{Function \code{/=}}
+% \index{*!\code{/=}}
+
+% \DSyntax{}
+
+% \code{/=} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+% \code{/=} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}
+
+% \DArgsNValues{}
+
+% \varname{a} \varname{b} -- Numbers.\\
+% \varname{bs} -- A list of numbers.\\
+% \varname{boolean} -- a \clterm{generalized boolean}.
+
+% \DDescription{}
+
+% The dyadic version of \code{/=} performs an arthimetic equality test
+% between \varname{a} and \varname{b}.  The monadic and n-adic versions are built upon
+% the dyadic one as per the regular \CL{} description in
+% \cite{1996:ANSIHyperSpec}.
+
+% It is assumed that \varname{a} and \varname{b} are converted (as per
+% the \emph{contagion rules} of \CL{}) to be of the same type.
+% Therefore the following cases can be be considered as per the LIA
+% specifications.
+
+% If \varname{a} and \varname{b} are either finite integers, finite
+% floating point numbers, or finite complex numbers then the result is
+% \varname{true} if the two numbers are equal in the mathematical sense.  In the
+% LIA spec this is the result of $\mathit{neq}_T(a, b) \equiv a \neq b$ for an
+% appropriate $T$.  This is the standard \CL{} case.
+
+% If \varname {a} and \varname {b} are \clieeeterm{infinities} then
+% \code{/=} returns \varname{false} if they are both positive or both
+% negative; otherwise it returns \varname{true}.
+
+% If either \varname {a} or \varname {b} is a \clieeeterm{quiet NaN},
+% and, respectively, \varname {b} and \varname {a} is not a
+% \clieeeterm{signaling NaN}, then the result is \varname{false}.
+
+% Complex numbers are checked recursively on the real and imaginary parts.
+
+% \DExceptional{}
+
+% If either \varname {a} or \varname {b} is a \clieeeterm{signaling
+%   NaN}, then, under the notification NACF regime, the indicator
+% \code{:invalid} is recorded and the
+% \code{floating-point-invalid-operation} is signalled (with
+% \emph{continuation value} \code{NIL} recorded); otherwise, under the
+% NRI notification regine, the indicator \code{invalid} is recorded and
+% \code{NIL} (\varname{false}) is returned as \emph{continuation value}.
+
+% For complex numbers, the recording and signaling operations (under NRI
+% and NACF) happens if the condition above applied to either of the real
+% or the imaginary parts of \varname{a} and \varname{b}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Functions \code{<}, \code{<=}, \code{>}, \code{>=}}
+\index{*!\code{<}}
+\index{*!\code{<=}}
+\index{*!\code{>}}
+\index{*!\code{>=}}
+
+\DSyntax{}
+
+\code{<} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+\code{<} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}\\
+\code{<=} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+\code{<=} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}\\
+\code{>} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+\code{>} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}\\
+\code{>=} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+\code{>=} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}
+
+\DArgsNValues{}
+
+\varname{a} \varname{b} -- Numbers.\\
+\varname{bs} -- A list of numbers.\\
+\varname{boolean} -- a \clterm{generalized boolean}.
+
+\DDescription{}
+
+The dyadic version of \code{<}, \code{<=}, \code{>} and \code{>=}
+perform arthimetic oredering tests between \varname{a} and
+\varname{b}.  The monadic and n-adic versions are built upon the
+dyadic one as per the regular \CL{} description in
 \cite{1996:ANSIHyperSpec}.
 
-\paragraph{Correspondances with \IEEEFPStd{}.} The list of operations
-recommended by \cite{2008:IEEE-754} is more extensive than the list of
-operations provided by \CL{} (cfr., Table~9.1 in \cite{2008:IEEE-754}).
-The tables referenced below provide correspondances for the \CL{} functions,
-especially regarding the exceptions (conditions) that must be
-signalled.
+It is assumed that \varname{a} and \varname{b} are converted (as per
+the \emph{contagion rules} of \CL{}) to be of the same type.
+Therefore the following cases can be be considered as per the LIA
+specifications.
 
-\begin{table}[h]
-  \begin{tabulary}{\textwidth}{|L|L|L|}
-    \hline
-    \CL{} Function & IEEE-745 Function & Exceptional Situations\\
-    \hline\hline
-    \multicolumn{3}{|l|}{Arithmetic}\\\hline
-    \code{+}
-    & \textit{F\_\textbf{addition}}(\varname{a}, \varname{b})
-    & Long list of cases
-    \\\hline
+\begin{description}
+\item If \varname{a} and \varname{b} are either finite reals, then the result is
+\varname{true} (respectively, \varname{false}) if \varname{a} is
+less or less than or equal (respectively, greater or greater or equal)
+than \varname{b} in the mathematical sense.  In the
+LIA specification this is the result of
+$\mathit{lss}_T(a, b) \equiv a < b$,
+$\mathit{leq}_T(a, b) \equiv a \leq b$
+$\mathit{gtr}_T(a, b) \equiv a > b$, or
+$\mathit{geq}_T(a, b) \equiv a \geq b$
+for an
+appropriate $T$.  This is the standard \CL{} case.
+
+\item If \varname {a} and \varname {b} are \clieeeterm{infinities} then
+\code{=} returns \varname{true} (respectively \varname{false}) if they
+are both positive or both negative; otherwise it returns
+\varname{false} (respectively \varname{true}).
+
+\item If either \varname {a} or \varname {b} is a \clieeeterm{quiet NaN},
+and, respectively, \varname {b} and \varname {a} is not a
+\clieeeterm{signaling NaN}, then the result is \varname{false}.
+
+\item Complex numbers cannot be compared as per the \CL{}
+  specification \cite{1996:ANSIHyperSpec}.
+\end{description}
+
+\DExceptional{}
+
+If either \varname {a} or \varname {b} is a \clieeeterm{signaling
+  NaN}, then, under the notification NACF regime, the indicator
+\code{:invalid} is recorded and the
+\code{floating-point-invalid-operation} is signalled (with
+\emph{continuation value} \code{NIL} recorded); otherwise, under the
+NRI notification regine, the indicator \code{invalid} is recorded and
+\code{NIL} (\varname{false}) is returned as \emph{continuation value}.
+
+If either \varname{a}, or \varname{b} is not a \clterm{real} then a
+\code{type-error} is signalled.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Functions \code{is-neg-zero}, \code{neg-zero-p}}
+\index{I!\code{is-neg-zero}}
+\index{N!\code{neg-zero-p}}
+
+
+\DSyntax{}
+
+\code{is-neg-zero} \varname{x} \RArrow \varname{boolean}\\
+\code{neg-zero-p} \varname{x} \RArrow \varname{boolean}
+
+\DArgsNValues{}
+
+\varname{x} -- A \clterm{real}.\\
+\varname{boolean} -- A \clterm{generalized boolean}.
+
+
+\DDescription{}
+
+These functions check whether \varname{x} is a \emph{negative zero}
+(i.e., $-0$).  For \CL{} the value returned is constantly \clterm{false}
+(i.e., \code{NIL}).
+
+\DExceptional{}
+
+If \varname{x} is a \clieeeterm{NaN} then, under NCAF regime, the
+function signals a\\
+\code{floating-point-invalid-operation} with a
+\code{NIL} \clieeeterm{continuation value}; under NRI, the
+\code{:invalid} indicator is recorded and the \clieeeterm{continuation
+  value} \code{NIL} is returned.
+
+The function signals a \code{type-error} if the argument \varname{x}
+is not a \clterm{real}.
+
+
+
+% \vspace*{3mm}
+
+% \noindent
+% Note that the \code{evenp} and \code{oddp} functions are not present
+% in the above table,  which corresponds to Figure~12-3 of
+% \cite{1996:ANSIHyperSpec}.
+
+% \paragraph{Correspondances with \IEEEFPStd{}.} The list of operations
+% recommended by \cite{2008:IEEE-754} is more extensive than the list of
+% operations provided by \CL{} (cfr., Table~9.1 in \cite{2008:IEEE-754}).
+% The tables referenced below provide correspondances for the \CL{} functions,
+% especially regarding the exceptions (conditions) that must be
+% signalled.
+
+% \begin{table}[h]
+%   \begin{tabulary}{\textwidth}{|L|L|L|}
+%     \hline
+%     \CL{} Function & IEEE-745 Function & Exceptional Situations\\
+%     \hline\hline
+%     \multicolumn{3}{|l|}{Arithmetic}\\\hline
+%     \code{+}
+%     & \textit{F\_\textbf{addition}}(\varname{a}, \varname{b})
+%     & Long list of cases
+%     \\\hline
     
-  \end{tabulary}
-\end{table}
+%   \end{tabulary}
+% \end{table}
 
-\DDictionaryItem{Error \index{I!\code{ieee-754-not-implemented-item}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DDictionaryItem{Error \code{ieee-754-not-implemented-item}}
+\index{I!\code{ieee-754-not-implemented-item}}
 
 \DSupertypes{}
 
 \code{ieee-754-not-implemented-item}, \code{error},
 \code{cl:arithmetic-error}, \ldots, \code{T}
 
+\DDescription{}
+
+This error is signalled by functions and macros that do not have (yet)
+an implementation in the running \CL{} at hand.
+
+
+\newpage
 
 \nocite{2012:LIA1,2001:LIA2,2004:LIA3}
 \nocite{1994:ANSICL}
