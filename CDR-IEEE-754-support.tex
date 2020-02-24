@@ -3735,8 +3735,8 @@ This is easy given the macros defined in the document.  There are a
 few ways of doing this.
 
 \begin{alltt}
-    (\codelia{trap-math} ((\codelia{:before :save :clear})
-                          (\codelia{:after :merge})
+    (\codelia{trap-math} (\codelia{:before (:save :clear)}
+                \codelia{:after :merge})
        \textit{\ldots run desired code \ldots}
        \textit{\ldots examine indicators \ldots}
        \textit{\ldots clear some indicators \ldots}
@@ -3758,8 +3758,8 @@ or\ldots
 \subsection{Fast versus Accurate}
 
 \begin{alltt}
-    (\codelia{trap-math} ((\codelia{:before :save :clear})
-                (\codelia{:after :merge})
+    (\codelia{trap-math} (\codelia{:before (:save :clear)}
+                \codelia{:after :merge})
       (fast-solution input)
       (cl:floating-point-overflow ()
          \codelia{:clear}
