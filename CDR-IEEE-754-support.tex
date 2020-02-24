@@ -401,8 +401,7 @@ values (cfr., \cite{2012:LIA1} Section~4.2.3, 4.2.8, 4.2.9).
 One of the functionalities described in \IEEEFPStd{} (\IECFPStd{}) and LIA is
 the control of \emph{rounding modes}.  Rounding modes control is
 important in some numerical applications and libraries.  E.g., they
-are necessary to build \emph{interval arithmetic} libraires (cfr.,
-\checkcite{Interval Arithmetic}).
+are necessary to build \emph{interval arithmetic} libraires (cfr., \cite{hickey:interval:2001,kulisch:complete:2009,revol:introIEEEIA:2017}).
 
 The \CLang{} standard interface for floating point rounding modes
 control (cfr., \cite{2018:C18} Section~7.6.3) provides the \code{fgetround}
@@ -3544,7 +3543,7 @@ NRI, the \code{:infinitary} indicator is recorded and a negative
 \varname{scaled-float} -- A \clterm{float}.
 
 
-\DDictionary{}
+\DDescription{}
 
 The function \code{scale-float} behaves like \code{cl:scale-float} for
 well behaved \varname{f} and \varname{k}.
@@ -3747,12 +3746,12 @@ or\ldots
 \begin{alltt}
     (let ((saved-flags (\codelia{fpe-test-notifications +fpe-all-notifications+})))
        (unwind-protect
-           (progn (\codelia{fpe-clear-expections +fpe-all-notifications+})
+           (progn (\codelia{fpe-clear-exceptions-flags +fpe-all-notifications+})
                   \textit{\ldots run desired code \ldots}
                   \textit{\ldots examine indicators \ldots}
                   \textit{\ldots clear some indicators \ldots}
                   )
-         (\codelia{fpe-raise-excpt-flags} saved-flags)))
+         (\codelia{fpe-raise-exceptions-flags} saved-flags)))
 \end{alltt}
 
 
