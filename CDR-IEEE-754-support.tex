@@ -227,8 +227,8 @@ be addressed:
   
 \item Functions and macros to handle with the underlying
   \emph{floating point environment} and the interplay between \IEEEFPStd{}
-  notion of \emph{signalling} vs.~the \CL{} notion of
-  \clterm{condition signalling}.
+  notion of \emph{signaling} vs.~the \CL{} notion of
+  \clterm{condition signal-ling}.
   
 \item Functions and macros to handle \emph{rounding modes}; with
   special care devoted to incentivate non-invasive, yet informative,
@@ -278,7 +278,7 @@ comparison involving \emph{quiet} NaNs.
 \begin{alltt}
 SBCL> \codeprompt{(< 42 quiet-nan)}
 debugger invoked on a FLOATING-POINT-INEXACT:
-  arithmetic error FLOATING-POINT-INEXACT signalled
+  arithmetic error FLOATING-POINT-INEXACT signaled
 
 Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
 
@@ -303,9 +303,9 @@ LW> \codeprompt{(< 42 1D+-0)} \textcolor{red}{; LW uses this notation to denote 
 \noindent
 CCL signals a \code{CL:FLOATING-POINT-INVALID-OPERATION} condition on a
 comparison involving NaNs; but in this case it is unknown whether
-\code{1D+-0} represents a \emph{quiet} or \emph{signalling} NaN.
+\code{1D+-0} represents a \emph{quiet} or \emph{signaling} NaN.
 \begin{alltt}
-CCL> \codeprompt{(< 42 1D+-0)} \textcolor{red}{; CCL uses a notation similar to LW.}
+CL> \codeprompt{(< 42 1D+-0)} \textcolor{red}{; CCL uses a notation similar to LW.}
 > Error: FLOATING-POINT-INVALID-OPERATION detected
 > While executing: CCL::FIXNUM-DFLOAT-COMPARE, in process Listener(4).
 > Type cmd-. to abort, cmd-\ for a list of available restarts.
@@ -347,7 +347,7 @@ The goal of this document is to provide a minimal
 consensus to give the \CL{} programmer ways to be able to work with
 facilities in line with the \IEEEFPStd{} (\IECFPStd{}) and LIA
 standards.  The specifications contained in this document are as
-\textsf{common-lisp}-ish as possibile, re-using as much the style and
+\textsf{common-lisp}-ish as possible, re-using as much the style and
 naming conventions established in the ANSI~\CL{} Specification
 \cite{1994:ANSICL,1996:ANSIHyperSpec}.
 
@@ -406,7 +406,7 @@ values (cfr., \cite{2012:LIA1} Section~4.2.3, 4.2.8, 4.2.9).
 One of the functionalities described in \IEEEFPStd{} (\IECFPStd{}) and LIA is
 the control of \emph{rounding modes}.  Rounding modes control is
 important in some numerical applications and libraries.  E.g., they
-are necessary to build \emph{interval arithmetic} libraires (cfr., \cite{hickey:interval:2001,kulisch:complete:2009,revol:introIEEEIA:2017}).
+are necessary to build \emph{interval arithmetic} libraries (cfr., \cite{hickey:interval:2001,kulisch:complete:2009,revol:introIEEEIA:2017}).
 
 The \CLang{} standard interface for floating point rounding modes
 control (cfr., \cite{2018:C18} Section~7.6.3) provides the \code{fgetround}
@@ -432,7 +432,7 @@ coding.  To this end, apart from the expected definition of a
 and of the corresponding \code{get-rounding-mode} and
 \code{set-rounding-mode}, this document also defines the macros
 \code{with-rounding-mode}, \code{round-to-zero}, \code{round-to-near},
-\code{round-upward}, and \code{round-downward}.  Their intende use is
+\code{round-upward}, and \code{round-downward}.  Their intent use is
 to localize and automate the establishing of a given rounding mode for
 a piece of code.
 
@@ -448,7 +448,7 @@ In this case the intent of the programmer is to ensure that the
 rounding mode in effect while executing the multiplication is
 \emph{toward positive infinity}.  Upon returning its value, the
 \code{round-upward} macro, the rounding mode is reset to the value
-before its invokation.
+before its invocation.
 
 \subsubsection{Default Rounding Mode}
 
@@ -524,7 +524,7 @@ programmer\footnote{\CMUCL{} and \SBCL{} already provide
 \begin{alltt}
 CMUCL> \codeprompt{(/ 42 0.0)}
 
-Arithmetic error DIVISION-BY-ZERO signalled.
+Arithmetic error DIVISION-BY-ZERO signaled.
 Operation was /, operands (42.0 0.0).
    [Condition of type DIVISION-BY-ZERO]
 
@@ -607,7 +607,7 @@ similar the \CLang{} Library interface to the \emph{Floating Point
 
 
 \subsubsection{Interaction Between the ``Low Level'' \IEEEFPStd{} and LIA
-  ``Signalling'' Machinery and \CL{} Condition Handling}
+  ``Signaling'' Machinery and \CL{} Condition Handling}
 
 The \IEEEFPStd{} and LIA specifications (cfr., Section~7 of
 \cite{2008:IEEE-754} and Sections~4.1.3, 4.1.4 and~6 of
@@ -619,10 +619,10 @@ operation $f(x, \ldots)$.
 \item Check the arguments of $f$ for special cases regarding
   \clieeeterm{NaN}s and \clieeeterm{infinities}.
 \item Decide whether a \clieeeterm{IEEE exception} should be
-  \emph{signalled}.
+  \emph{signaled}.
   \begin{enumerate}
   \item Handle the exception \emph{by default}.
-  \item Raise the flags to indicate what exception was signalled (and
+  \item Raise the flags to indicate what exception was signaled (and
     handled by default).
   \end{enumerate}
 \end{enumerate}
@@ -645,7 +645,7 @@ exception handling'' based on the standard Condition System.
 
 In the following, this specification will state exactly what kind of
 behavior the various functions and macros will follow.  In general, a
-\CL{} \emph{condition} will be \emph{signalled} when either the \CL{}
+\CL{} \emph{condition} will be \emph{signaled} when either the \CL{}
 standard already mandates so (e.g., in the case of
 \code{cl:division-by-zero}) or when the LIA specification implies that
 the ``continuation value'' and the recording of the exception proposed
@@ -703,7 +703,7 @@ What the macro wants to convey is the fact that when
 \code{division-by-zero} is caught (thus invoking the
 \code{<\textit{handler}>} above), we can simply \emph{continue} with
 the \emph{continuation value} that is associated to the operation that
-actually signalled the condition; note that this may be different from
+actually signaled the condition; note that this may be different from
 the usual \CL{} behavior -- \code{division-by-zero} a case in point.
 
 The macro \code{try-math} also makes provisions to set a local \emph{notification
@@ -712,9 +712,9 @@ macro \code{with-notification-style}.
 
 Other ``actions'' available, besides \code{:continue}, are
 \begin{itemize}
-\item\code{:default} the behavior of the operation that signalled
+\item\code{:default} the behavior of the operation that signaled
   the condition is the default one. In the example above, the
-  \code{division-by-zero} condition is re-signalled, i.e., passed
+  \code{division-by-zero} condition is re-signaled, i.e., passed
   on, but for other operations it may be different; in most cases this
   will be a no-op with respect to the specification.
     
@@ -814,7 +814,7 @@ This is the parameter \textit{bounded}$_I$ with $I$ equal to
 \code{maximum-fixnum},
 \code{most-positive-fixnum},\\
 %
-\code{minumum-integer},
+\code{minimum-integer},
 \code{maximum-integer}.
 
 
@@ -845,7 +845,7 @@ This is the parameter \textit{bounded}$_I$, with $I$ equal to
 \code{maximum-fixnum},
 \code{most-positive-fixnum},\\
 %
-\code{minumum-integer},
+\code{minimum-integer},
 \code{maximum-integer}.
 
 
@@ -928,7 +928,7 @@ Their values are the obvious \CL{} counterparts.
 \code{most-negative-fixnum},\\
 \code{most-positive-fixnum},\\
 %
-\code{minumum-integer},
+\code{minimum-integer},
 \code{maximum-integer}.
 
 
@@ -959,7 +959,7 @@ with $I$ equal to \code{integer}, required in LIA1 \cite{2012:LIA1}.
 \code{bounded-fixnum},
 \code{bounded-integer},\\
 %
-\code{minumum-fixnum},
+\code{minimum-fixnum},
 \code{maximum-fixnum}.
 
 \newpage
@@ -1085,8 +1085,8 @@ All \emph{implementation-dependent values}.
 
 The values \code{NAN}, \code{Q-NAN}, and \code{S-NAN} hold a
 representation of a ``not a number'' object.  The object can either be
-a \emph{quiet} (\code{Q-NAN}) or a \emph{signalling} (\code{S-NAN})
-\emph{NaN} (see~\cite{2008:IEEE-754}).  \code{NAN} ia always a
+a \emph{quiet} (\code{Q-NAN}) or a \emph{signaling} (\code{S-NAN})
+\emph{NaN} (see~\cite{2008:IEEE-754}).  \code{NAN} is always a
 \emph{quiet NaN}.
 
 
@@ -1119,22 +1119,22 @@ It is also understood that, \code{(numberp nan)} should return \code{T}.
 \DSeeAlso{}
 
 \code{is-nan}, \code{nanp}, \code{is-quiet-nan}, \code{quiet-nan-p},
-\code{is-signalling-nan}, \code{signalling-nan-p}.
+\code{is-signaling-nan}, \code{signaling-nan-p}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Functions \code{is-nan}, \code{nanp},\\
   \code{is-quiet-nan},
   \code{quiet-nan-p},\\
-  \code{is-signalling-nan},
-  \code{signalling-nan-p}
+  \code{is-signaling-nan},
+  \code{signaling-nan-p}
 }
 \index{I!\code{is-nan}}
 \index{N!\code{nanp}}
 \index{I!\code{is-quiet-nan}}
 \index{Q!\code{quiet-nan-p}}
-\index{I!\code{is-signalling-nan}} 
-\index{S!\code{signalling-nan-p}}
+\index{I!\code{is-signaling-nan}} 
+\index{S!\code{signaling-nan-p}}
 
 \DSyntax{}
 
@@ -1142,8 +1142,8 @@ It is also understood that, \code{(numberp nan)} should return \code{T}.
 \code{nanp} \varname{x} $\Rightarrow$ \textit{boolean}\\
 \code{is-quiet-nan} \varname{x} $\Rightarrow$ \textit{boolean}\\
 \code{quiet-nan-p} \varname{x} $\Rightarrow$ \textit{boolean}\\
-\code{is-signalling-nan} \varname{x} $\Rightarrow$ \textit{boolean}\\
-\code{signalling-nan-p} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{is-signaling-nan} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{signaling-nan-p} \varname{x} $\Rightarrow$ \textit{boolean}\\
 
 \DArgsNValues{}
 
@@ -1153,7 +1153,7 @@ It is also understood that, \code{(numberp nan)} should return \code{T}.
 
 The function \code{is-nan} (respectively \code{nanp} etc.) returns \code{T}
 whenever \varname{x} is a (representation of an IEEE) NaN.  Otherwise
-it returns \code{NIL}. The \emph{quiet} and \emph{signalling} versions
+it returns \code{NIL}. The \emph{quiet} and \emph{signaling} versions
 operate similarly.
 
 \DExamples{}
@@ -1484,7 +1484,7 @@ point environment.  \CL{} implementations may have made different
 choices about if, when, and how to signal the standard \CL{} floating
 point conditions.  That is, the above example may or may not work in a
 given \CL{} implementation, as the code that actually set the floating
-environment exception flags may have already signalled either
+environment exception flags may have already signaled either
 \code{cl:floating-point-invalid-operation} or
 \code{cl:floating-point-overflow}, and the some corresponding handling
 code may have already cleared the flags.
@@ -1566,7 +1566,7 @@ with a wide range of interfaces, which boils down tho the assumed
 representation of the \CLang{} \code{fenv\_t} type, described in
 \cite{2018:C18}.
 
-This specification describes an interface which should accomodate the
+This specification describes an interface which should accommodate the
 current -- at the tie of this writing -- treatment of the floating
 point environment provided by various \CL{} implementations.
 
@@ -1995,14 +1995,14 @@ $\Rightarrow$ \varname{result}, \varname{success}
 \DDescription{}
 
 The function sets the rounding mode.  If the setting of the rounding
-mode is succesful, then \varname{rounding-node} is returned as
+mode is successful, then \varname{rounding-node} is returned as
 \varname{result} and \varname{success} is \code{T}.  Otherwise, the
 rounding mode before the the call is returned with \varname{success}
 \code{NIL}.\marginnote{Should it instead signal an error?}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\DDictionaryItem{Macro \code{with-rouding-mode}}
+\DDictionaryItem{Macro \code{with-rounding-mode}}
 \index{W!\code{with-rounding-mode}}
 
 \DSyntax{}
@@ -2088,7 +2088,7 @@ a condition (as in \code{unwind-protect}).
 
 \DExceptional{}
 
-None \marginnote{Maybe signal error if the roundng mode cannot be set?}
+None \marginnote{Maybe signal error if the rounding mode cannot be set?}
 
 
 
@@ -2106,7 +2106,7 @@ alongside some \CL{} features to allow for read-time (cfr.,
 \emph{translation-time}) evaluations.
 
 
-\subsection{Non-computational \CL{} Enviroment \IEEEFPStd{} Queries}
+\subsection{Non-computational \CL{} Environment \IEEEFPStd{} Queries}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DDictionaryItem{Function \code{is-cdr-ieee-754-conformant}}
@@ -2272,9 +2272,9 @@ The list of operations
 recommended by \cite{2008:IEEE-754} is more extensive than the list of
 operations provided by \CL{} (cfr., Table~9.1 in \cite{2008:IEEE-754}).
 %
-The tables referenced below provide correspondances for the \CL{} functions,
+The tables referenced below provide correspondences for the \CL{} functions,
 especially regarding the exceptions (conditions) that must be
-signalled.
+signaled.
 
 \paragraph{Rounding Modes.} In particular, all the operations listed
 in Sections~\ref{sect:arith-ops} and~\ref{sect:transc-ops} respect the
@@ -2377,18 +2377,18 @@ format.  As already mentioned, the actual floating point format of
 
 When \code{+}, or \code{*} is called with either \varname{a} or
 \varname{b} being a \emph{quiet NaN}, and neither is a
-\emph{signalling NaN} then \varname{result} is a (quiet) \code{NAN}.
-No error (floating point exception) is signalled in this case.
+\emph{signaling NaN} then \varname{result} is a (quiet) \code{NAN}.
+No error (floating point exception) is signaled in this case.
 
 When \code{+} is called with \varname{a} being an 
 \clieeeterm{infinity} and \varname{b} being a finite \clterm{number}
-(or viceversa), then \varname{result} is \varname{a} (or, viceversa, 
+(or vice-versa), then \varname{result} is \varname{a} (or, vice-versa, 
 \varname{b}).
 
 When \code{*} is called with \varname{a} being an
 \clieeeterm{infinity} and \varname{b} being a non-zero finite
-\clterm{number} (or viceversa), then \varname{result} is \varname{a}
-(or, viceversa, \varname{b}).
+\clterm{number} (or vice-versa), then \varname{result} is \varname{a}
+(or, vice-versa, \varname{b}).
 
 \DExceptional{}
 
@@ -2396,18 +2396,18 @@ There are different exceptional situations to be considered.
 
 \begin{enumerate}
 \item When \code{+} is called with either \varname{a} or \varname{b}
-  being a \emph{signalling NaN}, then the\\
-  \clname{cl:floating-point-invalid-operation} error is signalled.
+  being a \emph{signaling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signaled.
 
 \item When \code{+} is called with \varname{a} being a
   \clieeeterm{positive infinity} and \varname{b} being a
-  \clieeeterm{negative infinity} (or viceversa), then the
-  \clname{cl:floating-point-invalid-operation} error is signalled.
+  \clieeeterm{negative infinity} (or vice-versa), then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
 
 \item When \code{*} is called with \varname{a} being an
   \clieeeterm{infinity} and \varname{b} being a \clieeeterm{zero}
-  value (or viceversa), then the
-  \clname{cl:floating-point-invalid-operation} error is signalled.
+  value (or vice-versa), then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
 
 \item If some of \varname{a}, \varname{b}, or any element of a non-empty
   \varname{numbers} is not a \CL{} \clterm{number} then the function
@@ -2435,8 +2435,8 @@ There are different exceptional situations to be considered.
 \DDescription{}
 
 The functions  \code{+.<} and \code{+.>} perform sums as per \code{+}
-but they establish a \emph{donward} and, respectively a
-\emph{upward} rounding mode before perfmorming the operation.
+but they establish a \emph{downward} and, respectively a
+\emph{upward} rounding mode before performing the operation.
 
 \DNotes{}
 
@@ -2465,9 +2465,9 @@ specialized library.
 
 \DDescription{}
 
-The functions  \code{*.<} and \code{*.>} perform mutiplications as per \code{*}
-but they establish a \emph{donward} and, respectively a
-\emph{upward} rounding mode before perfmorming the operation.
+The functions  \code{*.<} and \code{*.>} perform multiplications as per \code{*}
+but they establish a \emph{downward} and, respectively a
+\emph{upward} rounding mode before performing the operation.
 
 \DNotes{}
 
@@ -2525,13 +2525,13 @@ format.  As already mentioned, the actual floating point format of
 \varname{result} is dictated by the \CL{} standard.
 
 When \code{-} is called with either \varname{a} or \varname{b} being a
-\emph{quiet NaN}, and neither is a \emph{signalling NaN} then
+\emph{quiet NaN}, and neither is a \emph{signaling NaN} then
 \varname{result} is a (quiet) \code{NAN}.  No error (floating point
-exception) is signalled in this case.
+exception) is signaled in this case.
 
 When \code{-} is called with \varname{a} being an 
 \clieeeterm{infinity} and \varname{b} being a finite \clterm{number}
-(or viceversa), then \varname{result} is \varname{a}; when \code{-} is
+(or vice-versa), then \varname{result} is \varname{a}; when \code{-} is
 called with \varname{b} being an \clieeeterm{infinity} and \varname{a}
 being a finite \clterm{number}, then \varname{result}
 is $-$\varname{b}.
@@ -2543,15 +2543,15 @@ There are different exceptional situations to be considered.
 
 \begin{enumerate}
 \item When \code{-} is called with either \varname{a} or \varname{b}
-  being a \emph{signalling NaN}, then the\\
-  \clname{cl:floating-point-invalid-operation} error is signalled.
+  being a \emph{signaling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signaled.
 
 \item When \code{-} is called with \varname{a} being a
   \clieeeterm{positive infinity} and \varname{b} being a
   \clieeeterm{positive infinity}, or \varname{a} being a
   \clieeeterm{negative infinity} and \varname{b} being a
   \clieeeterm{positive infinity}, then the\\
-  \clname{cl:floating-point-invalid-operation} error is signalled.
+  \clname{cl:floating-point-invalid-operation} error is signaled.
 
 \item If some of \varname{a}, \varname{b}, or any element of a non-empty
   \varname{numbers} is not a \CL{} \clterm{number} then the function
@@ -2579,14 +2579,14 @@ There are different exceptional situations to be considered.
 \DDescription{}
 
 The functions  \code{-.<} and \code{-.>} perform subtractions as per \code{-}
-but they establish a \emph{donward} and, respectively a
-\emph{upward} rounding mode before perfmorming the operation.
+but they establish a \emph{downward} and, respectively a
+\emph{upward} rounding mode before performing the operation.
 
 \DNotes{}
 
 LIA1 suggests to call these operations \code{<-} and \code{->}, but the symbols \code{<-}
-and \code{->} get ``used up'', which amy cuase some readability issues
-as thet are surely used more often than not for some specialized
+and \code{->} get ``used up'', which may cause some readability issues
+as they are surely used more often than not for some specialized
 library.
 
 
@@ -2641,13 +2641,13 @@ format.  As already mentioned, the actual floating point format of
 \varname{result} is dictated by the \CL{} standard.
 
 When \code{/} is called with either \varname{a} or \varname{b} being a
-\emph{quiet NaN}, and neither is a \emph{signalling NaN} then
+\emph{quiet NaN}, and neither is a \emph{signaling NaN} then
 \varname{result} is a (quiet) \code{NAN}.  No error (floating point
-exception) is signalled in this case.
+exception) is signaled in this case.
 
 When \code{/} is called with \varname{a} being an 
 \clieeeterm{infinity} and \varname{b} being a finite \clterm{number}
-(or viceversa), then \varname{result} is \varname{a} with its sign
+(or vice-versa), then \varname{result} is \varname{a} with its sign
 possibly changed; when \code{/} is
 called with \varname{b} being an \clieeeterm{infinity} and \varname{a}
 being a finite \clterm{number}, then \varname{result}
@@ -2660,34 +2660,34 @@ There are different exceptional situations to be considered.
 
 \begin{enumerate}
 \item When \code{/} is called with either \varname{a} or \varname{b}
-  being a \emph{signalling NaN}, then the\\
-  \clname{cl:floating-point-invalid-operation} error is signalled.
+  being a \emph{signaling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signaled.
 
 \item When \code{/} is called with \varname{a} being an 
   \clieeeterm{infinity} and \varname{b} being an 
   \clieeeterm{infinity} as well, then the\\
-  \clname{cl:floating-point-invalid-operation} error is signalled.
+  \clname{cl:floating-point-invalid-operation} error is signaled.
 
 \item When \code{/} is called with \varname{a} being a
   \clieeeterm{zero} and \varname{b} being an 
   \clieeeterm{zero} as well, then the\\
-  \clname{cl:floating-point-invalid-operation} error is signalled.
+  \clname{cl:floating-point-invalid-operation} error is signaled.
 
 \item When the dyadic version of \code{/} is called with \varname{a}
   being a finite \clterm{number} and \varname{b} being a
   \clieeeterm{zero}, or when the monadic version of \code{/} is called
   with \varname{n} being a \clieeeterm{zero}, then the
-  \clname{cl:division-by-zero} error is signalled.
+  \clname{cl:division-by-zero} error is signaled.
 
 \item If some of \varname{a}, \varname{b}, or a
-  ny element of a non-empty
+  any element of a non-empty
   \varname{numbers} is not a \CL{} \clterm{number} then the function
   will signal a \clname{cl:type-error}.
 \end{enumerate}
 
 \noindent
 The monadic version of the function \code {/} behaves as \code{(/ 1}
-\varname{n}\code{)} with respect to exceptions being signalled.
+\varname{n}\code{)} with respect to exceptions being signaled.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2710,8 +2710,8 @@ The monadic version of the function \code {/} behaves as \code{(/ 1}
 \DDescription{}
 
 The functions  \code{/.<} and \code{/.>} perform division as per \code{/}
-but they establish a \emph{donward} and, respectively a
-\emph{upward} rounding mode before perfmorming the operation.
+but they establish a \emph{downward} and, respectively a
+\emph{upward} rounding mode before performing the operation.
 
 \DNotes{}
 
@@ -2755,8 +2755,8 @@ There are different exceptional situations to be considered.
 
 \begin{enumerate}
 \item When \code{1+} or \code{1-} is called with \varname{n}
-  being a \emph{signalling NaN}, then the\\
-  \clname{cl:floating-point-invalid-operation} error is signalled.
+  being a \emph{signaling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signaled.
 
 \item If \varname{n} is not a \CL{} \clterm{number} then the function
   signals a \clname{cl:type-error}.
@@ -2797,7 +2797,7 @@ as \varname{result} when \varname{place} or \varname{d} is a
 
 \DExceptional{}
 
-The conditions signalled are those described for \code{+} and \code{-}.
+The conditions signaled are those described for \code{+} and \code{-}.
 
 \DNotes{}
 
@@ -2829,13 +2829,13 @@ The function \code{conjugate} behaves like the corresponding
 number that is not a \clieeeterm{NaN}.
 
 \noindent
-When \varname{n} is a \clieeeterm{quiet NaN} then \varname{c} ia a
+When \varname{n} is a \clieeeterm{quiet NaN} then \varname{c} is a
 \clieeeterm{quiet NaN}.
 
 \DExceptional{}
 
-When \varname{n} is a \clieeeterm{signalling NaN} then the
-\clname{cl:floating-point-invalid-operation} error is signalled.
+When \varname{n} is a \clieeeterm{signaling NaN} then the
+\clname{cl:floating-point-invalid-operation} error is signaled.
 
 When \varname{n} is a \clterm{complex number}, then \code{conjugate}
 can signal the same set of conditions as if computing
@@ -2879,7 +2879,7 @@ operate on floating point numbers or do not have a semantic different
 from the \CL{} standard.
 
 \noindent
-The listed \CL{} functions have correspondances in the \cite{2008:IEEE-754}
+The listed \CL{} functions have correspondences in the \cite{2008:IEEE-754}
 specification, but with some key differences, e.g., \code{cl:log} returns
 a \clterm{complex number} for negative values.  In the following each
 function will be further specified to comply with the \cite{2008:IEEE-754}
@@ -2934,7 +2934,7 @@ The functions \code{asin} and \code{acos} do not signal a
 \DExceptional{}
 
 If \varname{n}, \varname{n1}, or \varname{n2} is a
-\clieeeterm{signalling NaN}, then \code{asin}, \code{acos} and
+\clieeeterm{signaling NaN}, then \code{asin}, \code{acos} and
 \code{atan} signal the\\
 \clname{cl:floating-point-invalid-operation} error.
 
@@ -2942,10 +2942,10 @@ According to \cite{2008:IEEE-754} there are several issues to be
 considered.
 
 If \varname{n}, \varname{n1}, or \varname{n2} are not \clterm{number}s
-a \code{type-error} is signalled by \code{acos}, \code{asin}, and
+a \code{type-error} is signaled by \code{acos}, \code{asin}, and
 \code{atan}.  If \varname{n1} and \varname{n2} are both supplied to
 \code{atan}, and they are not both \clterm{real} numbers, then a
-\code{type-error} is signalled.
+\code{type-error} is signaled.
 
 
 \newpage
@@ -2989,7 +2989,7 @@ operators than those listed above.
 
 \DDescription{}
 
-The dyadic version of \code{=} (and \code{/=}) performs an arthimetic
+The dyadic version of \code{=} (and \code{/=}) performs an arithmetic
 equality (inequality) test between \varname{a} and \varname{b}.  The
 monadic and n-adic versions are built upon the dyadic one as per the
 regular \CL{} description in \cite{1996:ANSIHyperSpec}.
@@ -3026,9 +3026,9 @@ parts.
 If either \varname {a} or \varname {b} is a \clieeeterm{signaling
   NaN}, then, under the notification NACF regime, the indicator
 \code{:invalid} is recorded and the
-\code{floating-point-invalid-operation} is signalled (with
+\code{floating-point-invalid-operation} is signaled (with
 \emph{continuation value} \code{NIL} recorded); otherwise, under the
-NRI notification regine, the indicator \code{invalid} is recorded and
+NRI notification regime, the indicator \code{invalid} is recorded and
 \code{NIL} (\varname{false}) is returned as \emph{continuation value}.
 
 For complex numbers, the recording and signaling operations (under NRI
@@ -3182,7 +3182,7 @@ or the imaginary parts of \varname{a} and \varname{b}.
 \DDescription{}
 
 The dyadic version of \code{<}, \code{<=}, \code{>} and \code{>=}
-perform arthimetic oredering tests between \varname{a} and
+perform arithmetic ordering tests between \varname{a} and
 \varname{b}.  The monadic and n-adic versions are built upon the
 dyadic one as per the regular \CL{} description in
 \cite{1996:ANSIHyperSpec}.
@@ -3223,13 +3223,13 @@ and, respectively, \varname {b} and \varname {a} is not a
 If either \varname {a} or \varname {b} is a \clieeeterm{signaling
   NaN}, then, under the notification NACF regime, the indicator
 \code{:invalid} is recorded and the
-\code{floating-point-invalid-operation} is signalled (with
+\code{floating-point-invalid-operation} is signaled (with
 \emph{continuation value} \code{NIL} recorded); otherwise, under the
-NRI notification regine, the indicator \code{invalid} is recorded and
+NRI notification regime, the indicator \code{invalid} is recorded and
 \code{NIL} (\varname{false}) is returned as \emph{continuation value}.
 
 If either \varname{a}, or \varname{b} is not a \clterm{real} then a
-\code{type-error} is signalled.
+\code{type-error} is signaled.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3304,7 +3304,7 @@ is not a \clterm{real}.
 
 \DNotes{}
 
-It is very difficult to correctly specify the behavior of ths function
+It is very difficult to correctly specify the behavior of this function
 in terms of \CL{} usual setup and assumptions.  Most implementations
 may simply leave this \clliaterm{not-implemented}.
 
@@ -3327,7 +3327,7 @@ may simply leave this \clliaterm{not-implemented}.
 \varname{x} -- a \clterm{number}\\
 \varname{signed-prototype} -- a \clterm{number}\\
 \varname{f1} -- a \clterm{float}\\
-\varname{f2} -- a \clterm{numberfloat}\\
+\varname{f2} -- a \clterm{float}\\
 \varname{signed-float} -- a \clterm{float}
 
 
@@ -3356,14 +3356,14 @@ either \varname{f1} or \varname{f2} is a \clliaterm{quiet NaN} then
 
 \DExceptional{}
 
-If \varname{x} is a floating point \clliaterm{signalling NaN} and the
+If \varname{x} is a floating point \clliaterm{signaling NaN} and the
 notification style is NACF, then a\\
-\code{floating-point-invalid} condition is signalled with a
+\code{floating-point-invalid} condition is signaled with a
 \clliaterm{quiet NaN} as a \emph{continuation value}; if the
 notification style is NRI then the indicator \code{:invalid} is
 recorder and a \clliaterm{quiet NaN} is returned.
 
-A \code{type-error} is signalled if \varname{x} is not a number or
+A \code{type-error} is signaled if \varname{x} is not a number or
 either \varname{f1}, or \varname{f2} is not a \clterm{float} number.
 
 
@@ -3412,7 +3412,7 @@ then if the notification style is NACF then a\\
 style is NRI then the \code{:invalid} indicator is recorded and a
 \clliaterm{quiet NaN} is returned as continuation value.
 
-A \code{type-error} is signalled if either \varname{x} or \varname{y} is
+A \code{type-error} is signaled if either \varname{x} or \varname{y} is
 not a \clliaterm{number}.
 
 
@@ -3454,10 +3454,10 @@ a \clliaterm{quiet NaN}.
 
 \DExceptional{}
 
-If \varname{} is a \clliaterm{siganling NaN} then if the notification
+If \varname{} is a \clliaterm{signaling NaN} then if the notification
 style is NACF then a\\
-\code{floating-point-ivalid-operation} is
-signalled, with a \clliaterm{quiet NaN} as a continuation value.  If
+\code{floating-point-invalid-operation} is
+signaled, with a \clliaterm{quiet NaN} as a continuation value.  If
 the notification style is NRI then the \code{:invalid} indicator is
 recorded and a \clliaterm{quiet NaN} is returned as continuation
 value.
@@ -3504,7 +3504,7 @@ as if defined (for finite floating point numbers) as follows:
   
   (defun \codelia{exponent} (f) (nth-value 0 (decode-float f)))
   
-  \textcolor{red}{;;; NTH-VALUE is used in both functions just for simmetry.}
+  \textcolor{red}{;;; NTH-VALUE is used in both functions just for symmetry.}
 \end{alltt}
 
 If \varname{f} is an \clliaterm{infinity} or $0$, then \code{fraction}
@@ -3596,7 +3596,7 @@ well behaved \varname{f} and \varname{k}.
 
 \DDescription{}
 
-This error is signalled by functions and macros that do not have (yet)
+This error is signaled by functions and macros that do not have (yet)
 an implementation in the running \CL{} at hand.
 
 
@@ -3636,7 +3636,7 @@ the programs are writable in standard \CL{}.
 
 \subsection{Verifying Platform Acceptability}
 
-Soppose some code should be executed only is the single float
+Suppose some code should be executed only is the single float
 precision is at least 1 part in a million.  The code below can be used
 to bail out before executing it.
 \begin{alltt}
