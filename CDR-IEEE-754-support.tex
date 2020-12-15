@@ -2784,14 +2784,31 @@ specialized library.
 
 \DDescription{}
 
-The functions \code{1+}, \code{1-}, behave
-as the \CL{} counterparts on non-\clieeeterm{NaN}s and
-non-\clieeeterm{infinities} (see \cite{1996:ANSIHyperSpec}).
+The functions \code{1+} and \code{1-} are defined, 
+as the \CL{} counterparts, as:
+\begin{enumerate}
+\item \code{(1+}
+\varname{n}\code{)} $\equiv$ \code{(+}
+\varname{n}\code{ 1)}.
+\item \code{(1-}
+\varname{n}\code{)} $\equiv$ \code{(-}
+\varname{n}\code{ 1)}.
+\end{enumerate}
 
-The functions \code{1+}, \code{1-} return a \clieeeterm{quiet NaN} as \varname{result}
-when \varname{n} is a \clieeeterm{quiet NaN}; they return an
-\clieeeterm{infinity} equal to \varname{n}, when \varname{n} is an
-\clieeeterm{infinity}.
+The behaviour and the exceptional situations of \code{1+} and
+\code{1-} are inherited by \code{+} and \code{-} described above.
+
+When \varname{n} is not a \clieeeterm{NaNs} or an
+\clieeeterm{infinity} the functions \code{1+} and \code{1-}
+assume the usual behavior specified for \CL{} (cfr.
+Section~12.2 of \cite{1996:ANSIHyperSpec}).
+
+When \code{1+} or \code{1-} is called with \varname{n} being a
+\clieeeterm{quiet NaN} then \varname{result} is a \clieeeterm{quiet NaN}.
+
+When \code{1+} or \code{1-} is called with \varname{n} being an
+\clieeeterm{infinity} then \varname{result}  is an
+\clieeeterm{infinity} equal to \varname{n}.
 
 \DExceptional{}
 
@@ -2830,18 +2847,56 @@ There are different exceptional situations to be considered.
 
 \DDescription{}
 
-The macros \code{incf} and \code{decf} behave
-as the \CL{} counterparts on non-\clieeeterm{NaN}s and
-non-\clieeeterm{infinities} (see \cite{1996:ANSIHyperSpec}).
+The macros \code{incf} and \code{decf} are defined,
+as the \CL{} counterparts, as:
+\begin{itemize}
+\item \code{(incf} \varname{x}\code{)} $\equiv$ \code{(setf}
+  \varname{x} \code{(+} \varname{x}\code{ 1))}
+\item \code{(decf} \varname{x}\code{)} $\equiv$ \code{(setf}
+  \varname{x} \code{(-} \varname{x}\code{ 1))}
+\item \code{(incf} \varname{x}\code{ d)} $\equiv$ \code{(setf}
+  \varname{x} \code{(+} \varname{x}\code{ d))}
+\item \code{(decf} \varname{x}\code{ d)} $\equiv$ \code{(setf}
+  \varname{x} \code{(-} \varname{x}\code{ d))}
+\end{itemize}
 
-The macros \code{incf} and \code{decf} return a \clieeeterm{quiet NaN}
-as \varname{result} when \varname{place} or \varname{d} is a
-\clieeeterm{quiet NaN}; they return an \clieeeterm{infinity} equal to
-\varname{n}, when \varname{n} is an \clieeeterm{infinity}.
+The behaviour and the exceptional situations of the macros \code{incf} and
+\code{incf} are inherited by \code{+} and \code{-} described above.
+
+When the value of \varname{place} and \varname{d} are not
+\clieeeterm{NaNs} or \clieeeterm{infinity} the macros \code{incf} and
+\code{decf} assume the usual behavior specified for \CL{} (cfr.
+Section~12.2 of \cite{1996:ANSIHyperSpec}).
+
+When \code{incf} or \code{decf} is called with either the value of
+\varname{place} or \varname{d} being a \clieeeterm{quiet NaN}, and
+neither is a \clieeeterm{signaling NaN} then \varname{result} is a
+(quiet) \code{NAN}. No error (floating point exception) is signaled in
+this case.
+
+When \code{incf} or \code{decf} is called with the value of
+\varname{place} being \clieeeterm{infinity}  and \varname{d} being a
+finite \clterm{number} (or vice-versa), then \varname{result} is the
+value of \varname{place} (or, vice-versa, \varname{d}).
 
 \DExceptional{}
 
-The conditions signaled are those described for \code{+} and \code{-}.
+There are different exceptional situations to be considered.
+
+\begin{enumerate}
+\item When \code{incf} or \code{decf} is called with either the value of
+  \varname{place} or \varname{d} being a \emph{signaling NaN}, then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+
+\item When \code{incf} or \code{decf} is called with the value of
+  \varname{place} being a \clieeeterm{positive infinity} and \varname{d}
+  being a \clieeeterm{negative infinity} (or vice-versa), then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+
+\item If the value of \varname{place} or \varname{d} is not a \CL{}
+  \clterm{number} then the macros \code{incf} and \code{decf}
+  might signal a \clname{cl:type-error}.
+\end{enumerate}
 
 \DNotes{}
 
@@ -2868,27 +2923,44 @@ point \code{1.0}, depending on the floating point format of
 
 \DDescription{}
 
-The function \code{conjugate} behaves like the corresponding
-\code{cl:conjugate} function, when \varname{n} is a \clterm{real}
-number that is not a \clieeeterm{NaN}.
+When the value of \code{(realpart} \varname{n}\code{)} and
+\code{(imagpart} \varname{n}\code{)} are not
+\clieeeterm{NaNs} or \clieeeterm{infinity} the function
+\code{conjugate} assume the usual behavior specified for \CL{} (cfr.
+Section~12.2 of \cite{1996:ANSIHyperSpec}).
 
-\noindent
-When \varname{n} is a \clieeeterm{quiet NaN} then \varname{c} is a
+When \code{conjugate} is called with \varname{n} being a
+\clieeeterm{quiet NaN} then \varname{c} is a
 \clieeeterm{quiet NaN}.
+
+When \code{conjugate} is called with \code{(realpart}
+\varname{n}\code{)}  being a \clieeeterm{positive infinity} (or,
+vice-versa \clieeeterm{negative infinity}) then 
+\code{(realpart} \varname{c}\code{)} is a
+\clieeeterm{positive infinity} (or, vice-versa \clieeeterm{negative
+  infinity}).
+
+When \code{conjugate} is called with \code{(imagpart}
+\varname{n}\code{)}  being a \clieeeterm{positive infinity} (or,
+vice-versa \clieeeterm{negative infinity}) then 
+\code{(imagpart} \varname{c}\code{)} is a
+\clieeeterm{negative infinity} (or, vice-versa \clieeeterm{positive
+infinity}).
 
 \DExceptional{}
 
-When \varname{n} is a \clieeeterm{signaling NaN} then the
-\clname{cl:floating-point-invalid-operation} error is signaled.
 
-When \varname{n} is a \clterm{complex number}, then \code{conjugate}
-can signal the same set of conditions as if computing
-\code{(- (cl:imagpart} \varname{n}\code{))} while constricting the result
-\varname{c}.
+There are different exceptional situations to be considered.
 
-The function \code{conjugate} signals a \code{type-error} if
-\varname{n} is not a \clterm{number}.
+\begin{enumerate}
+\item When \code{conjugate} is called with 
+  \varname{n} being a \emph{signaling NaN}, then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
 
+\item If \varname{n} is not a \CL{} \clterm{number}
+  then the \code{conjugate}
+  might signal a \clname{cl:type-error}.
+\end{enumerate}
 
 \DSeeAlso{}
 
