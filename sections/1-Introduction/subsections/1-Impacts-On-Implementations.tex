@@ -1,0 +1,73 @@
+\documentclass[../Introduction.tex]{subfiles}
+\begin{document}
+It is understood that different \CL{} implementations already have
+made some assumptions about the \emph{floating point environment} they
+are dealing with.  In particular, the implementation of several \CL{}
+math functions may be sensitive to the
+setting of \emph{rounding modes}.  E.g., it is quite possible that all
+\CL{} implementations quietly assume a \emph{round to nearest} mode in
+the implementation of the \CL{} standard floating point operations.
+Another example is the treatment of comparison operators with respect
+to NaNs, as depicted by the example below\footnote{There are ways to
+  tell SBCL how to construct a NaN.}.
+
+\vspace*{3mm}
+
+\noindent
+SBCL signals a \code{CL:FLOATING-POINT-INEXACT} condition on a
+comparison involving \emph{quiet} NaNs.
+\begin{alltt}
+SBCL> \codeprompt{(< 42 quiet-nan)}
+debugger invoked on a FLOATING-POINT-INEXACT:
+  arithmetic error FLOATING-POINT-INEXACT signaled
+
+Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
+
+restarts (invokable by number or by possibly-abbreviated name):
+  0: [ABORT] Exit debugger, returning to top level.
+
+(SB-KERNEL:TWO-ARG-< 42 #<DOUBLE-FLOAT quiet NaN>)
+SBCL 0]
+\end{alltt}
+
+\vspace*{3mm}
+
+\noindent
+Lispworks just returns \code{NIL}.
+\begin{alltt}
+LW> \codeprompt{(< 42 1D+-0)} \textcolor{red}{; LW uses this notation to denote NaNs.}
+\textit{NIL}
+\end{alltt}
+
+\vspace*{3mm}
+
+\noindent
+CCL signals a \code{CL:FLOATING-POINT-INVALID-OPERATION} condition on a
+comparison involving NaNs; but in this case it is unknown whether
+\code{1D+-0} represents a \emph{quiet} or \emph{signaling} NaN.
+\begin{alltt}
+CL> \codeprompt{(< 42 1D+-0)} \textcolor{red}{; CCL uses a notation similar to LW.}
+> Error: FLOATING-POINT-INVALID-OPERATION detected
+> While executing: CCL::FIXNUM-DFLOAT-COMPARE, in process Listener(4).
+> Type cmd-. to abort, cmd-\ for a list of available restarts.
+> Type :? for other options.
+CCL 1 > 
+\end{alltt}
+
+As a consequence, this specification takes care not to impose
+constraints on programs already running, or to require implementations to
+actually adapt their cores to make the \CL{} package math functions in
+order to comply.
+
+Therefore, in order to be self-contained, this specification provides
+facilities (described below) that allow a \CL{} programmer to actually
+decide how to use LIA compliant code.  Most important, and
+possibly most annoying, this specification must define \emph{symbols}
+that corresponds to (some of) the operations described in
+\cite{2008:IEEE-754}, in order to provide the programmer with some
+certainty about the behavior of floating point operations.
+
+All in all, this specification is grafting onto the \CL{}
+specification some functionality which was fully defined after the
+publication of \cite{1996:ANSIHyperSpec}.
+\end{document}

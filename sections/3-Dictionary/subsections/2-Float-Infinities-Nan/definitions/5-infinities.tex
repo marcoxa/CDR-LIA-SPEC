@@ -1,0 +1,82 @@
+\documentclass[../Float-Infinities-Nan.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Constant Variables\\
+  \code{long-float-positive-infinity},
+  \code{long-float-negative-infinity},\\
+  \code{double-float-positive-infinity},
+  \code{double-float-negative-infinity},\\
+  \code{single-float-positive-infinity},
+  \code{single-float-negative-infinity},\\
+  \code{short-float-positive-infinity},
+  \code{short-float-negative-infinity},\\
+  \code{infL},
+  \code{infD},
+  \code{infF},
+  \code{infS}
+}
+\index{I!Infinities!\code{long-float-positive-infinity}}
+\index{I!Infinities!\code{long-float-negative-infinity}}
+\index{I!Infinities!\code{double-float-positive-infinity}}
+\index{I!Infinities!\code{double-float-negative-infinity}}
+\index{I!Infinities!\code{single-float-positive-infinity}}
+\index{I!Infinities!\code{single-float-negative-infinity}}
+\index{I!Infinities!\code{short-float-positive-infinity}}
+\index{I!Infinities!\code{short-float-negative-infinity}}
+\index{I!Infinities!\code{infL}}
+\index{I!Infinities!\code{infD}}
+\index{I!Infinities!\code{infF}}
+\index{I!Infinities!\code{infS}}  
+% \index{I!Infinities!\code{+infL0}}, 
+% \index{I!Infinities!\code{-infL0}},
+% \index{I!Infinities!\code{+infD0}}, 
+% \index{I!Infinities!\code{-infD0}},
+% \index{I!Infinities!\code{+infF0}}, 
+% \index{I!Infinities!\code{-infF0}},
+% \index{I!Infinities!\code{+infS0}}, 
+% \index{I!Infinities!\code{-infS0}},
+
+\DValues{}
+
+The value of each of these constants is
+\emph{implementation-dependent}.
+
+\DDescription{}
+
+The value of each of these constants must conform with the format
+(i.e., the floating point type) codified in the name.
+
+\DExamples{}
+
+\begin{alltt}
+SBCL> \codeprompt{single-float-positive-infinity}
+\textit{#.SB-EXT:SINGLE-FLOAT-POSITIVE-INFINITY}
+\end{alltt}
+
+\begin{alltt}
+LW> \codeprompt{single-float-positive-infinity}
+\textit{+1F++0} \textcolor{red}{#| +1F++0 is single-float plus-infinity |#}
+\end{alltt}
+
+\begin{alltt}
+LW> \codeprompt{-infD0}
+\textit{-1D++0} \textcolor{red}{#| -1D++0 is double-float plus-infinity |#}
+\end{alltt}
+
+\begin{alltt}
+LW> \codeprompt{-infL0}
+\textit{-1D++0} \textcolor{red}{#| -1D++0 is double-float plus-infinity |#}
+\textcolor{red}{;;; Note that in this case the widest float representation
+;;; available is DOUBLE-FLOAT.}
+\end{alltt}
+
+
+\DNotes{}
+
+The ``short'' names and the ``long ones'' are completely equivalent.
+A possible implementation would be the following:
+\begin{alltt}
+(define-symbol-macro -infD0 double-float-negative-infinity)
+\end{alltt}
+
+\end{document}

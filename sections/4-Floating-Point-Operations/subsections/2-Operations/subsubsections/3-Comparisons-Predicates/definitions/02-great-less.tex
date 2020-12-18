@@ -1,0 +1,79 @@
+\documentclass[../Comparisons-Predicates.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Functions \code{<}, \code{<=}, \code{>}, \code{>=}}
+  \index{*!\code{<}}
+  \index{*!\code{<=}}
+  \index{*!\code{>}}
+  \index{*!\code{>=}}
+  
+  \DSyntax{}
+  
+  \code{<} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+  \code{<} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}\\
+  \code{<=} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+  \code{<=} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}\\
+  \code{>} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+  \code{>} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}\\
+  \code{>=} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+  \code{>=} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}
+  
+  \DArgsNValues{}
+  
+  \varname{a} \varname{b} -- Numbers.\\
+  \varname{bs} -- A list of numbers.\\
+  \varname{boolean} -- a \clterm{generalized boolean}.
+  
+  \DDescription{}
+  
+  The dyadic version of \code{<}, \code{<=}, \code{>} and \code{>=}
+  perform arithmetic ordering tests between \varname{a} and
+  \varname{b}.  The monadic and n-adic versions are built upon the
+  dyadic one as per the regular \CL{} description in
+  \cite{1996:ANSIHyperSpec}.
+  
+  It is assumed that \varname{a} and \varname{b} are converted (as per
+  the \emph{contagion rules} of \CL{}) to be of the same type.
+  Therefore the following cases can be be considered as per the LIA
+  specifications.
+  
+  \begin{description}
+  \item If \varname{a} and \varname{b} are either finite reals, then the result is
+  \varname{true} (respectively, \varname{false}) if \varname{a} is
+  less or less than or equal (respectively, greater or greater or equal)
+  than \varname{b} in the mathematical sense.  In the
+  LIA specification this is the result of
+  $\mathit{lss}_T(a, b) \equiv a < b$,
+  $\mathit{leq}_T(a, b) \equiv a \leq b$
+  $\mathit{gtr}_T(a, b) \equiv a > b$, or
+  $\mathit{geq}_T(a, b) \equiv a \geq b$
+  for an
+  appropriate $T$.  This is the standard \CL{} case.
+  
+  \item If \varname {a} and \varname {b} are \clieeeterm{infinities} then
+  \code{=} returns \varname{true} (respectively \varname{false}) if they
+  are both positive or both negative; otherwise it returns
+  \varname{false} (respectively \varname{true}).
+  
+  \item If either \varname {a} or \varname {b} is a \clieeeterm{quiet NaN},
+  and, respectively, \varname {b} and \varname {a} is not a
+  \clieeeterm{signaling NaN}, then the result is \varname{false}.
+  
+  \item Complex numbers cannot be compared as per the \CL{}
+    specification \cite{1996:ANSIHyperSpec}.
+  \end{description}
+  
+  \DExceptional{}
+  
+  If either \varname {a} or \varname {b} is a \clieeeterm{signaling
+    NaN}, then, under the notification NACF regime, the indicator
+  \code{:invalid} is recorded and the
+  \code{floating-point-invalid-operation} is signaled (with
+  \emph{continuation value} \code{NIL} recorded); otherwise, under the
+  NRI notification regime, the indicator \code{invalid} is recorded and
+  \code{NIL} (\varname{false}) is returned as \emph{continuation value}.
+  
+  If either \varname{a}, or \varname{b} is not a \clterm{real} then a
+  \code{type-error} is signaled.
+  
+\end{document}

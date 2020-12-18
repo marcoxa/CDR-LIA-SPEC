@@ -1,0 +1,51 @@
+\documentclass[../Floating-Point-Environment.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Accessors
+  \code{fpe-traps},
+  \code{fpe-rounding-mode},
+  \code{fpe-current-notifications},\\
+  \code{fpe-accrued-notifications},
+  \code{fpe-precision},
+  \code{fpe-fast-mode-p},
+}
+\index{F!\code{fpe-traps}}      % Change to FPE-NOTIFICATIONS
+\index{F!\code{fpe-rounding-mode}}
+\index{F!\code{fpe-current-notifications}}
+\index{F!\code{fpe-accrued-notifications}}
+\index{F!\code{fpe-precision}}
+\index{F!\code{fpe-fast-mode-p}}
+
+\DSyntax{}
+
+\code{fpe-traps} \varname{fpe} $\Rightarrow$ \varname{traps}\\
+\code{fpe-rounding-mode} \varname{fpe} $\Rightarrow$ \varname{rounding-mode}\\
+\code{fpe-current-notifications} \varname{fpe} $\Rightarrow$ \varname{exceptions}\\
+\code{fpe-accrued-notifications} \varname{fpe} $\Rightarrow$ \varname{exceptions}\\
+\code{fpe-precision} \varname{fpe} $\Rightarrow$ \varname{precision}\\
+\code{fpe-fast-mode-p} \varname{fpe} $\Rightarrow$ \varname{result}
+
+\DArgsNValues{}
+
+\varname{fpe} -- An object of type \code{floating-point-environment}.\\
+\varname{rounding-mode} -- A member of the type \code{rounding-mode}.\\
+\varname{exceptions} -- An object of type \code{fpe-notification-set}.\\
+\varname{precision} -- One of the one of the integers 24, 53 and 64.\\
+\varname{result} -- A \emph{boolean}.
+
+\DDescription{}
+
+The ``accessors'' (readers -- functions) extract information from
+\varname{fpe}.
+
+
+\DNotes{}
+
+See also Section~\ref{sect:rounding} (below.)
+
+\DSeeAlso{}
+
+\code{floating-point-environment}, \code{rounding-mode},
+\code{fpe-notification-set}.
+
+\end{document}

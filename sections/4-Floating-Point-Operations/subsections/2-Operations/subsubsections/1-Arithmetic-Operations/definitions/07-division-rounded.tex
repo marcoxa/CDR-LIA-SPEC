@@ -1,0 +1,33 @@
+\documentclass[../Arithmetic-Operations.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Functions \code{/.<}, \code{/.>}}
+\index{*!\code{/.<}}
+\index{*!\code{/.>}}
+
+
+\code{/.<} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{/.>} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{/.<} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+\code{/.>} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+
+\DArgsNValues{}
+
+\varname{a}, \varname{b}, \varname{result} -- Floating Point numbers.\\
+\varname{numbers} -- A, possibly empty, list of numbers.\\
+\varname{n} -- A number.
+
+\DDescription{}
+
+The functions  \code{/.<} and \code{/.>} perform division as per \code{/}
+but they establish a \emph{downward} and, respectively a
+\emph{upward} rounding mode before performing the operation.
+
+\DNotes{}
+
+LIA1 suggests to call these operations \code{</} and \code{/>}, but
+then the symmetric subtraction ones hoard the the symbols \code{<-}
+and \code{->}, which are surely used more often than not for some
+specialized library.
+
+\end{document}

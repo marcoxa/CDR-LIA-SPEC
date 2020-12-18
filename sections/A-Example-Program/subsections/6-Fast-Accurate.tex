@@ -1,0 +1,15 @@
+\documentclass[../Example-Program.tex]{subfiles}
+\begin{document}
+
+\begin{alltt}
+    (\codelia{trap-math} (\codelia{:before (:save :clear)}
+                \codelia{:after :merge})
+      (fast-solution input)
+      (cl:floating-point-overflow ()
+         \codelia{:clear}
+         (\codelia{:continue} (reliable-solution input)))
+      )
+\end{alltt}
+
+
+\end{document}

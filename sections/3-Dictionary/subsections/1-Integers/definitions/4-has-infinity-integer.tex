@@ -1,0 +1,28 @@
+\documentclass[../Integers.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Constant \code{has-infinity-integer}}
+\index{H!\code{has-infinity-integer}}
+
+\DValues{}
+
+The value is \code{NIL}.\marginnote{Or should it be \code{T}? In this
+  case, there will be several consequences; how is an integer infinity
+represented? What is the ``continuation value'' for a division by
+zero?}
+
+\DDescription{}
+
+This constant indicates that the \CL{} datatype \code{integer} does not
+include infinities.
+
+\DNotes{}
+
+This is the parameter \textit{hasinf}$_I$ with $I$ equal to
+\code{integer}, required in LIA1 \cite{2012:LIA1}.
+
+\DSeeAlso{}
+
+\code{bounded-fixnum}, \code{bounded-integer}, \code{has-infinity-fixnum}.
+
+\end{document}

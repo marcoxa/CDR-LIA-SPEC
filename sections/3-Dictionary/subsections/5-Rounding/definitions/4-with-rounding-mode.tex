@@ -1,0 +1,56 @@
+\documentclass[../Rounding.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Macro \code{with-rounding-mode}}
+\index{W!\code{with-rounding-mode}}
+
+\DSyntax{}
+
+\code{with-rounding-mode} \code{(} \varname{rm} \code{)} \code{\&body}
+\varname{body}\\
+$\Rightarrow$ \varname{results}
+
+\DArgsNValues{}
+
+\varname{rm} -- An item of type \code{rounding-modes}.\\
+\varname{body} -- An implicit \code{progn} of code.\\
+\varname{results} -- The value (or values) returned by \varname{body}.
+
+\DDescription{}
+
+The code in \varname{body} is executed with a floating point
+environment where the rounding mode is set to \varname{rm}.  The
+previous rounding mode is saved before executing \varname{body} and it
+is restored (as if using \code{unwind-protect}) upon exit.
+
+\DExceptional{}
+
+The macro \code{with-rounding-mode} performs a minimal code-walk of
+\varname{body} and if it finds some floating point operation which
+potentially may not respect the rounding mode \varname{rm} issues a
+warning.
+%
+It is assumed that this warning will be raised at macro-expansion
+time.
+
+\DExamples{}
+
+The following examples may be from two implementations behaving
+differently with respect to their handling of rounding modes at the
+\CL{} package level.
+
+\begin{alltt}
+CL(A) prompt> \codeprompt{(with-rounding-mode (:positive-infinity)
+                  (cl:* 2 21.0))}
+\textit{42.0}
+\end{alltt}
+
+\begin{alltt}
+CL(B) prompt> \codeprompt{(with-rounding-mode (:positive-infinity)
+                  (cl:* 2 21.0))}
+\textcolor{red}{Warning:
+the function CL:* may not respect the new rounding mode :POSITIVE-INFINITY.}
+\textit{42.0}
+\end{alltt}
+
+\end{document}

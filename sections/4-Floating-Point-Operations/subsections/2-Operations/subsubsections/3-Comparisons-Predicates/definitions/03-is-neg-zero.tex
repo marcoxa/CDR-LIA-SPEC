@@ -1,0 +1,38 @@
+\documentclass[../Comparisons-Predicates.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Functions \code{is-neg-zero}, \code{neg-zero-p}}
+  \index{I!\code{is-neg-zero}}
+  \index{N!\code{neg-zero-p}}
+  
+  
+  \DSyntax{}
+  
+  \code{is-neg-zero} \varname{x} \RArrow \varname{boolean}\\
+  \code{neg-zero-p} \varname{x} \RArrow \varname{boolean}
+  
+  \DArgsNValues{}
+  
+  \varname{x} -- A \clterm{real}.\\
+  \varname{boolean} -- A \clterm{generalized boolean}.
+  
+  
+  \DDescription{}
+  
+  These functions check whether \varname{x} is a \emph{negative zero}
+  (i.e., $-0$).  For \CL{} the value returned is constantly \clterm{false}
+  (i.e., \code{NIL}).
+  
+  \DExceptional{}
+  
+  If \varname{x} is a \clieeeterm{NaN} then, under NCAF regime, the
+  function signals a\\
+  \code{floating-point-invalid-operation} with a
+  \code{NIL} \clieeeterm{continuation value}; under NRI, the
+  \code{:invalid} indicator is recorded and the \clieeeterm{continuation
+    value} \code{NIL} is returned.
+  
+  The function signals a \code{type-error} if the argument \varname{x}
+  is not a \clterm{real}.
+  
+\end{document}

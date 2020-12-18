@@ -1,0 +1,45 @@
+\documentclass[../Comparisons-Predicates.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{residue}}
+  \index{R!\code{residue}}
+  
+  \DSyntax{}
+  
+  \code{residue} \varname{x} \varname {y} \RArrow \varname{rm}
+  
+  \DArgsNValues{}
+  
+  \varname{x} -- a \clterm{number}\\
+  \varname{y} -- a \clterm{number}\\
+  \varname{rm} -- a \clterm{number}
+  
+  
+  \DDescription{}
+  
+  The \code{residue} function returns the \clliaterm{remainder}
+  \varname{rm} of a the division between \varname{x} and \varname{y}.
+  
+  When \varname{y} is an \clliaterm{infinite} number, than \varname{rm}
+  is \varname{y} itself.  If either \varname{x} or \varname{y} is a
+  \clliaterm{quiet NaN} then \varname{rf} is a \clliaterm{quite NaN}.
+  
+  If either \varname{x} or \varname{y} is a \clterm{complex number}
+  then, as per LIA3 \cite{2004:LIA3}, the real part and the imaginary
+  part must be \clterm{integer numbers} and the result \varname{rm} is
+  computed as per LIA3.
+  
+  
+  \DExceptional{}
+  
+  If either \varname{x} or \varname{y} is a \clliaterm{signaling NaN}
+  then if the notification style is NACF then a\\
+  \code{floating-point-invalid-operation} is signaled with a
+  \clliaterm{quiet NaN} as continuation value.  If the notification
+  style is NRI then the \code{:invalid} indicator is recorded and a
+  \clliaterm{quiet NaN} is returned as continuation value.
+  
+  A \code{type-error} is signaled if either \varname{x} or \varname{y} is
+  not a \clliaterm{number}.
+  
+\end{document}

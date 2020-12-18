@@ -1,0 +1,34 @@
+\documentclass[../Integers.tex]{subfiles}
+\begin{document}
+
+
+\DDictionaryItem{Constants \code{minimum-integer}, \code{maximum-integer}}
+\index{M!\code{minimum-integer}}
+\index{M!\code{maximum-integer}}
+
+\DValues{}
+
+The value of \code{minimum-integer} is $-\infty$.\\
+The value of \code{maximum-integer} is $+\infty$\marginnote{The values
+  are, for the time being, arbitrary.  They could be made equal to the
+  floating point infinities, with all the necessary consequences.}
+
+\DDescription{}
+
+These constants represent the minimum and maximum \code{integers},
+which are usually limited by actual memory constraints.
+
+\DNotes{}
+
+These are the parameters \textit{minint}$_I$ and \textit{maxint}$_I$,
+with $I$ equal to \code{integer}, required in LIA1 \cite{2012:LIA1}.
+
+\DSeeAlso{}
+
+\code{bounded-fixnum},
+\code{bounded-integer},\\
+%
+\code{minimum-fixnum},
+\code{maximum-fixnum}.
+
+\end{document}

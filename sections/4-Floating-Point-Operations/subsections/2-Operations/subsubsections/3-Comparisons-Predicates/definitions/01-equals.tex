@@ -1,0 +1,69 @@
+\documentclass[../Comparisons-Predicates.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{=}, \code{/=}}
+  \index{*!\code{=}}
+  \index{*!\code{/=}}
+  
+  \DSyntax{}
+  
+  \code{=} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+  \code{=} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}\\
+  \code{/=} \varname{a}, \varname{b} \RArrow \varname{boolean}\\
+  \code{/=} \varname{a} \code{\&rest} \varname{bs} \RArrow \varname{boolean}
+  
+  \DArgsNValues{}
+  
+  \varname{a} \varname{b} -- Numbers.\\
+  \varname{bs} -- A list of numbers.\\
+  \varname{boolean} -- a \clterm{generalized boolean}.
+  
+  \DDescription{}
+  
+  The dyadic version of \code{=} (and \code{/=}) performs an arithmetic
+  equality (inequality) test between \varname{a} and \varname{b}.  The
+  monadic and n-adic versions are built upon the dyadic one as per the
+  regular \CL{} description in \cite{1996:ANSIHyperSpec}.
+  
+  It is assumed that \varname{a} and \varname{b} are converted (as per
+  the \emph{contagion rules} of \CL{}) to be of the same type.
+  Therefore the following cases can be be considered as per the LIA
+  specifications.
+  
+  \begin{description}
+  \item If \varname{a} and \varname{b} are either finite integers, finite
+  floating point numbers, or finite complex numbers then the result is
+  \varname{true} (respectively, \varname{false}) if the two numbers are
+  equal (respectively, different) in the mathematical sense.  In the
+  LIA spec this is the result of $\mathit{eq}_T(a, b) \equiv a = b$ or
+  $\mathit{neq}_T(a, b) \equiv a \neq b$ for an
+  appropriate $T$.  This is the standard \CL{} case.
+  
+  \item If \varname {a} and \varname {b} are \clieeeterm{infinities} then
+  \code{=} returns \varname{true} (respectively \varname{false}) if they
+  are both positive or both negative; otherwise it returns
+  \varname{false} (respectively \varname{true}).
+  
+  \item If either \varname {a} or \varname {b} is a \clieeeterm{quiet NaN},
+  and, respectively, \varname {b} and \varname {a} is not a
+  \clieeeterm{signaling NaN}, then the result is \varname{false}.
+  
+  \item Complex numbers are checked recursively on the real and imaginary
+  parts.
+  \end{description}
+  
+  \DExceptional{}
+  
+  If either \varname {a} or \varname {b} is a \clieeeterm{signaling
+    NaN}, then, under the notification NACF regime, the indicator
+  \code{:invalid} is recorded and the
+  \code{floating-point-invalid-operation} is signaled (with
+  \emph{continuation value} \code{NIL} recorded); otherwise, under the
+  NRI notification regime, the indicator \code{invalid} is recorded and
+  \code{NIL} (\varname{false}) is returned as \emph{continuation value}.
+  
+  For complex numbers, the recording and signaling operations (under NRI
+  and NACF) happens if the condition above applied to either of the real
+  or the imaginary parts of \varname{a} and \varname{b}.
+  
+\end{document}

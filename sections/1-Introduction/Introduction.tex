@@ -1,0 +1,98 @@
+\documentclass[../../CDR-IEEE-754-support.tex]{subfiles}
+\begin{document}
+The ANSI \CL{} Specification \cite{1996:ANSIHyperSpec} hints at possible
+compliance with IEEE ``Floating Points'' (in retrospect, \IEEEFPStd{}) in
+the description of the \code{*features*} variable, where:
+\begin{description}
+\item[\code{:ieee-floating-point}]
+  If present, indicates that the
+  implementation \emph{purports to conform}  to the requirements of
+  \emph{IEEE Standard for Binary Floating-Point Arithmetic}. 
+\end{description}
+
+After the publication of the \CL{} standard \cite{1994:ANSICL}, other
+standards were published by IEEE and ISO/IEC specifying the
+Application Programming Interface (API) for, by then well established,
+commonly used arithmetic and mathematical operations.  These
+specifications are the \emph{IEEE Standard for Floating-Point
+  Arithmetic} (\IEEEFPStd{}) \cite{2008:IEEE-754} specification (which
+will be referred as \IEEEFPStd{} in this text) and the \emph{ISO/IEC
+  Information technology -- Language independent arithmetic} \IECLIA{}
+\cite{2012:LIA1,2001:LIA2,2004:LIA3} (in three parts, which will be
+referred as LIA1, LIA2 and LIA3, or simply LIA, in this text).
+
+\vspace*{3mm}
+
+\noindent
+The LIA specifications also contain Annexes specifying \emph{language
+  bindings}, including \CL{} (cfr., LIA1, Annex~D).  They also specify
+how a language definition should handle \emph{exceptional situations}
+(cfr., LIA1, Section~6), which has consequences for \CL{} described
+below.
+
+\vspace*{3mm}
+
+\noindent
+Alas, the actual state of ``compliance'' with these specifications,
+among different \CL{} implementations varies wildly, especially the
+LIA ones, with some implementations publicizing the
+\code{:ieee-floating-point} feature while providing an unclear subset
+of functionalities of features.
+% \footnote{We speak of the sin and not of the sinner; you can check for
+%   yourself what happens in the various implementations.}.
+This is in contrast with the current state of affairs in other
+languages and language ecosystems; especially languages designed and
+built \emph{after} the publication of the \IEEEFPStd{} and LIA
+documents.
+
+\vspace*{3mm}
+
+% The goal of this document is to address some of this state of affairs
+% by providing a specification for a minimalistic subset of
+% names,\marginnote{Not very ``minimalistic'' anymore\ldots}
+% functions and macros to be used in conjunction with \IEEEFPStd{}
+% concepts.
+
+The goal of this document is to put forth a rationale and a \ANSICL{}
+styled specification for \CL{} that provided the facilities described
+in the \IECLIA{} LIA specification.
+%
+The following issues will especially 
+be addressed:
+\begin{itemize}
+\item \code{NaN}s and ``infinities''.
+
+\item Functions and macros to handle \emph{rounding modes}; with
+  special care devoted to incentivate non-invasive, yet informative,
+  implementations.
+
+\item Functions and macros to handle with the underlying
+  \emph{floating point environment} and the interplay between
+  \IEEEFPStd{} notion of \emph{signaling} vs.~the \CL{} notion of
+  \clterm{condition signalling}.  I.e., providing a clear set of
+  functionalities to handle \emph{exceptional situations} and a clear
+  definition of the behavior of each operator and function with
+  respect the LIA specifications.
+  
+\item Clarifying the behavior of the \CL{} set of mathematical
+  functions (cfr.,~Section~12.2 of \cite{1996:ANSIHyperSpec}) with respect
+  to the specification contained herein.
+\end{itemize}
+
+\vspace*{3mm}
+
+The content of this document borrows ideas from the \CLang{}
+specification \cite{2018:C18}, and the documentation of
+several \CL{} implementations.
+
+\paragraph{Note.} In the following, the examples shown try to be
+specific for a given implementation; that is, whenever a behavior is
+referring to a specific implementation (even when illustrating a
+generic behavior), the ``prompt'' will refer to that implementation --
+\code{LW>}, \code{SBCL>}, etc. etc.
+
+
+\subsection{Impact on Current \CL{} Implementations}
+\subfile{subsections/1-Impacts-On-Implementations.tex}
+
+\end{document}

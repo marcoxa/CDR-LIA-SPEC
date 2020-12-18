@@ -1,0 +1,53 @@
+\documentclass[../Float-Infinities-Nan.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Functions \code{is-nan}, \code{nanp},\\
+  \code{is-quiet-nan},
+  \code{quiet-nan-p},\\
+  \code{is-signaling-nan},
+  \code{signaling-nan-p}
+}
+\index{I!\code{is-nan}}
+\index{N!\code{nanp}}
+\index{I!\code{is-quiet-nan}}
+\index{Q!\code{quiet-nan-p}}
+\index{I!\code{is-signaling-nan}} 
+\index{S!\code{signaling-nan-p}}
+
+\DSyntax{}
+
+\code{is-nan} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{nanp} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{is-quiet-nan} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{quiet-nan-p} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{is-signaling-nan} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{signaling-nan-p} \varname{x} $\Rightarrow$ \textit{boolean}\\
+
+\DArgsNValues{}
+
+\varname{x} -- any \CL{} object.
+
+\DDescription{}
+
+The function \code{is-nan} (respectively \code{nanp} etc.) returns \code{T}
+whenever \varname{x} is a (representation of an IEEE) NaN.  Otherwise
+it returns \code{NIL}. The \emph{quiet} and \emph{signaling} versions
+operate similarly.
+
+\DExamples{}
+
+\begin{alltt}
+CL prompt> \codeprompt{(is-nan nan)}
+\textit{T}
+
+CL prompt> \codeprompt{(nanp nan)}
+\textit{T}
+
+CL prompt> \codeprompt{(is-nan 42)}
+\textit{NIL}
+
+CL prompt> \codeprompt{(is-nan "NaN")}
+\textit{NIL}
+\end{alltt}
+
+\end{document}

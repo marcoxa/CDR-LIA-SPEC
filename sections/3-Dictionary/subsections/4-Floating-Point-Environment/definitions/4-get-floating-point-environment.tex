@@ -1,0 +1,42 @@
+\documentclass[../Floating-Point-Environment.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{get-floating-point-environment}}
+\index{G!\code{get-floating-point-environment}}
+
+\DSyntax{}
+
+\code{get-floating-point-environment} \textit{$<$no arguments$>$}
+$\Rightarrow$ \varname{modes}
+
+\DArgsNValues{}
+
+\varname{modes} --  An object of type \code{floating-point-environment}.
+
+
+\DDescription{}
+
+The function returns an a-list that represents the current state of
+the floating point modes in use at the time.  The format of the
+returned \varname{modes} a-list is such to be
+usable as an \code{apply} last argument for
+\code{set-floating-point-environment}.
+
+
+\DExamples{}
+
+\begin{alltt}
+SBCL> \codeprompt{(get-floating-point-environment)}
+\textit{(:TRAPS (:OVERFLOW :INVALID :DIVIDE-BY-ZERO)
+ :ROUNDING-MODE :NEAREST
+ :CURRENT-NOTIFICATIONS (:INEXACT)
+ :FAST-MODE NIL
+ :PRECISION :53-BIT)}
+\end{alltt}
+
+
+\DSeeAlso{}
+
+\code{set-floating-point-environment}.
+
+\end{document}

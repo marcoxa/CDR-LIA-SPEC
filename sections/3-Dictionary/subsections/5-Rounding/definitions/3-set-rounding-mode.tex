@@ -1,0 +1,27 @@
+\documentclass[../Rounding.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{set-rounding-mode}}
+\index{S!\code{set-rounding-mode}}
+
+\DSyntax{}
+
+\code{set-rounding-mode} \varname{rounding-mode}
+$\Rightarrow$ \varname{result}, \varname{success}
+
+\DArgsNValues{}
+
+\varname{rounding-mode} -- a \code{rounding-mode}\\
+\varname{result} -- a \code{rounding-mode}\\
+\varname{success} -- a boolean
+
+
+\DDescription{}
+
+The function sets the rounding mode.  If the setting of the rounding
+mode is successful, then \varname{rounding-node} is returned as
+\varname{result} and \varname{success} is \code{T}.  Otherwise, the
+rounding mode before the the call is returned with \varname{success}
+\code{NIL}.\marginnote{Should it instead signal an error?}
+
+\end{document}

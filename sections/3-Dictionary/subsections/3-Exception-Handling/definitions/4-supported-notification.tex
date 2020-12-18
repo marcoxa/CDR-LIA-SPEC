@@ -1,0 +1,64 @@
+\documentclass[../Exception-Handling.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Functions \code{supported-notification-p},\\
+  \code{all-supported-notifications-p},
+  \code{some-supported-notifications-p}}
+\index{S!\code{supported-notification-p}}
+\index{A!\code{all-supported-notifications-p}}
+\index{S!\code{some-supported-notifications-p}}
+
+\DSyntax{}
+
+\code{supported-notification-p}
+\varname{exception} $\Rightarrow$ \textit{boolean}\\
+\code{all-supported-notifications-p} \code{\&rest}
+\varname{exceptions} $\Rightarrow$ \textit{boolean}\\
+\code{some-supported-notifications-p} \code{\&rest}
+\varname{exceptions} $\Rightarrow$ \textit{boolean}
+
+\DArgsNValues{}
+
+\varname{exception} -- a \CL{} object of type 
+\code{fpe-notification}.\\
+\varname{exceptions} -- a list of \CL{} objects each of type 
+\code{fpe-notification}.
+
+
+\DDescription{}
+
+The functions returns a true value if the exceptions passed as
+arguments are supported by the implementation.
+
+The function \code{supported-notification-p} returns true if 
+\varname{exception} is supported by the implementation, and \code{NIL}
+otherwise.
+
+The function \code{all-supported-notifications-p} returns true if all the
+elements in \varname{exceptions} are supported by the implementation,
+and \code{NIL} otherwise.
+
+The function \code{some-supported-notifications-p} returns true if any the
+elements in \varname{exceptions} is supported by the implementation,
+and \code{NIL} otherwise.
+
+\DExamples{}
+
+\begin{alltt}
+CL prompt> \codeprompt{(supported-notification-p :divide-by-zero)}
+\textit{T} \textcolor{red}{; Or could be be NIL.}
+
+CL prompt> \codeprompt{(some-supported-notifications-p :divide-by-zero :inexact)}
+\textit{T} \textcolor{red}{; Assuming the previous operation returned true.}
+
+CL prompt> \codeprompt{(all-supported-notification-p :divide-by-zero :inexact)}
+\textit{NIL} \textcolor{red}{; Or could be be T.}
+\end{alltt}
+
+\DExceptional{}
+
+The functions signal a \code{type-error} if \varname{exception}
+is not of type \code{fpe-notification} or if \varname{exceptions} contains
+objects not of type \code{fpe-notification}.
+
+\end{document}

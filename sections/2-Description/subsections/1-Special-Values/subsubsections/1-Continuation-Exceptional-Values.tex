@@ -1,0 +1,18 @@
+\documentclass[../Special-Values.tex]{subfiles}
+\begin{document}
+
+The LIA specifications ensure that certain special values are passed
+on as \emph{continuation} values downstream a computation.  This often
+happens in conjunction with a \emph{notification}, that is, in
+presence of an \emph{exceptional} situation (cfr.,
+Section~\ref{sect:notifications}).
+
+This specification clarifies when and \emph{how} such continuation
+values are passed on -- the most common example being
+\clieeeterm{quiet NaNs}.  This specification also clarifies when and
+how \emph{exceptional values} are to be considered; also,
+\clieeeterm{infinities} and \clieeeterm{NaN}s used as
+\emph{continuation values} are not to be intended as exceptional
+values (cfr., \cite{2012:LIA1} Section~4.2.3, 4.2.8, 4.2.9).
+
+\end{document}

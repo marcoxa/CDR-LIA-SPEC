@@ -1,0 +1,99 @@
+\documentclass[../Floating-Point-Environment.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Macro \code{with-floating-point-environment}}
+\index{W!\code{with-floating-point-environment}}
+
+\DSyntax{}
+
+% \code{with-floating-point-environment} (\textit{\code{\&key}}
+% \varname{traps}
+% \varname{rounding-mode}
+% \varname{current-notifications}
+% \varname{precision}
+% \varname{\code{\&allow-other-keys}}) \code{\&body} \varname{body}
+% $\Rightarrow$ \varname{results}
+
+\begin{tabbing}
+\code{with-floating-point-environment} \=(\=\code{\&key}\\
+\>\>                                \varname{traps}\\
+\>\>                                \varname{rounding-mode}\\
+\>\>                                \varname{current-notifications}\\
+\>\>                                \varname{precision}\\
+\>\>                                \code{\&allow-other-keys})\\
+\> \code{\&body} \varname{body}\\
+$\Rightarrow$ \varname{results}
+\end{tabbing}
+
+
+
+
+\DArgsNValues{}
+
+\varname{traps} -- A list of the exception conditions that should cause
+traps.\\
+\varname{rounding-mode} -- The rounding mode to use when the result is
+not exact.\\
+\varname{current-notifications} -- The argument is used to set the current
+set of exceptions.\\
+\varname{precision} -- An integer.\\
+\varname{results} -- One or more \CL{} objects.
+
+
+\DDescription{}
+
+The \code{with-floating-point-environment} macro executes \varname{body} in a
+an environment where the floating point modes are determined by the
+values passed as arguments to the macro.  Upon termination (either
+normal or exceptional) of the code in \varname{body} the floating
+point modes are restored to those in effect before the execution of\\
+\code{with-floating-point-environment}.
+
+As for \code{set-floating-point-environment} the values that the arguments
+can take are the following:
+
+\begin{itemize}
+\item \varname{traps} is a list that can contain the keywords
+  \code{:underflow}, \code{:overflow}, \code{:inexact}, \code{:invalid},
+  \code{:divide-by-zero}, and \code{:denormalized-operand}.
+
+\item \varname{rounding-mode} is the rounding mode to use when the result is
+  not exact; it can assume the values \code{:nearest},
+  \code{:positive-infinity}, \code{:negative-infinity} and
+  \code{:zero}.
+
+\item \varname{current-notifications} is used to set the exception flags. The
+  main use is setting the accrued exceptions to \code{NIL} to clear
+  them.
+
+\item \varname{precision} can be one of the integers 24, 53 and 64,
+  standing for the internal precision of the mantissa.
+\end{itemize}
+
+
+
+\noindent
+\varname{results} is the value (or values) returned by \varname{body}.
+
+
+\DNotes{}
+
+When called with an empty arguments list,
+\code{with-floating-point-environment} is a no-op and \varname{body}
+is executed as-is.
+
+\DExceptional{}
+
+The macro \code{with-floating-point-environment} performs a minimal
+code-walk of \varname{body} and if it finds some floating point
+operation which potentially may not respect the changed environment as
+described by the specified arguments, it then issues a warning.
+
+
+\DSeeAlso{}
+
+\code{get-floating-point-environment},
+\code{set-floating-point-environment}\\
+\code{with-rounding-mode}.
+
+\end{document}

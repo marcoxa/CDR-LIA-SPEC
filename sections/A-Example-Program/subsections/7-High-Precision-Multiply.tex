@@ -1,0 +1,17 @@
+\documentclass[../Example-Program.tex]{subfiles}
+\begin{document}
+
+\begin{alltt}
+   (let* ((x1 (\codelia{round-float} x (/ (float-digits x) 2)))
+          (x2 (- x x1))
+          (y1 (\codelia{round-float} y (/ (float-digits y) 2)))
+          (y2 (- y y2))
+          \ldots
+          )
+     (declare (type double-float x1 x2 y1 y2 \ldots))
+
+     \ldots
+     )
+\end{alltt}
+
+\end{document}

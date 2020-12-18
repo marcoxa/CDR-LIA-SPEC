@@ -1,0 +1,46 @@
+\documentclass[../Float-Infinities-Nan.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Functions \code{is-infinity}, \code{infinityp}}
+\index{I!\code{is-infinity}}
+\index{I!\code{infinityp}}
+
+\DSyntax{}
+
+\code{is-infinity} \varname{x} $\Rightarrow$ \textit{boolean}\\
+\code{infinityp} \varname{x} $\Rightarrow$ \textit{boolean}
+
+\DArgsNValues{}
+
+\varname{x} -- any \CL{} object.
+
+\DDescription{}
+
+The function \code{is-infinity} (respectively \code{infinityp}) returns \code{T}
+whenever \varname{x} is a (representation of an IEEE) infinity.  Otherwise
+it returns \code{NIL}.
+
+
+\DExamples{}
+
+\begin{alltt}
+CL prompt> \codeprompt{(is-infinity double-float-negative-infinity)}
+\textit{T}
+\end{alltt}
+
+\begin{alltt}
+CL prompt> \codeprompt{(infinityp nan)}
+\textit{NIL}
+\end{alltt}
+
+\begin{alltt}
+CL prompt> \codeprompt{(is-infinity 42)}
+\textit{NIL}
+\end{alltt}
+
+\begin{alltt}
+CL prompt> \codeprompt{(is-infinity "NaN")}
+\textit{NIL}
+\end{alltt}
+
+\end{document}

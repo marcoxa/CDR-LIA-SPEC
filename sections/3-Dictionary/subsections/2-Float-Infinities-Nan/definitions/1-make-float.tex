@@ -1,0 +1,45 @@
+\documentclass[../Float-Infinities-Nan.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{make-float}}
+\index{M!\code{make-float}}
+
+\DSyntax{}
+
+\code{make-float} \varname{bytes} \code{\&optional}
+\varname{float-type}
+$\Rightarrow$ \varname{float}
+
+\DArgsNValues{}
+
+\varname{bytes} -- An integer or bit-vector representing the binary
+pattern of a floating point number.\\
+\varname{float-type} -- A recognizable subtype of \code{float},
+defaulting to \code{*read-default-float-format*}.\\
+\varname{result} -- the resulting floating point number or \code{NAN}.
+
+
+\DDescription{}
+
+The function constructs a floating point number of appropriate
+\varname{float-type}, starting from the bit content of
+\varname{bytes}.
+
+If \varname{bytes} corresponds to the byte pattern of a \emph{NaN},
+then a \code{NAN} is returned, regardless of \varname{float-type}.
+
+\DExceptional{}
+
+The function signals a \code{type-error} if either \varname{bytes} or
+\varname{float-type} are not as described above.
+
+\DSeeAlso{}
+
+\code{NAN}.
+
+\DNotes{}
+
+This function is, in one form or another, already present in \CL{}
+implementations.
+
+\end{document}

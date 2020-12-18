@@ -1,0 +1,29 @@
+\documentclass[../Environment-Queries.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{is-cl-using-cdr-ieee-745}}
+\index{I!\code{is-cl-using-cdr-ieee-745}}
+
+\DSyntax{}
+
+\code{is-cl-using-cdr-ieee-745} \varname{$<$no argument$>$}
+\RArrow \varname{result}
+
+\DArgsNValues{}
+
+\varname{result} -- a generalized boolean.
+
+
+\DDescription{}
+
+This function returns a non-\code{NIL} value if the mathematical
+operations in the ANSI \CL{} standard \cite{1996:ANSIHyperSpec} respect the
+IEEE~745 specification.
+
+\DNotes{}
+
+This is a stronger requirement than the
+presence of the \code{ieee-floating-point} feature in
+\code{*features*}.
+
+\end{document}

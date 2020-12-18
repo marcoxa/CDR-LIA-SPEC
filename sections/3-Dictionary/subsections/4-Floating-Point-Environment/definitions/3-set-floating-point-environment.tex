@@ -1,0 +1,80 @@
+\documentclass[../Floating-Point-Environment.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{set-floating-point-environment}}
+\index{S!\code{set-floating-point-environment}}
+
+\DSyntax{}
+
+\begin{tabbing}
+\code{set-floating-point-environment} \= \code{\&key}\\
+\>\varname{traps}\\
+\>\varname{rounding-mode}\\
+\>\varname{current-notifications}\\
+\>\varname{precision}\\
+\>\code{\&allow-other-keys}\\
+$\Rightarrow$ \varname{modes}
+\end{tabbing}
+
+
+\DArgsNValues{}
+
+\varname{traps} -- A list of the exception conditions that should cause
+traps.\\
+\varname{rounding-mode} -- The rounding mode to use when the result is
+not exact.\\
+\varname{current-notifications} -- The argument is used to set the current
+set of exceptions.\\
+\varname{precision} -- An integer.\\
+\varname{modes} -- An a-list containing the current floating
+point modes; the indicators are keywords.
+
+\DDescription{}
+
+This function sets options controlling the floating-point
+hardware. If a keyword is not supplied, then the current value is
+preserved.
+
+The possible values for each of the keywords are the
+following.
+
+\begin{itemize}
+\item \varname{traps} is a list that can contain the keywords
+  \code{:underflow}, \code{:overflow}, \code{:inexact}, \code{:invalid},
+  \code{:divide-by-zero}, and \code{:denormalized-operand}.
+
+\item \varname{rounding-mode} is the rounding mode to use when the result is
+  not exact; it can assume the values \code{:nearest},
+  \code{:positive-infinity}, \code{:negative-infinity} and
+  \code{:zero}.
+
+\item \varname{current-notifications} is used to set the exception flags. The
+  main use is setting the accrued exceptions to \code{NIL} to clear
+  them.
+
+\item \varname{precision} can be one of the integers 24, 53 and 64, standing for
+  the internal precision of the mantissa.
+\end{itemize}
+
+\DExamples{}
+
+None.
+
+
+\DNotes{}
+
+None.
+
+
+\DExceptional{}
+
+The function can always result in a no-op if access to the underlying
+hardware is not fully supported.  When this happens
+\code{set-floating-point-environment} must issue a warning.
+
+
+\DSeeAlso{}
+
+\code{get-floating-point-environment}.
+
+\end{document}

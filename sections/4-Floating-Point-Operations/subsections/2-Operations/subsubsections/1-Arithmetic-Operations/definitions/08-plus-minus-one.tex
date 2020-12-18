@@ -1,0 +1,64 @@
+\documentclass[../Arithmetic-Operations.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Functions \code{1+}, \code{1-}}
+\index{*!\code{1+}}
+\index{*!\code{1-}}
+
+\DSyntax{}
+
+\code{1+} \varname{n} \RArrow ~ \varname{result}\\
+\code{1-} \varname{n} \RArrow ~ \varname{result}\\
+
+\DArgsNValues{}
+
+\varname{n} -- A \clterm{number}.\\
+\varname{result} -- A \clterm{number}.
+
+
+\DDescription{}
+
+The functions \code{1+} and \code{1-} are defined, 
+as the \CL{} counterparts, as:
+\begin{enumerate}
+\item \code{(1+}
+\varname{n}\code{)} $\equiv$ \code{(+}
+\varname{n}\code{ 1)}.
+\item \code{(1-}
+\varname{n}\code{)} $\equiv$ \code{(-}
+\varname{n}\code{ 1)}.
+\end{enumerate}
+
+The behaviour and the exceptional situations of \code{1+} and
+\code{1-} are inherited by \code{+} and \code{-} described above.
+
+When \varname{n} is not a \clieeeterm{NaNs} or an
+\clieeeterm{infinity} the functions \code{1+} and \code{1-}
+assume the usual behavior specified for \CL{} (cfr.
+Section~12.2 of \cite{1996:ANSIHyperSpec}).
+
+When \code{1+} or \code{1-} is called with \varname{n} being a
+\clieeeterm{quiet NaN} then \varname{result} is a \clieeeterm{quiet NaN}.
+
+When \code{1+} or \code{1-} is called with \varname{n} being an
+\clieeeterm{infinity} then \varname{result}  is an
+\clieeeterm{infinity} equal to \varname{n}.
+
+\DExceptional{}
+
+There are different exceptional situations to be considered.
+
+\begin{enumerate}
+\item When \code{1+} or \code{1-} is called with \varname{n}
+  being a \emph{signaling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+
+\item If \varname{n} is not a \CL{} \clterm{number} then the function
+  signals a \clname{cl:type-error}.
+\end{enumerate}
+
+\DSeeAlso{}
+
+\code{+}, \code{-}.
+
+\end{document}

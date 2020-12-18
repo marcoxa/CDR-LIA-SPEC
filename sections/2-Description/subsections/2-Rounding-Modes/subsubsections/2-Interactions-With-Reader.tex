@@ -1,0 +1,17 @@
+\documentclass[../Rounding-Modes.tex]{subfiles}
+\begin{document}
+
+The \CL{} reader builds floating point numbers according to the rules
+specified in \cite{1994:ANSICL}.  This specification states that the
+\CL{} reader subsystem is not affected by changes of the rounding
+mode.  That is,
+\begin{alltt}
+CL prompt> \codeprompt{(round-upward (read))}
+42.0
+\textit{42.0}
+\end{alltt}
+will produce a \code{42.0} result that is rounded according to the
+standard rules of the \CL{} reader floating point parsing
+rules, overriding the \code{round-upward} settings.
+
+\end{document}

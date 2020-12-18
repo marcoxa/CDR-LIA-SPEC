@@ -1,0 +1,60 @@
+\documentclass[../Arithmetic-Operations.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{conjugate}}
+\index{C!\code{conjugate}}
+
+\DSyntax{}
+
+\code{conjugate} \varname{n} \RArrow{} \varname{c}
+
+\DArgsNValues{}
+
+\varname{n}, \varname{c} -- \CL{} \clterm{number}s.
+
+\DDescription{}
+
+When the value of \code{(realpart} \varname{n}\code{)} and
+\code{(imagpart} \varname{n}\code{)} are not
+\clieeeterm{NaNs} or \clieeeterm{infinity} the function
+\code{conjugate} assume the usual behavior specified for \CL{} (cfr.
+Section~12.2 of \cite{1996:ANSIHyperSpec}).
+
+When \code{conjugate} is called with \varname{n} being a
+\clieeeterm{quiet NaN} then \varname{c} is a
+\clieeeterm{quiet NaN}.
+
+When \code{conjugate} is called with \code{(realpart}
+\varname{n}\code{)}  being a \clieeeterm{positive infinity} (or,
+vice-versa \clieeeterm{negative infinity}) then 
+\code{(realpart} \varname{c}\code{)} is a
+\clieeeterm{positive infinity} (or, vice-versa \clieeeterm{negative
+  infinity}).
+
+When \code{conjugate} is called with \code{(imagpart}
+\varname{n}\code{)}  being a \clieeeterm{positive infinity} (or,
+vice-versa \clieeeterm{negative infinity}) then 
+\code{(imagpart} \varname{c}\code{)} is a
+\clieeeterm{negative infinity} (or, vice-versa \clieeeterm{positive
+infinity}).
+
+\DExceptional{}
+
+
+There are different exceptional situations to be considered.
+
+\begin{enumerate}
+\item When \code{conjugate} is called with 
+  \varname{n} being a \emph{signaling NaN}, then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+
+\item If \varname{n} is not a \CL{} \clterm{number}
+  then the \code{conjugate}
+  might signal a \clname{cl:type-error}.
+\end{enumerate}
+
+\DSeeAlso{}
+
+\code{-}
+
+\end{document}

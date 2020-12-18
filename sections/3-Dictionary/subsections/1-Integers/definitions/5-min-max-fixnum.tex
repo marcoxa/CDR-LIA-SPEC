@@ -1,0 +1,35 @@
+\documentclass[../Integers.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Constants \code{minimum-fixnum}, \code{maximum-fixnum}}
+\index{M!\code{minimum-fixnum}}
+\index{M!\code{maximum-fixnum}}
+
+\DValues{}
+
+The value of \code{minimum-fixnum} is \code{cl:most-negative-fixnum}.\\
+The value of \code{maximum-fixnum} is \code{cl:most-positive-fixnum}.
+
+\DDescription{}
+
+These constants represent the minimum and maximum \code{fixnum}s
+available in an implementation.
+
+\DNotes{}
+
+These are the parameters \textit{minint}$_I$ and \textit{maxint}$_I$,
+with $I$ equal to \code{fixnum}, required in LIA1 \cite{2012:LIA1}.
+Their values are the obvious \CL{} counterparts.
+
+\DSeeAlso{}
+
+\code{bounded-fixnum},
+\code{bounded-integer},\\
+%
+\code{most-negative-fixnum},\\
+\code{most-positive-fixnum},\\
+%
+\code{minimum-integer},
+\code{maximum-integer}.
+
+\end{document}

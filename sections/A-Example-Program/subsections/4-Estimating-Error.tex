@@ -1,0 +1,26 @@
+\documentclass[../Example-Program.tex]{subfiles}
+\begin{document}
+
+\begin{alltt}
+      (let ((a (make-array 100 :element-type 'double-float))
+            (b (make-array 100 :element-type 'double-float))
+            (dot 0.0d0)
+            (dotmax 0.0d0)
+            (loss 0)
+           )
+        (declare (type (array 100 double-float) a b)
+                 (type double-float dot dotmax)
+                 (type integer loss))
+       
+        (dotimes (i 100)
+           (incf dot (* (aref a i) (aref b i)))
+           (setf dotmax (max (abs dot) dotmax)))
+  
+        (setf loss (- (nth-value 1 (decode-float dotmax)) \textcolor{red}{; `exponent'.}
+                      (nth-value 1 (decode-float dot))))
+        (when (> loss (/ (float-digits dot) 2))
+           (warn "Half the precision may be lost."))
+        )
+  \end{alltt}
+
+\end{document}

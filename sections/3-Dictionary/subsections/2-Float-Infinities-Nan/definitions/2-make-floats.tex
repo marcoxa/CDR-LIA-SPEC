@@ -1,0 +1,61 @@
+\documentclass[../Float-Infinities-Nan.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Functions
+  \code{make-short-float},
+  \code{make-single-float},\\
+  \code{make-double-float},
+  \code{make-long-float}}
+\index{M!\code{make-short-float}}
+\index{M!\code{make-single-float}}
+\index{M!\code{make-double-float}}
+\index{M!\code{make-long-float}}
+
+\DSyntax{}
+
+\code{make-short-float} \varname{bytes}
+$\Rightarrow$ \varname{result}\\
+\code{make-single-float} \varname{bytes}
+$\Rightarrow$ \varname{result}\\
+\code{make-double-float} \varname{bytes}
+$\Rightarrow$ \varname{result}\\
+\code{make-long-float} \varname{bytes}
+$\Rightarrow$ \varname{result}
+
+\DArgsNValues{}
+
+\varname{bytes} -- An integer or bit-vector representing the binary
+pattern of a floating point number.\\
+\varname{result} -- the resulting floating point number or \code{NAN}.
+
+\DDescription{}
+
+The functions construct a floating point number of appropriate
+float type starting from the bit content of
+\varname{bytes}.
+
+If \varname{bytes} corresponds to the byte pattern of a \emph{NaN},
+then a \code{NAN} is returned.
+
+The actual float type returned by the functions is the widest one
+supported by the implementation; i.e., a call to
+\code{make-long-float} may return a \code{double-float}.
+
+\DExceptional{}
+
+The functions signals a \code{type-error} if \varname{bytes} is not of
+the type described above
+
+\DSeeAlso{}
+
+\code{NAN}, \code{Q-NAN}, \code{S-NAN}, \code{make-float}.
+
+\DNotes{}
+
+These functions are, in one form or another, already present in \CL{}
+implementations.
+
+Implementations may supply a larger set of these functions, e.g.,
+\code{make-quad-float}.
+
+\end{document}

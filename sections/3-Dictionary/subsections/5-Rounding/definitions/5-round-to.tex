@@ -1,0 +1,38 @@
+\documentclass[../Rounding.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Macros \code{round-to-zero}, \code{round-to-near},\\
+  \code{round-upward}, \code{round-downward}}
+\index{R!\code{round-to-zero}}
+\index{R!\code{round-to-near}}
+\index{R!\code{round-upward}}
+\index{R!\code{round-downward}}
+
+\DSyntax{}
+
+\code{round-to-zero} \code{\&body} \varname{body}
+$\Rightarrow$ \varname{results}\\
+\code{round-to-near} \code{\&body} \varname{body}
+$\Rightarrow$ \varname{results}\\
+\code{round-upward} \code{\&body} \varname{body}
+$\Rightarrow$ \varname{results}\\
+\code{round-downward} \code{\&body} \varname{body}
+$\Rightarrow$ \varname{results}
+
+\DArgsNValues{}
+
+\varname{body} -- a sequence of forms; i.e., an implicit \code{progn}.\\
+\varname{results} -- the value(s) returned by \varname{body}.
+
+\DDescription{}
+
+The macros evaluate \varname{body} within an environment where the
+rounding mode is set to to the macro's namesake.  The rounding mode is
+reset to the one surrounding the macro call upon returning or raising
+a condition (as in \code{unwind-protect}).
+
+\DExceptional{}
+
+None \marginnote{Maybe signal error if the rounding mode cannot be set?}
+
+\end{document}

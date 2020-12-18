@@ -1,0 +1,28 @@
+\documentclass[../Example-Program.tex]{subfiles}
+\begin{document}
+
+This is easy given the macros defined in the document.  There are a
+few ways of doing this.
+
+\begin{alltt}
+    (\codelia{trap-math} (\codelia{:before (:save :clear)}
+                \codelia{:after :merge})
+       \textit{\ldots run desired code \ldots}
+       \textit{\ldots examine indicators \ldots}
+       \textit{\ldots clear some indicators \ldots}
+       )
+\end{alltt}
+or\ldots
+\begin{alltt}
+    (let ((saved-flags (\codelia{fpe-test-notifications +fpe-all-notifications+})))
+       (unwind-protect
+           (progn (\codelia{fpe-clear-exceptions-flags +fpe-all-notifications+})
+                  \textit{\ldots run desired code \ldots}
+                  \textit{\ldots examine indicators \ldots}
+                  \textit{\ldots clear some indicators \ldots}
+                  )
+         (\codelia{fpe-raise-exceptions-flags} saved-flags)))
+\end{alltt}
+
+
+\end{document}

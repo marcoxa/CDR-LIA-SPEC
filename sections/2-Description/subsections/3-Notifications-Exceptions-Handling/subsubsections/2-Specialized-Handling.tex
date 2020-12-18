@@ -1,0 +1,125 @@
+\documentclass[../Notifications-Exception-Handling.tex]{subfiles}
+\begin{document}
+
+
+This document specifies a simple macro, built on top of the standard
+\CL{} condition handling machinery to quickly handle LIA-related
+exceptions, that is, the standard \CL{}\\
+\code{floating-point-invalid-operation},
+\code{floating-point-inexact},
+\code{floating-point-overflow}, and
+\code{floating-point-underflow} conditions.  This macro provides for
+a simplified \clieeeterm{alternative exception handling}
+\checkref{Alternative Exception Handling}.
+
+The macro is named \code{trap-math} and has the following
+simple syntax:
+\begin{alltt}
+  (trap-math (&key \textit{notify-by} \textit{before} \textit{after}) <\textit{expr}> <\textit{handler}>* )
+\end{alltt}
+In the simplest case \code{trap-math} is a no-op, with
+respect to the behavior of the math operations in \code{<\textit{expr}>}.
+\begin{alltt}
+CL prompt> \codeprompt{(trap-math () (* 2 21.0))}
+\textit{42.0}
+\end{alltt}
+\ldots but:
+\begin{alltt}
+LW prompt> \codeprompt{(trap-math () (/ 40 0.0))}
+
+Error: Division-by-zero caused by / of (40.0 0.0).
+  1 (continue) Return a value to use.
+  2 Supply new arguments to use.
+  3 (abort) Return to top loop level 0.
+
+Type :b for backtrace or :c <option number> to proceed.
+Type :bug-form "<subject>" for a bug report template or :? for other options.
+\end{alltt}
+On the other hand, the following example produces the LIA and \CLang{} result
+(assuming that\\
+\code{*read-default-float-format*} was \code{single-float}).
+\begin{alltt}
+CL prompt> \codeprompt{(trap-math () (/ 40 0.0)
+               (division-by-zero () :continue))}
+\textit{INFS}
+\color{red}{;;; ... or \textit{1S++0}, or \textit{SINGLE-FLOAT-POSITIVE-INFINITY}.}
+\end{alltt}
+What the macro wants to convey is the fact that when
+\code{division-by-zero} is caught (thus invoking the
+\code{<\textit{handler}>} above), we can simply \emph{continue} with
+the \emph{continuation value} that is associated to the operation that
+actually signaled the condition; note that this may be different from
+the usual \CL{} behavior -- \code{division-by-zero} a case in point.
+
+The macro \code{try-math} also makes provisions to set a local \emph{notification
+  style} (cfr., the keyword argument \textit{\code{style}} as per the
+macro \code{with-notification-style}.
+
+Other ``actions'' available, besides \code{:continue}, are
+\begin{itemize}
+\item\code{:default} the behavior of the operation that signaled
+  the condition is the default one. In the example above, the
+  \code{division-by-zero} condition is re-signaled, i.e., passed
+  on, but for other operations it may be different; in most cases this
+  will be a no-op with respect to the specification.
+    
+\item\code{:clear} the low level exceptions stored in the
+  \emph{floating point environment} are cleared\footnote{Cfr.,
+    the \CLang{} standard function \code{feclearexcept},
+    Section~7.6.2.1 of \cite{2018:C18}.}.
+
+\item\code{(:continue <\textit{expr}>)} the value(s) returned by
+  \code{\textit{expr}} are used as \emph{continuation value(s)}.
+\end{itemize}
+The \code{:default} and the \code{:continue} forms (also the
+\code{:continue} with ``values'') are mutually exclusive.  The effect
+of \code{:clear} is described hereafter. See the full documentation of
+the macro \code{trap-math} for more details.
+
+\paragraph{LIA Exceptions in the Floating Point Environment.} Whenever
+an exception ``happens'', the corresponding flag is \emph{raised}
+(i.e., stored in the \emph{floating point environment} and remains
+available for further analysis by the program; at least when using the
+\CLang{} library, which has been the inspiration for this
+specification.  In \CL{} some operations do signal a
+\clterm{condition} which may or may not be handled by the program.
+The choice of this specification is to state that the signaling of a
+\CL{} condition, say \code{cl:division-by-zero} does also raise the
+corresponding \clieeeterm{floating point exception flag}.  Moreover,
+unless some special machinery is used (cfr., the
+\code{trap-math} macro) the handling of a \CL{} condition
+(say, \code{cl:floating-point-invalid-operation}) by
+\code{handler-case} or similar facilities \emph{does not clear} the
+floating point environment flags (unless done explicitly by the
+handler code).
+
+\missingpart{Should I have an argument for ``before'' and
+  ``after'' operations in \code{trap-math}?  Like
+  \code{:restore-on-exit} \code{:clear-on-exit} \code{clear-on-entry}
+  \code{preserve-on-entry}}
+
+\noindent
+As an example consider the following code snippet.
+\begin{alltt}
+(defun boom (x)
+    (declare (type single-float x))
+    (handler-case 
+        (/ x 0)
+      (division-by-zero (e)
+        (format *error-output* "Boom ~S.~%" e)))
+\end{alltt}
+After this function is run, the result will be \code{NIL} \emph{and} the
+floating point environment will still have the \code{divZero} flag raised.
+That is, the following interaction should be expected:
+\begin{alltt}
+CL prompt> \codeprompt{(boom 42.0s0)}
+
+Boom #<Condition DIVISION-BY-ZERO>
+\textit{NIL}
+
+CL prompt> \codeprompt{(fpe-test-notifications :division-by-zero)}
+\textit{T}
+\end{alltt}
+
+
+\end{document}

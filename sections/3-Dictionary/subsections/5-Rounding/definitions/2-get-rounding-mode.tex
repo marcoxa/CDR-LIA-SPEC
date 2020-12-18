@@ -1,0 +1,26 @@
+\documentclass[../Rounding.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{get-rounding-mode}}
+\index{G!\code{get-rounding-mode}}
+
+\DSyntax{}
+
+\code{get-rounding-mode} \textit{$<$no arguments$>$}
+$\Rightarrow$ \varname{rounding-mode}
+
+\DArgsNValues{}
+
+\varname{rounding-mode} -- a value of type \code{rounding-modes}.
+
+\DDescription{}
+
+The function returns the current rounding mode.  The value
+\code{:indeterminate} is returned if such rounding mode cannot be
+determined.
+
+\DSeeAlso{}
+
+\code{rounding-modes}.
+
+\end{document}

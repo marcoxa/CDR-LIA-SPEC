@@ -1,0 +1,58 @@
+\documentclass[../Comparisons-Predicates.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Functions \code{exponent}, \code{fraction}}
+  \index{E!\code{exponent}}
+  \index{F!\code{fraction}}
+  
+  \DSyntax{}
+  
+  \code{exponent} \varname{f} \RArrow{} \varname{exp}\\
+  \code{fraction} \varname{f} \RArrow{} \varname{frac}\\
+  
+  
+  \DArgsNValues{}
+  
+  \varname{f} -- A \clterm{float}.\\
+  \varname{exp} -- An \clterm{integer}.\\
+  \varname{frac} -- A \clterm{float}.
+  
+  \DDescription{}
+  
+  The \code{exponent} and \code{fraction} functions extract parts of the
+  representation of a floating point number.  The two functions behave
+  as if defined (for finite floating point numbers) as follows:
+  
+  \begin{alltt}
+    (defun \codelia{fraction} (f) (nth-value 1 (decode-float f)))
+    
+    (defun \codelia{exponent} (f) (nth-value 0 (decode-float f)))
+    
+    \textcolor{red}{;;; NTH-VALUE is used in both functions just for symmetry.}
+  \end{alltt}
+  
+  If \varname{f} is an \clliaterm{infinity} or $0$, then \code{fraction}
+  returns \varname{f} as result \varname{frac}; \code{exponent}
+  returns $\infty$ if \varname{f} is an \clliaterm{infinity}.
+  
+  If \varname{f} is a \clliaterm{quiet NaN} then, \code{exponent}
+  returns a \clliaterm{quiet NaN}.  If \varname{f} is a \clliaterm{quiet
+    NaN} then, \code{exponentfraction} returns a \clliaterm{quiet NaN}.
+  
+  \DExceptional{}
+  
+  If \varname{f} is a \clliaterm{signaling NaN} then, if the notification
+  style is NACF, the condition\\
+  \code{floating-point-invalid-operation} is signaled with a
+  \clliaterm{quiet NaN} as continuation value; if the notification style
+  is NRI, the indicator \code{:invalid} is recorded and a
+  \clliaterm{quiet NaN} is returned as continuation value.
+  
+  If \varname{f} is $0$ then \code{exponent} signals a
+  \code{floating-point-infinitary-operation} with a negative
+  \clliaterm{infinite} ($-\infty$) as continuation value If the
+  notification style is NACF; otherwise, if the notification style is
+  NRI, the \code{:infinitary} indicator is recorded and a negative
+  \clliaterm{infinite} ($-\infty$) is returned as continuation value.
+  
+\end{document}

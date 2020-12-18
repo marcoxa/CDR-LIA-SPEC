@@ -1,0 +1,83 @@
+\documentclass[../Arithmetic-Operations.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Macros \code{incf}, \code{decf}}
+\index{I!\code{incf}}
+\index{D!\code{decf}}
+
+\DSyntax{}
+
+\code{incf} \varname{place} \code{\&optional} \varname{d} \RArrow ~ \varname{result}\\
+\code{decf} \varname{place} \code{\&optional} \varname{d} \RArrow ~ \varname{result}
+
+\DArgsNValues{}
+
+\varname{d} -- A \clterm{number}, the default is \code{1}.\\
+\varname{result} -- A \clterm{number}.\\
+\varname{place} -- A \CL{} \clterm{place}.\\
+
+
+\DDescription{}
+
+The macros \code{incf} and \code{decf} are defined,
+as the \CL{} counterparts, as:
+\begin{itemize}
+\item \code{(incf} \varname{x}\code{)} $\equiv$ \code{(setf}
+  \varname{x} \code{(+} \varname{x}\code{ 1))}
+\item \code{(decf} \varname{x}\code{)} $\equiv$ \code{(setf}
+  \varname{x} \code{(-} \varname{x}\code{ 1))}
+\item \code{(incf} \varname{x}\code{ d)} $\equiv$ \code{(setf}
+  \varname{x} \code{(+} \varname{x}\code{ d))}
+\item \code{(decf} \varname{x}\code{ d)} $\equiv$ \code{(setf}
+  \varname{x} \code{(-} \varname{x}\code{ d))}
+\end{itemize}
+
+The behaviour and the exceptional situations of the macros \code{incf} and
+\code{incf} are inherited by \code{+} and \code{-} described above.
+
+When the value of \varname{place} and \varname{d} are not
+\clieeeterm{NaNs} or \clieeeterm{infinity} the macros \code{incf} and
+\code{decf} assume the usual behavior specified for \CL{} (cfr.
+Section~12.2 of \cite{1996:ANSIHyperSpec}).
+
+When \code{incf} or \code{decf} is called with either the value of
+\varname{place} or \varname{d} being a \clieeeterm{quiet NaN}, and
+neither is a \clieeeterm{signaling NaN} then \varname{result} is a
+(quiet) \code{NAN}. No error (floating point exception) is signaled in
+this case.
+
+When \code{incf} or \code{decf} is called with the value of
+\varname{place} being \clieeeterm{infinity}  and \varname{d} being a
+finite \clterm{number} (or vice-versa), then \varname{result} is the
+value of \varname{place} (or, vice-versa, \varname{d}).
+
+\DExceptional{}
+
+There are different exceptional situations to be considered.
+
+\begin{enumerate}
+\item When \code{incf} or \code{decf} is called with either the value of
+  \varname{place} or \varname{d} being a \emph{signaling NaN}, then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+
+\item When \code{incf} or \code{decf} is called with the value of
+  \varname{place} being a \clieeeterm{positive infinity} and \varname{d}
+  being a \clieeeterm{negative infinity} (or vice-versa), then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+
+\item If the value of \varname{place} or \varname{d} is not a \CL{}
+  \clterm{number} then the macros \code{incf} and \code{decf}
+  might signal a \clname{cl:type-error}.
+\end{enumerate}
+
+\DNotes{}
+
+The default for \varname{d} is coerced to the appropriate floating
+point \code{1.0}, depending on the floating point format of
+\varname{place}.
+
+\DSeeAlso{}
+
+\code{+}, \code{-}, \code{1+}, \code{1-}.
+
+\end{document}

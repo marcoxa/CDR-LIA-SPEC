@@ -1,0 +1,59 @@
+\documentclass[../Exception-Handling.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{fpe-test-notifications}}
+\index{F!\code{fpe-test-notifications}}
+
+\DSyntax{}
+
+\code{fpe-test-notifications} \code{\&rest} \varname{excps}
+$\Rightarrow$ \varname{excp-set}
+
+\DArgsNValues{}
+
+\varname{excps} -- A list of \code{fpe-notification} items.\\
+\varname{excp-set} -- An object of type \code{fpe-notification-set}.
+
+\DDescription{}
+
+The function tests which of the \varname{excps} is set (i.e., whether
+the corresponding flag is set in the underlying floating point
+environment) and returns an object of type \code{fpe-notification-set}
+with the corresponding flag set.
+
+\DExamples{}
+
+The following example (adapted from \cite{2018:C18}) shows how a piece of
+code may decide how to \emph{handle} either
+\code{floating-point-invalid-operation} or
+\code{floating-point-overflow} (cfr., \cite{1996:ANSIHyperSpec}.)
+
+\begin{alltt}
+(let ((fpe-excps \textcolor{blue}{(fpe-test-notifications :overflow :invalid)}))
+   (when (fpe-check-notifications :invalid)
+     (signal 'cl:floating-point-invalid-operation))
+   (when (fpe-check-notifications :overflow)
+     (signal 'cl:floating-point-overflow))
+   )
+\end{alltt}
+
+\DNotes{}
+
+The \code{fpe-test-notifications} function accesses the current floating
+point environment.  \CL{} implementations may have made different
+choices about if, when, and how to signal the standard \CL{} floating
+point conditions.  That is, the above example may or may not work in a
+given \CL{} implementation, as the code that actually set the floating
+environment exception flags may have already signaled either
+\code{cl:floating-point-invalid-operation} or
+\code{cl:floating-point-overflow}, and the some corresponding handling
+code may have already cleared the flags.
+
+\DSeeAlso{}
+
+\code{fpe-notification}, \code{fpe-notification-set},
+\code{fpe-check-notifications},\\
+\code{cl:floating-point-invalid-operation},
+\code{cl:floating-point-overflow}.
+
+\end{document}

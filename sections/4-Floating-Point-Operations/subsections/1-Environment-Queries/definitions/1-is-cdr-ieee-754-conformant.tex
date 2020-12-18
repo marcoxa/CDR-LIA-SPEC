@@ -1,0 +1,39 @@
+\documentclass[../Environment-Queries.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{is-cdr-ieee-754-conformant}}
+\index{I!\code{is-cdr-ieee-754-conformant}}
+
+\DSyntax{}
+
+\code{is-cdr-ieee-754-conformant} \varname{$<$no argument$>$}
+$\Rightarrow$ \varname{result}
+
+\DArgsNValues{}
+
+\varname{result} -- a generalized boolean.
+
+\DDescription{}
+
+This function returns a non-\code{NIL} value if the \CL{}
+implementation or the \CL{} library implements the specification of
+this document.
+
+If this function returns non-\code{NIL}, so will
+\code{is-cdr-ieee-745-constants-providing},\\
+\code{is-cdr-ieee-754-environment-providing} and
+\code{is-cdr-ieee-745-operation-providing}.
+
+\DSeeAlso{}
+
+\code{is-cdr-ieee-745-constants-providing},
+\code{is-cdr-ieee-754-environment-providing},\\ and
+\code{is-cdr-ieee-745-operation-providing}.
+
+\DNotes{}
+
+\cite{2008:IEEE-754} specifies two predicates \code{is754version1985} and
+\code{is754version2008}, but they imply conformance to the full
+\IEEEFPStd{} standard.
+
+\end{document}

@@ -1,0 +1,84 @@
+\documentclass[../Arithmetic-Operations.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{-}}
+\index{*!\code{-}}
+
+\DSyntax{}
+
+\code{-} \varname{a} \varname{b} \RArrow \varname{result}\\
+\code{-} \varname{a} \code{\&rest} \varname{ns} \RArrow \varname \code{n}\\
+
+\DArgsNValues{}
+
+\varname{a}, \varname{b}, \varname{result} -- Floating Point numbers.\\
+\varname{numbers} -- A, possibly empty, list of numbers.\\
+\varname{n} -- A number.
+
+\DDescription{}
+
+The dyadic version of the function \code{-}, when operating on
+floating point numbers (or numbers that eventually are converted to
+floating point numbers according to \CL{} float contagion rules -- cfr.,
+Section~12.1.4 of \cite{1996:ANSIHyperSpec}) assume the behavior of the
+underlying \IEEEFPStd{} specification \cite{2008:IEEE-754}.  It is assumed that
+the multiple argument versions are eventually built upon the dyadic
+ones (the one argument version can be seen as a special case from
+the point of view of this specification).
+
+The dyadic version of the functions \code{-} behaves
+according to the \IEEEFPStd{} operations described in Section~5.4.1 of
+\cite{2008:IEEE-754}, which is assumed to be the usual behavior specified
+for \CL{} by \cite{1996:ANSIHyperSpec} when \varname{a} and \varname{b} are
+not \emph{NaN}s or \emph{infinities}.
+
+\noindent
+The operation from \cite{2008:IEEE-754} is:
+
+\vspace*{3mm}
+
+\noindent
+\textit{formatOf}-\textbf{subtraction}(\varname{a}, \varname{b})
+
+\vspace*{3mm}
+
+\noindent
+where \textit{formatOf} describes the resulting floating point
+format.  As already mentioned, the actual floating point format of
+\varname{result} is dictated by the \CL{} standard.
+
+When \code{-} is called with either \varname{a} or \varname{b} being a
+\emph{quiet NaN}, and neither is a \emph{signaling NaN} then
+\varname{result} is a (quiet) \code{NAN}.  No error (floating point
+exception) is signaled in this case.
+
+When \code{-} is called with \varname{a} being an 
+\clieeeterm{infinity} and \varname{b} being a finite \clterm{number}
+(or vice-versa), then \varname{result} is \varname{a}; when \code{-} is
+called with \varname{b} being an \clieeeterm{infinity} and \varname{a}
+being a finite \clterm{number}, then \varname{result}
+is $-$\varname{b}.
+
+
+\DExceptional{}
+
+There are different exceptional situations to be considered.
+
+\begin{enumerate}
+\item When \code{-} is called with either \varname{a} or \varname{b}
+  being a \emph{signaling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+
+\item When \code{-} is called with \varname{a} being a
+  \clieeeterm{positive infinity} and \varname{b} being a
+  \clieeeterm{positive infinity}, or \varname{a} being a
+  \clieeeterm{negative infinity} and \varname{b} being a
+  \clieeeterm{positive infinity}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+
+\item If some of \varname{a}, \varname{b}, or any element of a non-empty
+  \varname{numbers} is not a \CL{} \clterm{number} then the function
+  might signal a \clname{cl:type-error}.
+\end{enumerate}
+
+\end{document}

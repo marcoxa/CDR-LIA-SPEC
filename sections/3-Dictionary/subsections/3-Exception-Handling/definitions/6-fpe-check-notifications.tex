@@ -1,0 +1,58 @@
+\documentclass[../Exception-Handling.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{fpe-check-notifications}}
+\index{F!\code{fpe-check-notifications}}
+
+\DSyntax{}
+
+\code{fpe-check-notifications} \varname{excp-set} \code{\&rest} \varname{excps}
+$\Rightarrow$ \varname{result}
+
+\DArgsNValues{}
+
+\varname{excp-set} -- An object of type \code{fpe-notification-set}\\
+\varname{excps} -- A list of \code{fpe-notification} items.\\
+\varname{result} -- A boolean.
+
+\DDescription{}
+
+The function checks whether \emph{all} of the \varname{excps} flags
+are set in the \varname{excp-set} and returns a boolean indicating the
+result.  If the \varname{excps} is empty, then the function returns
+\code{NIL}.
+
+\DExamples{}
+
+The following example (adapted from \cite{2018:C18}) shows how a piece of
+code may decide how to \code{signal} either
+\code{floating-point-invalid-operation} or
+\code{floating-point-overflow} (cfr., \cite{1996:ANSIHyperSpec}.)
+
+\begin{alltt}
+(let ((fpe-excps (fpe-test-notifications :overflow :invalid)))
+   (when \textcolor{blue}{(fpe-check-notifications :invalid)}
+     (signal 'cl:floating-point-invalid-operation))
+   (when \textcolor{blue}{(fpe-check-notifications :overflow)}
+     (signal 'cl:floating-point-overflow))
+   )
+\end{alltt}
+
+\DNotes{}
+
+Note that the value returned when \varname{excps} is empty is nor what
+\CL{} users may expect from a function that looks like a call to
+\code{(and)}.
+
+The notes about \code{fpe-test-notifications} regarding the example above
+apply also in the case of \code{fpe-check-notifications}.
+
+
+\DSeeAlso{}
+
+\code{fpe-notification}, \code{fpe-notification-set},
+\code{fpe-test-notifications},\\
+\code{cl:floating-point-invalid-operation},
+\code{cl:floating-point-overflow}.
+
+\end{document}

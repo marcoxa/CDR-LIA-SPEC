@@ -1,0 +1,48 @@
+\documentclass[../Floating-Point-Environment.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{default-floating-point-environment}}
+\index{D!\code{default-floating-point-environment}}
+
+\DSyntax{}
+
+\code{default-floating-point-environment} \textit{$<$no arguments$>$}
+$\Rightarrow$ \varname{fpe}
+
+\DArgsNValues{}
+
+\varname{fpe} -- An object of type \code{floating-point-environment}.
+
+\DDescription{}
+
+The function returns an object of type
+\code{floating-point-environment} that represents the \emph{default}
+floating point environment in use by the implementation.
+
+% The format of the returned \varname{fpe} a-list is such to be usable
+% as an \code{apply} last argument for
+% \code{set-floating-point-environment}.
+
+\DExamples{}
+
+\begin{alltt}
+SBCL> \codeprompt{(default-floating-point-environment)}
+\textit{(:TRAPS (:OVERFLOW :INVALID :DIVIDE-BY-ZERO)
+ :ROUNDING-MODE :NEAREST
+ :CURRENT-NOTIFICATIONS (:INEXACT)
+ :FAST-MODE NIL
+ :PRECISION :53-BIT)}
+\textcolor{red}{;;; The format of the result for SBCL is incidental.
+;;; The fpe-* readers can be made to work with such representation.}
+\end{alltt}
+
+\DNotes{}
+
+The function \code{default-floating-point-environment} should always return
+the same (or \code{equalp}) value.
+
+\DSeeAlso{}
+
+\code{set-floating-point-environment}, \code{get-floating-point-environment}.
+
+\end{document}

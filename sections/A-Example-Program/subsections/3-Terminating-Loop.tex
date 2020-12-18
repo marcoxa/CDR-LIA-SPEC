@@ -1,0 +1,19 @@
+\documentclass[../Example-Program.tex]{subfiles}
+\begin{document}
+
+\begin{alltt}
+   (defconstant n 6.0s0) \textcolor{red}{; Max ulp difference for loop termination.}
+
+   (loop for prev-approx of type single-float
+         = (first-guess <\textit{input}>)
+         then approx
+
+         for approx of type single-float
+         = (next-quess <\textit{input}> prev-approx)
+
+         while (> (abs (- approx prev-approx))
+                  (* n (\codelia{ulp} approx)))
+         finally (return approx))
+\end{alltt}
+
+\end{document}

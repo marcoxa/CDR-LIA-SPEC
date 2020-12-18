@@ -1,0 +1,30 @@
+\documentclass[../Exception-Handling.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Type \code{fpe-notification}}
+\index{F!\code{fpe-notification}}
+
+\DSupertypes{}
+
+\code{fpe-notification}, \ldots, \code{T}
+
+\DDescription{}
+
+The \code{fpe-notification} type is defined to be:
+\begin{alltt}
+(member :divide-by-zero :infinitary
+        :inexact
+        :invalid
+        :underflow
+        :overflow
+        :absolute-precision-underflow
+        )
+\end{alltt}
+The meaning of these values correspond to a the possible
+\emph{exceptional values} supported by an implementation.
+
+\DSeeAlso{}
+
+\code{fpe-notification-set}, \code{+fpe-all-notification+}.
+
+\end{document}

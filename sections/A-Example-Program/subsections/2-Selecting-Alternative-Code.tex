@@ -1,0 +1,18 @@
+\documentclass[../Example-Program.tex]{subfiles}
+\begin{document}
+
+Being able to control rounding can be useful.
+\begin{alltt}
+    (cond ((\codelia{iec-559}) \textbf{CHECK THIS WRT SPEC ABOVE!}
+           (\codelia{round-upward} 
+              \textit{\ldots calc})
+           (\codelia{round-downward}
+              \textit{\ldots calc})
+           (\codelia{round-to-nearest}
+              \textit{\ldots calc})
+           )
+          (t
+           \textit{\ldots calc}))
+\end{alltt}
+
+\end{document}

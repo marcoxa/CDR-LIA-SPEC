@@ -1,0 +1,46 @@
+\documentclass[../Rounding.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Type \code{rounding-mode}}
+\index{R!\code{rounding-mode}}
+
+\DSupertypes{}
+
+\code{rounding-mode}, \ldots, \code{T}
+
+\DDescription{}
+
+The \code{rounding-mode} type is defined to be:
+\begin{alltt}
+(member :indeterminable
+        :zero
+        :nearest
+        :positive-infinity
+        :negative-infinity)
+\end{alltt}
+The meaning of these values correspond to a direction of floating
+point rounding.
+
+
+\DNotes{}
+
+The keywords used correspond to the \CLang{} Library \cite{2018:C18}
+\textbf{\code{FLT\_ROUNDS}} values of:
+
+\vspace*{3mm}
+
+\begin{tabular}{rl}
+  \textbf{\code{-1}} & indeterminable.\\
+  \textbf{\code{0}}  & toward zero.\\
+  \textbf{\code{1}}  & toward nearest.\\
+  \textbf{\code{2}}  & toward positive infinity.\\
+  \textbf{\code{3}}  & toward negative infinity.\\
+\end{tabular}
+
+\vspace*{3mm}
+
+As per the \CLang{} Library standard, \CL{} implementations can extend the
+type \code{rounding-modes} with other keywords representing
+\emph{implementation dependent} rounding modes.
+
+\end{document}
