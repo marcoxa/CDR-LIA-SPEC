@@ -1,0 +1,144 @@
+\documentclass[../Description.tex]{subfiles}
+\begin{document}
+
+\label{sect:notifications}
+
+The floating point and complex arithmetic exceptional situation
+handling machinery described in
+\cite{2012:LIA1,2001:LIA2,2004:LIA3,2008:IEEE-754}, more specifically,
+\cite{2012:LIA1} Section~6, \emph{Notification}.  Three main
+notification modalities are described in LIA1:
+\begin{itemize}
+\item \emph{Notification by recording in indicators} (NRI -- LIA1,
+  Section~6.2.1).
+\item \emph{Notification by alteration of control flow} (NACF -- LIA1,
+  Section~6.2.2).
+\item \emph{Notification by termination with message} (NTM -- LIA1,
+  Section~6.2.3).
+\end{itemize}
+
+\noindent
+These notification machineries balance three viewpoints that different
+engineers have.
+
+\begin{itemize}
+\item The hardware instruction set designer\footnote{Just a label; it
+    is used for the purpose of illustration.}.
+\item The programming language designer.
+\item The specification implementor.
+\end{itemize}
+
+The \CL{} ANSI Specification provides the following conditions that
+may be raised by an implementation (in an \emph{implementation
+  dependent} way) in conjunction with floating point operations.
+\begin{description}
+\item \code{floating-point-invalid-operation},
+\item \code{floating-point-inexact},
+\item \code{floating-point-overflow},
+\item \code{floating-point-underflow}.
+\end{description}
+Of course, the condition \code{division-by-zero} may also be signaled
+by floating point operations.
+
+The LIA1 specification, Annex~D, proposes that \CL{} defined the
+arithmetic exception handling using the Condition System, i.e., using
+the NACF notification approach.  This document specifies that
+\textbf{both} alternatives NRI and NACF are actually available to the
+programmer\footnote{\CMUCL{} and \SBCL{} already provide
+  both modes, although in a non fully documented way. In fact:
+
+\begin{alltt}
+CMUCL> \codeprompt{(/ 42 0.0)}
+
+Arithmetic error DIVISION-BY-ZERO signaled.
+Operation was /, operands (42.0 0.0).
+   [Condition of type DIVISION-BY-ZERO]
+
+Restarts:
+  0: [ABORT] Return to Top-Level.
+
+Debug  (type H for help)
+\end{alltt}
+  The above is the behavior implied by LIA1 for \CL{}.  However,
+  \CMUCL{} (and \SBCL{}) provide also direct manipulation of the
+  underlying \emph{floating point environment}.  In that case, it
+  appears that \CMUCL{} and \SBCL{} do offer the NRI machinery.
+\begin{alltt}
+SBCL> \codeprompt{(sb-int:with-float-traps-masked (:divide-by-zero) (/ 3 0.0))}
+\textit{\#.SB-EXT:SINGLE-FLOAT-POSITIVE-INFINITY}
+
+SBCL> \codeprompt{(sb-int:get-floating-point-modes)}\\
+\textit{(:TRAPS (:OVERFLOW :INVALID :DIVIDE-BY-ZERO)\\
+  :ROUNDING-MODE :NEAREST\\
+  :CURRENT-EXCEPTION NIL\\
+  :ACCRUED-EXCEPTION NIL\\
+  :FAST-MODE NIL\\
+  :PRECISION :53-BIT)}
+\end{alltt}
+In the case above, the division by zero is not raised or recorded and
+the expected ``continuation value'' is returned (in this case the
+\code{short-float} $\infty$).
+}.
+This causes issues in the interplay between the NRI and the NACF
+exception handling methods, but it gives the programmer all the fine
+control it is needed to handle many potential numerical
+issues. Incidentally, note that LIA1 provides an example about how
+\Fortran{} may provide some compiler directives to choose between NRI
+and NTM (cfr., LIA1, Annex E).
+\begin{alltt}
+!LIA\$  NOTIFICATION=RECORDING
+!LIA\$  NOTIFICATION=TERMINATE
+\end{alltt}
+
+In order to select and introspect what kind of exception handling
+regime is selected in a given computation\footnote{In this
+  specification, no mention of \emph{threading model} is made;
+  however, it is assumed that an implementation can make all the
+  dynamical behavior of numerical computations ``thread safe''.}, this
+specification provides the following API.
+\begin{itemize}
+\item An enumerated type for NRI, NACF and NTM: %\\
+  \code{arithmetic-notification-style}.
+  \begin{alltt}
+    (deftype \codelia{arithmetic-notification-style} ()
+      (member :recording    \textcolor{red}{; I.e., NRI.}
+              :error        \textcolor{red}{; I.e., NACF.}
+              :termination  \textcolor{red}{; I.e., NTM.}
+              ))
+  \end{alltt}
+\item A set of functions and macros to retrieve and set the current
+  notification style.
+  \begin{description}
+  \item \code{current-notification-style}: a function that retrieves
+    the, as the name implies, the current notification style.
+  \item \code{set-notification-style}: a function that sets the
+    notification style.
+  \item \code{with-notification-style}: a macro that temporarily sets
+    the notification style and ensures to restore the one in effect
+    before its invocation.
+  \end{description}
+\item A ``mirroring'' in package \CLLIAPKG{} of the ANSI CL floating
+  point exceptions in order to accommodate the notion of
+  \emph{continuation values}.  This will amount to have the mirrored
+  ANSI CL floating point exceptions have a \code{continuation-value}
+  slot with a associated initarg and reader (of the same name).
+\end{itemize}
+
+\vspace*{2mm}
+
+\noindent
+Finally, the entries in Section~\ref{sect:fpe-dictionary} specify an interface
+similar the \CLang{} Library interface to the \emph{Floating Point
+  Environment} provided by \verb|<fenv.h>| \cite{2018:C18}.
+
+
+\subsubsection{Interaction Between the ``Low Level'' \IEEEFPStd{} and LIA
+  ``Signaling'' Machinery and \CL{} Condition Handling}
+
+\subfile{subsubsections/Interactions-IEEE-LIA-Lisp.tex}
+
+\subsubsection{Specialized Handling of LIA-related Exceptions}
+
+\subfile{subsubsections/Specialized-Handling.tex}
+
+\end{document}

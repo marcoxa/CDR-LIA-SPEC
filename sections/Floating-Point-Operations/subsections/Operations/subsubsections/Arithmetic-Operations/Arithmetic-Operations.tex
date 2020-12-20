@@ -1,0 +1,45 @@
+\documentclass[../../Operations.tex]{subfiles}
+\begin{document}
+
+\label{sect:arith-ops}
+
+\begin{table}[h!]
+  \centering
+  \begin{tt}
+    \begin{tabular}{lll}
+      * & 1+ & \ldots \\
+      + & 1- & \ldots \\
+      - & incf & conjugate\\
+      / & decf & \\
+    \end{tabular}
+  \end{tt}
+  \caption{The basic \CL{} arithmetic operations}
+  \label{table:cl-arit-ops}
+\end{table}
+
+\noindent
+Each of the functions in Table~\ref{table:cl-arit-ops} must be further
+specified with respect to \cite{1996:ANSIHyperSpec} in order to adhere to
+the requirements of \IEEEFPStd{}.  The descriptions and the references for
+each function further specify the standard \CL{} behavior with respect
+to \emph{NaN}s, \emph{infinities} and floating point exceptions.
+
+\vspace*{3mm}
+
+\noindent
+Note that the \code{gcd}, and \code{lcm} functions are not
+present in the above table, which corresponds to Figure~12-1 of
+\cite{1996:ANSIHyperSpec}.
+
+\subfile{definitions/addition-multiplication.tex}
+\subfile{definitions/addition-rounded.tex}
+\subfile{definitions/multiplication-rounded.tex}
+\subfile{definitions/subtraction.tex}
+\subfile{definitions/subtraction-rounded.tex}
+\subfile{definitions/division.tex}
+\subfile{definitions/division-rounded.tex}
+\subfile{definitions/plus-minus-one.tex}
+\subfile{definitions/incf-decf.tex}
+\subfile{definitions/conjugate.tex}
+
+\end{document}
