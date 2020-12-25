@@ -1,0 +1,105 @@
+\documentclass[../Exponentials-Logarithms-Trigonometry.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Functions \code{sin}, \code{cos}, \code{tan}}
+\index{A!\code{sin}}
+\index{A!\code{cos}}
+\index{A!\code{tan}}
+
+\DSyntax{}
+
+\code{sin} \varname{radians} \RArrow \varname{result}\\
+\code{cos} \varname{radians} \RArrow \varname{result}\\
+\code{tan} \varname{radians} \RArrow \varname{result}
+
+\DArgsNValues{}
+
+\varname{radians} -- A \clieeeterm{floating
+  point number}\\
+\varname{result} -- A \clieeeterm{floating point number}
+
+\DDescription{}
+
+The functions \code{sin}, \code{cos}, \code{tan} compute the sine, cosine
+and tangent of a number. When \varname{radians} is not a \clieeeterm{NaNs} or an
+\clieeeterm{infinity} their behavior is the one described in
+\cite{1996:ANSIHyperSpec} for regular floating point numbers and complex
+numbers.
+
+\noindent
+When \varname{radians} is a \clieeeterm{quiet NaN} the functions \code{sin},
+\code{cos}, \code{tan} return a \clieeeterm{quiet NaN}.
+
+\noindent
+The function \code{sin}, when \varname{radians} is a complex number, \varname{x}
+and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
+\begin{itemize}
+  \item If \varname{y} is a \code{negative-zero} returns \code{(conjugate
+  (sin \#c(}\varname{x}\code{ 0)))}
+  \item If \varname{x} is a \code{negative-zero} and \varname{y} is not a
+  \code{negative-zero} returns \code{(- (sin \#c(0 (-
+  }\varname{y}\code{))))}
+  \item If \varname{x} is not \code{negative-zero} or \code{zero} and
+  \varname{y} is \code{positive-infinity} or \code{negative-infinity} returns
+  \code{\#c((* (sin }\varname{x}\code{) positive-infinity) (*
+  (cos} \varname{x}\code{)} \varname{y}\code{))}
+  \item If \varname{x} is \code{zero} and \varname{y} is
+  \code{positive-infinity} or \code{negative-infinity} returns \code{\#c(0
+  }\varname{y}\code{)}
+\end{itemize}
+
+\noindent
+The function \code{cos}, when \varname{radians} is a complex number, \varname{x}
+and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
+\begin{itemize}
+  \item If \varname{y} is a \code{negative-zero} returns \code{(conjugate
+  (cos \#c(}\varname{x}\code{ 0)))}
+  \item If \varname{x} is a \code{negative-zero} and \varname{y} is not a
+  \code{negative-zero} returns \code{(cos \#c(0 (-
+  }\varname{y}\code{)))}
+  \item If \varname{x} is not \code{negative-zero} or \code{zero} and
+  \varname{y} is \code{positive-infinity} or \code{negative-infinity} returns
+  \code{\#c((* (cos }\varname{x}\code{) positive-infinity) (*
+  (sin} \varname{x}\code{)} (- \varname{y})\code{))}
+  \item If \varname{x} is \code{zero} and \varname{y} is
+  \code{positive-infinity} or \code{negative-infinity} returns
+  \item \code{\#c(positive-infinity }(\ (-1) \varname{y})\code{)}
+\end{itemize}
+
+\noindent
+The function \code{tan}, when \varname{radians} is a complex number, \varname{x}
+and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
+\begin{itemize}
+  \item If \varname{y} is a \code{negative-zero} returns \code{(conjugate
+  (tan \#c(}\varname{x}\code{ 0)))}
+  \item If \varname{x} is a \code{negative-zero} and \varname{y} is not a
+  \code{negative-zero} returns \code{(- (tan \#c(0 (-
+  }\varname{y}\code{))))}
+  \item If \varname{x} is not a \code{negative-zero} and \varname{y} is a
+  \code{positive-infinity} or a \code{negative-infinity} returns \code{\#c((*
+  (tan }\varname{x}\code{) 0) (signum }\varname{y}\code{))}
+\end{itemize}
+
+\DExceptional{}
+
+There are different exceptional situations to be considered:
+\begin{enumerate}
+  \item If \code{sin}, \code{cos} and \code{tan} are called with
+    \varname{radians} being a \clieeeterm{signaling NaN}, then the
+    \clname{cl:floating-point-invalid-operation} error is signaled.
+  \item If \code{sin}, \code{cos} and \code{tan} are called with the real
+    part of \varname{radians} being a \code{infinity}, then the
+    \clname{cl:floating-point-invalid-operation} error is signaled.
+  \item If \code{tan} is called with the real part of
+    \varname{radians} being an $\pi/2 + k\pi$, then the
+    \clname{cl:floating-point-invalid-operation} error is signaled.
+  \item If \varname{radians} is not \CL{}
+    \clterm{number} then the functions \code{asin}, \code{acos} and
+    \code{atan} signal a \clname{cl:type-error}.
+\end{enumerate}
+
+\DSeeAlso{}
+
+\code{*}, \code{-}, \code{signum}, \code{abs}, \code{conjugate}.
+
+\end{document}

@@ -1,0 +1,57 @@
+\documentclass[../Exponentials-Logarithms-Trigonometry.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{phase}}
+\index{A!\code{phase}}
+
+\DSyntax{}
+
+\code{phase} \varname{n} \RArrow \varname{result}
+
+\DArgsNValues{}
+
+\varname{n} -- A \clieeeterm{floating
+  point number}\\
+\varname{result} -- A \clieeeterm{floating point number}
+
+\DDescription{}
+
+The function \code{phase}, \code{cos}, \code{tan} compute the phase of a 
+number in radians. When \varname{n} is not a \clieeeterm{NaNs} or an
+\clieeeterm{infinity} its behavior is the one described in
+\cite{1996:ANSIHyperSpec} for regular floating point numbers and complex
+numbers.
+
+\noindent
+When \varname{n} is a \clieeeterm{quiet NaN} the functions \code{sin},
+\code{cos}, \code{tan} return a \clieeeterm{quiet NaN}.
+
+When \varname{n} is a complex number and \varname{x} and \varname{y} are its
+real and imaginary parts
+\begin{itemize}
+  \item If \varname{x} is \code{positive-infinity} and \varname{y} is not an
+  infinity \code{phase} returns $0$
+  \item If \varname{x} is \code{negative-infinity} and \varname{y} is not an
+  infinity \code{phase} returns $\pi$
+  \item If \varname{y} is \code{positive-infinity} and \varname{x} is not an
+  infinity \code{phase} returns $\pi/2$
+  \item If \varname{y} is \code{negative-infinity} and \varname{x} is not an
+  infinity \code{phase} returns $-\pi/2$
+\end{itemize}
+
+\DExceptional{}
+
+There are different exceptional situations to be considered:
+\begin{enumerate}
+  \item If \code{phase} is called with
+    \varname{n} being a \clieeeterm{signaling NaN}, then the
+    \clname{cl:floating-point-invalid-operation} error is signaled.
+  \item If \code{phase} is called with a number with both the real and
+  imaginary parts of \varname{n} being a \code{infinity}, then the
+    \clname{cl:floating-point-invalid-operation} error is signaled.
+  \item If \varname{n} is not \CL{}
+    \clterm{number} then the functions \code{phase} signals a
+  \clname{cl:type-error}.
+\end{enumerate}
+
+\end{document}

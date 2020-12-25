@@ -1,0 +1,161 @@
+\documentclass[../Exponentials-Logarithms-Trigonometry.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Functions \code{sinh}, \code{cosh}, \code{tanh},
+\code{asinh}, \code{acosh}, \code{atanh}}
+\index{A!\code{sinh}}
+\index{A!\code{cosh}}
+\index{A!\code{tanh}}
+\index{A!\code{asinh}}
+\index{A!\code{acosh}}
+\index{A!\code{atanh}}
+
+\DSyntax{}
+
+\code{sinh} \varname{n} \RArrow \varname{result}\\
+\code{cosh} \varname{n} \RArrow \varname{result}\\
+\code{tanh} \varname{n} \RArrow \varname{result}\\
+\code{asinh} \varname{n} \RArrow \varname{result}\\
+\code{acosh} \varname{n} \RArrow \varname{result}\\
+\code{atanh} \varname{n} \RArrow \varname{result}
+
+\DArgsNValues{}
+
+\varname{n} -- A \clieeeterm{floating
+  point number}\\
+\varname{result} -- A \clieeeterm{floating point number}
+
+\DDescription{}
+
+The functions \code{sinh}, \code{cosh}, \code{tanh}, \code{asinh},
+\code{acosh} and \code{atanh} compute the hyperbolic
+sine, hyberbolic cosine, hyperbolic tangent, hyperbolic
+arc sine, hyberbolic arc cosine and hyperbolic arc tangent of a number. When
+\varname{n} is not a \clieeeterm{NaNs} or an
+\clieeeterm{infinity} their behavior is the one described in
+\cite{1996:ANSIHyperSpec} for regular floating point numbers and complex
+numbers.
+
+\noindent
+When \varname{n} is a \clterm{real} number smaller than $+1$ the function
+\code{acosh} does not signal a \\\code{cl:floating-point-invalid-operation}, it
+quietly returns a \clterm{complex} number.
+
+\noindent
+When \varname{n} is a \clterm{real} number outside the interval $[-1, +1]$
+the function \code{atanh} does not signal a \\
+\code{cl:floating-point-invalid-operation}, it quietly
+returns a \clterm{complex} number.
+
+\noindent
+When \varname{n} is a \clieeeterm{quiet NaN} the functions \code{sinh},
+\code{cosh}, \code{tanh}, \code{asinh}, \code{acosh} and \code{atanh} return
+a \clieeeterm{quiet NaN}.
+
+\noindent
+The function \code{sinh}
+\begin{itemize}
+  \item When \varname{n} $\in \{$\code{negative-infinity}$,$
+  \code{negative-zero}$,$ \code{positive-infinity}$\}$ returns \varname{n}
+  \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
+  are its real and imaginary parts has the behaviour and the exceptional
+  situations derived from the relation: \code{(sinh }\varname{n}\code{)}
+  $\equiv$ \code{(* \#c(0 1) (sin \#c(}\varname{y}\code{ (-
+  }\varname{x}\code{)))}
+\end{itemize}
+
+\noindent
+The function \code{cosh}
+\begin{itemize}
+  \item When \varname{n} $\in \{$\code{negative-infinity}$,$
+  \code{positive-infinity}$\}$ returns \code{positive-infinity}
+  \item When \varname{n} is \code{negative-zero} returns $+1$
+  \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
+  are its real and imaginary parts has the behaviour and the exceptional
+  situations derived from the relation: \code{(cosh }\varname{n}\code{)}
+  $\equiv$ \code{(cos \#c(}\varname{y}\code{ (-
+  }\varname{x}\code{)))}
+\end{itemize}
+
+\noindent
+The function \code{tanh}
+\begin{itemize}
+  \item When \varname{n} is \code{negative-infinity} returns
+  $-1$
+  \item When \varname{n} is \code{negative-zero} returns \code{negative-zero}
+  \item When \varname{n} is \code{positive-infinity} returns
+  $1$
+  \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
+  are its real and imaginary parts has the behaviour and the exceptional
+  situations derived from the relation: \code{(tanh }\varname{n}\code{)}
+  $\equiv$ \code{(* \#c(0 1) (tan \#c(}\varname{y}\code{ (-
+  }\varname{x}\code{)))}
+\end{itemize}
+
+\noindent
+The function \code{asinh}
+\begin{itemize}
+  \item When \varname{n} $\in \{$\code{negative-infinity}$,$
+  \code{negative-zero}$,$ \code{positive-infinity}$\}$ returns \varname{n}
+  \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
+  are its real and imaginary parts has the behaviour and the exceptional
+  situations derived from the relation: \code{(asinh }\varname{n}\code{)}
+  $\equiv$ \code{(* \#c(0 1) (asin \#c(}\varname{y}\code{ (-
+  }\varname{x}\code{)))}
+\end{itemize}
+
+\noindent
+The function \code{acosh}
+\begin{itemize}
+  \item When \varname{n} is \code{positive-infinity} returns
+  \code{positive-infinity}
+  \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
+  are its real and imaginary parts has the behaviour and the exceptional
+  situations derived from the following relations:
+  \begin{itemize}
+    \item If \varname{y} is greater than or equal to zero or
+    \code{positive-infinity}, \code{(acosh
+    }\varname{n}\code{)}
+    $\equiv$ \code{(* \#c(0 1) (acos \#c(}\varname{x}\code{
+    }\varname{y}\code{)))}
+    \item Else  \code{(acosh
+    }\varname{n}\code{)}
+    $\equiv$ \code{(- (* \#c(0 1) (acos \#c(}\varname{x}\code{
+    }\varname{y}\code{))))}
+  \end{itemize}
+\end{itemize}
+
+\noindent
+The function \code{atanh}
+\begin{itemize}
+  \item When \varname{n} is $-1$ returns \code{negative-infinity}
+  \item When \varname{n} is \code{negative-zero} returns \code{negative-zero}
+  \item When \varname{n} is $1$ returns \code{positive-infinity}
+  \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
+  are its real and imaginary parts has the behaviour and the exceptional
+  situations derived from the relation: \code{(atanh }\varname{n}\code{)}
+  $\equiv$ \code{(* \#c(0 1) (atan \#c(}\varname{y}\code{ (-
+  }\varname{x}\code{)))}
+\end{itemize}
+
+\DExceptional{}
+
+There are different exceptional situations to be considered, in addition to
+the ones that can be derived from the relations stated above:
+\begin{enumerate}
+  \item If \code{sinh}, \code{cosh}, \code{tanh}, \code{asinh},
+    \code{acosh} and \code{atanh} are called with
+    \varname{n} being a \clieeeterm{signaling NaN}, then the
+    \clname{cl:floating-point-invalid-operation} error is signaled.
+  \item If \varname{n} is not \CL{}
+    \clterm{number} then the functions \code{sinh}, \code{cosh}, \code{tanh},
+    \code{asinh}, \code{acosh} and \code{atanh} signals a
+    \clname{cl:type-error}.
+\end{enumerate}
+
+\DSeeAlso{}
+
+\code{*}, \code{-}, \code{sin}, \code{cos}, \code{tan}, \code{asin},
+\code{acos}, \code{atan}.
+
+\end{document}
