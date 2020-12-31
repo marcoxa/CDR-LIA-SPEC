@@ -9,7 +9,7 @@
     acos &  cosh &  sin\\
     acosh & exp  &  sinh\\
     asin &  expt &  sqrt\\
-    asinh & isqrt &  tan\\
+    asinh & \#| isqrt |\# &  tan\\
     atan &  log &   tanh\\
     atanh & phase & \\
     cis & \#| pi |\# & \\
@@ -31,6 +31,16 @@ a \clterm{complex number} for negative values.  In the following each
 function will be further specified to comply with the \cite{2008:IEEE-754}
 standard.
 
+
+\noindent
+For each of the functions in the table above the following set of functions is
+defined:
+\begin{itemize}
+  \item \code{function.<} compute the function with rounding downward
+  \item \code{function.>} compute the function with rounding upward
+  \item \code{function.<>} compute the function with rounding to nearest
+  \item \code{function} compute the function with the current rounding mode
+\end{itemize}
 \vspace*{3mm}
 
 The following functions will also be specified for completeness,
@@ -40,5 +50,9 @@ according to Section~9 of \cite{2008:IEEE-754}.
 \subfile{definitions/sin-cos-tan.tex}
 \subfile{definitions/sinh-cosh-tanh-asinh-acosh-atanh.tex}
 \subfile{definitions/phase.tex}
+\subfile{definitions/exp-expt-cis.tex}
+\subfile{definitions/sqrt.tex}
+\subfile{definitions/signum.tex}
+\subfile{definitions/log.tex}
 
 \end{document}

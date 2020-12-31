@@ -1,0 +1,111 @@
+\documentclass[../Comparisons-Predicates.tex]{subfiles}
+\begin{document}
+
+    \DDictionaryItem{Functions \code{signum}, \code{float-sign}}
+    \index{S!\code{signum}}
+    \index{F!\code{float-sign}}
+
+
+    \DSyntax{}
+
+    \code{signum} \varname{n} \RArrow \varname{signed-prototype}\\
+    \code{float-sign} \varname{f1} \code{\&optional} \varname{f2}
+    \RArrow \varname{signed-float}
+
+
+    \DArgsNValues{}
+
+    \varname{n} -- a \clterm{number}\\
+    \varname{signed-prototype} -- a \clterm{number}\\
+    \varname{f1} -- a \clterm{float}\\
+    \varname{f2} -- a \clterm{float}\\
+    \varname{signed-float} -- a \clterm{float}
+
+
+    \DDescription{}
+
+    The function \code{signum} computes the sign of \varname{n}. The function
+    \code{float-sign} computes the sign of \varname{f1} is \varname{f2} is not
+    provided, otherwise it returns a number with the same absolute value of
+    \varname{f2} and the sign of \varname{f1}.
+
+    \noindent
+    When \varname{n} or \varname{f1} or \varname{f2} are not a
+    \clieeeterm{NaNs} or an
+    \clieeeterm{infinity} their behavior is the one described in
+    \cite{1996:ANSIHyperSpec} for regular floating point numbers and complex
+    numbers.
+
+    \noindent
+    When \varname{n} or \varname{f1} or \varname{f2} are a \clieeeterm{quiet
+    NaN} the functions \code{signum} or \code{float-sign} return a
+    \clieeeterm{quiet NaN}.
+
+    \noindent
+    The function \code{signum}
+    \begin{itemize}
+        \item When \varname{n} is \code{positive-infinity} returns $1$
+        \item When \varname{n} is \code{negative-infinity} returns $-1$
+        \item When \varname{n} is a complex number and \varname{x} and
+        \varname{y} are its real and imaginary parts
+        \begin{itemize}
+            \item If \varname{y} is \code{negative-infinity} or
+            code{negative-zero} returns \code{(conjugate (signum (conjugate
+            \#c(}\varname{x} \varname{y}\code{))))}
+            \item If \varname{x} is \code{negative-infinity} or
+            code{negative-zero} and \varname{y} is not \code{negative-infinity} or
+            code{negative-zero} returns \code{(- (signum (-
+            \#c(}\varname{x} \varname{y}\code{))))}
+            \item Else is equivalent to \code{\#c((sin (phase \#c
+            (}\varname{y} \varname{x}\code{))) (sin
+            (phase \#c(}\varname{y} \varname{x}\code{))))}
+        \end{itemize}
+    \end{itemize}
+
+
+    The function \code{float-sign}
+    \begin{itemize}
+        \item If \varname{f2} is not provided has the same behavior of
+        \code{signum}
+        \item If \varname{f2} is a \code{positive-infinity} or a
+        \code{negative-infinity} returns
+        \code{(* (signum} \varname{f1}\code{) positive-infinity)}
+        \item If \varname{f2} is a complex number number and its real or
+        imaginary parts are \code{positive-infinity} or
+        \code{negative-infinity} returns
+        \code{(* (signum} \varname{f1}\code{) positive-infinity)}
+        \item If \varname{f2} is a \emph{finite} real or complex number is
+        equivalent to \code{(* (signum} \varname{f1}\code{) (abs}
+        \varname{f2}\code{)}
+    \end{itemize}
+
+    \DExceptional{}
+
+    There are different exceptional situations to be considered:
+    \begin{enumerate}
+        \item If \code{signum} or \code{float-sign} are called with
+        \varname{n} or \varname{f1} or \varname{f2} being a
+        \clieeeterm{signaling NaN}, then the
+        \clname{cl:floating-point-invalid-operation} error is signaled.
+        \item If \varname{n} or \varname{f1} or \varname{f2} are not \CL{}
+        \clterm{number} then the functions \code{signum} and \code{float-sign}
+        signal a \clname{cl:type-error}.
+    \end{enumerate}
+
+%    If \varname{n} is a floating point \clliaterm{signaling NaN} and the
+%    notification style is NACF, then a\\
+%    \code{floating-point-invalid} condition is signaled with a
+%    \clliaterm{quiet NaN} as a \emph{continuation value}; if the
+%    notification style is NRI then the indicator \code{:invalid} is
+%    recorder and a \clliaterm{quiet NaN} is returned.
+%
+%    A \code{type-error} is signaled if \varname{n} is not a number or
+%    either \varname{f1}, or \varname{f2} is not a \clterm{float} number.
+
+
+    \DNotes{}
+
+    The specification of \code{signum} is substantially different from the
+    one present in \cite{1994:ANSICL}.
+
+\end{document}

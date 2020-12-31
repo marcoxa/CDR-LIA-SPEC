@@ -1,0 +1,85 @@
+\documentclass[../Comparisons-Predicates.tex]{subfiles}
+\begin{document}
+
+    \DDictionaryItem{Function \code{log}}
+    \index{S!\code{log}}
+
+    \DSyntax{}
+
+    \code{log} \varname{n} \varname{base} \RArrow{} \varname{number}
+
+    \DArgsNValues{}
+
+    \varname{n} -- A \clterm{number}.\\
+    \varname{base} -- A \clterm{number}.\\
+    \varname{number} -- A \clterm{number}.
+
+    \DDescription{}
+
+    The function \code{log} compute the \emph{natural logarithm} of
+    \varname{n} if \varname{base} is not supplied. If \varname{base} is
+    supplied \code{(log} \varname{n} \varname{base}\code{)} $\equiv$ \code{
+    (/ (log} \varname{n}\code{) (log} \varname{base}\code{))}
+
+    \noindent
+    When \varname{n} is not a \clieeeterm{NaNs} or an
+    \clieeeterm{infinity} its behavior is the one described in
+    \cite{1996:ANSIHyperSpec} for regular floating point numbers and complex
+    numbers.
+
+    \noindent
+    When \varname{n} is a \clieeeterm{quiet NaN} the function \code{log}
+    returns a \clieeeterm{quiet NaN}.
+
+    \noindent
+    When \varname{n} is a negative \clterm{real}
+    number the function \code{log} does not signal a
+    \code{cl:floating-point-invalid-operation}, it quietly returns a
+    \clterm{complex} number.
+
+    \noindent
+    The function \code{log}
+    \begin{itemize}
+        \item When \varname{n} is $0$ or \code{negative-zero} returns
+        \code{negative-infinity}
+        \item When \varname{n} is \code{positive-infinity} returns
+        \code{positive-infinity}
+        \item When \varname{n} is a complex number and \varname{x} and
+        \varname{y} are its real and imaginary parts
+        \begin{itemize}
+            \item If \varname{x} is $0$ or \code{negative-zero} and
+            \varname{y} is $0$ returns \code{\#c(negative-infinity (phase
+            \#c(}\varname{x} \varname{y}\code{)))}
+            \item If \varname{y} is \code{negative-zero} returns \code
+            {(conjugate (log \#c(}\varname{x} \code{0)))}
+            \item If \varname{x} is \code{negative-zero} and \varname{y} is a
+            positive \clterm{number} or \code{positive-infinity} returns
+            \code{\#c((log} \varname{y}\code{) (/ $\pi$ 2)}
+            \item If \varname{x} is \code{negative-zero} and \varname{y} is a
+            negative \clterm{number} or \code{negative-infinity} returns
+            \code{\#c((log (-} \varname{y}\code{)) (- (/ $\pi$ 2))}
+            \item If \varname{x} is an \clieeeterm{infinity} and \varname{y}
+            is a finite number or an \clieeeterm{infinity} returns
+            \code{\#c(positive-infinity (phase \#c(}\varname{x}
+            \varname{y}\code{)))}
+            \item If \varname{x} is a \clterm{finite} number and \varname{y}
+            is an \clieeeterm{infinity} returns
+            \code{\#c(positive-infinity (phase
+            \#c(}\varname{x} \varname{y}\code{)))}
+        \end{itemize}
+    \end{itemize}
+
+
+    \DExceptional{}
+
+    There are different exceptional situations to be considered:
+    \begin{enumerate}
+        \item If \code{log} is called with
+        \varname{n} being a \clieeeterm{signaling NaN}, then the
+        \clname{cl:floating-point-invalid-operation} error is signaled.
+        \item If \varname{n} is not \CL{}
+        \clterm{number} then the function \code{log} signals a
+        \clname{cl:type-error}.
+    \end{enumerate}
+
+\end{document}

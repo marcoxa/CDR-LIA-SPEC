@@ -1,0 +1,85 @@
+\documentclass[../Exponentials-Logarithms-Trigonometry.tex]{subfiles}
+\begin{document}
+
+    \DDictionaryItem{Functions \code{exp}, \code{expt}, \code{cis}}
+    \index{A!\code{exp}}
+    \index{A!\code{expt}}
+    \index{A!\code{cis}}
+
+    \DSyntax{}
+
+    \code{exp} \varname{n} \RArrow \varname{result}\\
+    \code{expt} \varname{base} \varname{power} \RArrow \varname{result}\\
+    \code{cis} \varname{radians} \RArrow \varname{result}
+
+    \DArgsNValues{}
+
+    \varname{n} -- A \clieeeterm{number}\\
+    \varname{base} -- A \clieeeterm{number}\\
+    \varname{power} -- A \clieeeterm{number}\\
+    \varname{radians} -- A \clieeeterm{real number}
+
+    \DDescription{}
+
+    The function \code{exp} compute the natural exponentiation of a number. In
+    this section we describe only \code{exp}, the description and the properties
+    of \code{expt} and \code{cis} can be derived with the relations:
+    \begin{itemize}
+        \item \code{(expt} \varname{a} \varname{b}\code{)} $\equiv$ \code{(* (exp}
+        \varname{b}\code{)} \code{(log} \varname{a}\code{))}
+        \item \code{(cis} \varname{x}\code{)} $\equiv$ \code{(exp} \code{\#c(0}
+        \varname{x}\code{))}
+    \end{itemize}
+
+
+    When \varname{n} is not a \clieeeterm{NaNs} or an
+    \clieeeterm{infinity} their behavior is the one described in
+    \cite{1996:ANSIHyperSpec} for regular floating point numbers and complex
+    numbers.
+
+    \noindent
+    When \varname{n} is a \clieeeterm{quiet NaN} the function \code{exp} returns a
+    \clieeeterm{quiet NaN}.
+
+    \noindent
+    The function \code{exp}, when \varname{n} is a complex number, \varname{x}
+    and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
+    \begin{itemize}
+        \item If \varname{x} is a \code{negative-zero} returns \code{(exp \#c(0 }
+        \varname{y}\code{))}
+        \item If \varname{x} is not a \code{negative-zero} and \varname{y} is a
+        \code{negative-zero} returns \code{(conjugate (exp \#c(}\varname{x}
+        \code{0)))}
+        \item If \varname{x} is \code{negative-infinity} and
+        \varname{y} is not \code{positive-infinity} or \code{negative-infinity}
+        returns \code{\#c((* 0 (cos }\varname{y}\code{)) (* 0 (sin
+        }\varname{y}\code{)))}
+        \item If \varname{x} is \code{positive-infinity} and
+        \varname{y} is not \code{positive-infinity} or \code{negative-infinity} or $0$
+        returns \code{\#c((* positive-infinity (cos }\varname{y}\code{)) (*
+        positive-infinity (sin
+        }\varname{y}\code{)))}
+        \item If \varname{x} is \code{positive-infinity} and \varname{y} is $0$
+        returns \code{\#c(positive-infinity 0)}
+    \end{itemize}
+
+    \DExceptional{}
+
+    There are different exceptional situations to be considered:
+    \begin{enumerate}
+        \item If \code{exp} is called with
+        \varname{n} being a \clieeeterm{signaling NaN}, then the
+        \clname{cl:floating-point-invalid-operation} error is signaled.
+        \item If \code{exp} is called with the imaginary
+        part of \varname{n} being a \code{infinity}, then the
+        \clname{cl:floating-point-invalid-operation} error is signaled.
+        \item If \varname{n} is not \CL{}
+        \clterm{number} then the function \code{exp} signals a
+        \clname{cl:type-error}.
+    \end{enumerate}
+
+    \DSeeAlso{}
+
+    \code{log}.
+
+\end{document}
