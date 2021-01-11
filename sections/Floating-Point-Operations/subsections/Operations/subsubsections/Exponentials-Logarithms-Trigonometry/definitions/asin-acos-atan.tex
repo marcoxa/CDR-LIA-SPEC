@@ -42,23 +42,25 @@ When \varname{n} or \varname{n1} or \varname{n2} are
 \noindent
 The function \code{asin}
 \begin{itemize}
-  \item When \varname{n} is \code{negative-infinity} returns \code{\#c((- (\
-  pi 2)) positive-infinity)}
-  \item When \varname{n} is \code{positive-infinity} returns \code{\#c((\ pi
-  2) negative-infinity)}
-  \item When \varname{n} is a complex number, \varname{x} and \varname{y}
+\item When \varname{n} is \code{negative-infinity} returns
+  \code{\#c((- (\ pi 2)) positive-infinity)}
+
+\item When \varname{n} is \code{positive-infinity} returns
+  \code{\#c((\ pi 2) negative-infinity)}
+
+\item When \varname{n} is a complex number, \varname{x} and \varname{y}
   are its \clieeeterm{real} and \clieeeterm{imaginary} parts
   \begin{itemize}
-    \item If \varname{x} is a \code{negative-zero} returns \code{(- (asin
-    \#c(0 (- }\varname{y}\code{))))}
-    \item If \varname{y} is a \code{negative-zero} and \varname{x} is not a
+  \item If \varname{x} is a \code{negative-zero} returns \code{(- (asin
+      \#c(0 (- }\varname{y}\code{))))}
+  \item If \varname{y} is a \code{negative-zero} and \varname{x} is not a
     \code{negative-zero} returns \code{(conjugate (asin
-    \#c(}\varname{x}\code{ (- 0)))}
-    \item If \varname{x} is a \code{positive-infinity} or
+      \#c(}\varname{x}\code{ (- 0)))}
+  \item If \varname{x} is a \code{positive-infinity} or
     \code{negative-infinity} and \varname{y} a real number OR if \varname{y} is
     a \code{positive-infinity} or a \code{negative-infinity} and \varname{x} is
     a \clieeeterm{finite} \clieeeterm{real} number returns \code{\#c((phase
-    \#c((abs }\varname{y}\code{) }\varname{x}\code{)) (* (signum}
+      \#c((abs }\varname{y}\code{) }\varname{x}\code{)) (* (signum}
     \varname{y}\code{) positive-infinity))}
   \end{itemize}
 \end{itemize}
@@ -66,23 +68,23 @@ The function \code{asin}
 \noindent
 The function \code{acos}
 \begin{itemize}
-  \item When \varname{n} is \code{negative-infinity} returns \code{\#c(pi
-  negative-infinity)}
-  \item When \varname{n} is \code{positive-infinity} returns \code{\#c(0
-  positive-infinity)}
-  \item When \varname{n} is a complex number, \varname{x} and \varname{y}
+\item When \varname{n} is \code{negative-infinity} returns \code{\#c(pi
+    negative-infinity)}
+\item When \varname{n} is \code{positive-infinity} returns \code{\#c(0
+    positive-infinity)}
+\item When \varname{n} is a complex number, \varname{x} and \varname{y}
   are its \clieeeterm{real} and \clieeeterm{imaginary} parts
   \begin{itemize}
-    \item If \varname{x} is a \code{negative-zero} returns \code{\#c((\ pi 2)
-    (- (asinh }\varname{y}\code{)))}
-    \item If \varname{y} is a \code{negative-zero} and \varname{x} is not a
+  \item If \varname{x} is a \code{negative-zero} returns \code{\#c((\ pi 2)
+      (- (asinh }\varname{y}\code{)))}
+  \item If \varname{y} is a \code{negative-zero} and \varname{x} is not a
     \code{negative-zero} returns \code{(conjugate (acos \#c
-    (}\varname{x}\code{ 0))}
-    \item If \varname{x} is a \code{positive-infinity} or
+      (}\varname{x}\code{ 0))}
+  \item If \varname{x} is a \code{positive-infinity} or
     \code{negative-infinity} and \varname{y} a positive \clieeeterm{real}
     number or zero or a \code{positive-infinity} returns \code{\#c((phase n)
-    negative-infinity))}
-    \item If \varname{x} is a \code{positive-infinity} or
+      negative-infinity))}
+  \item If \varname{x} is a \code{positive-infinity} or
     \code{negative-infinity} and \varname{y} a negative \clieeeterm{real}
     number or a \code{negative-infinity} returns
     \code{\#c((phase \#c(x (- y)) positive-infinity))}
@@ -92,22 +94,22 @@ The function \code{acos}
 \noindent
 The function \code{atan}
 \begin{itemize}
-  \item When \varname{n1}, or the ratio \varname{n1}$/$\varname{n2}, is a
+\item When \varname{n1}, or the ratio \varname{n1}$/$\varname{n2}, is a
   \code{positive-infinity} (or \code{negative-infinity}) it returns $+\pi/2$
   (or $-\pi/2$)
-  \item When \varname{n1} is a complex
+\item When \varname{n1} is a complex
   number, \varname{x} and \varname{y} are its \clieeeterm{real} and
   \clieeeterm{imaginary} parts,
   \begin{itemize}
-    \item If $x = 0$ and $y \in \{-1, 1\}$ then the function \code{(atan
-    }\varname{n1}\code{)}
+  \item If $x = 0$ and $y \in \{-1, 1\}$ then the function
+    \code{(atan }\varname{n1}\code{)}
     returns \code{\#c(0 (* }\varname{y} \code{positive-infinity))}
-    \item If \varname{x} is a \code{negative-zero} return \code{(- (atan \#c(0 (-
+  \item If \varname{x} is a \code{negative-zero} return \code{(- (atan \#c(0 (-
     }\varname{y}\code{))))}
-    \item If \varname{y} is a \code{negative-zero} and \varname{x} is not a
+  \item If \varname{y} is a \code{negative-zero} and \varname{x} is not a
     \code{negative-zero} return \code{(conjugate (atan
-    \#c(}\varname{x}\code{ 0))}
-    \item If \varname{x} is a \code{positive-infinity} or
+      \#c(}\varname{x}\code{ 0))}
+  \item If \varname{x} is a \code{positive-infinity} or
     \code{negative-infinity} and \varname{y} a real number OR if \varname{y} is
     a \code{positive-infinity} or a \code{negative-infinity} and \varname{x} is
     a \clieeeterm{finite} \clieeeterm{real} number return \code{\#c((* (signum
@@ -117,22 +119,20 @@ The function \code{atan}
 \end{itemize}
 
 
-
-
 \DExceptional{}
 
 There are different exceptional situations to be considered:
 \begin{enumerate}
-  \item If \code{asin}, \code{acos} and \code{atan} are called with
-    \varname{n}, \varname{n1}, or \varname{n2} being a
-    \clieeeterm{signaling NaN}, then the
-    \clname{cl:floating-point-invalid-operation} error is signaled.
-  \item If \code{atan} is called with both \varname{n1} and
-    \varname{n2} and at least one of them is not a \clterm{real} number,
-    then the a \code{type-error} is signaled.
-  \item If \varname{n} or \varname{n1} or \varname{n2} are not \CL{}
-    \clterm{number} then the functions \code{asin}, \code{acos} and
-    \code{atan} signals a \clname{cl:type-error}.
+\item If \code{asin}, \code{acos} and \code{atan} are called with
+  \varname{n}, \varname{n1}, or \varname{n2} being a
+  \clieeeterm{signaling NaN}, then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+\item If \code{atan} is called with both \varname{n1} and
+  \varname{n2} and at least one of them is not a \clterm{real} number,
+  then the a \code{type-error} is signaled.
+\item If \varname{n} or \varname{n1} or \varname{n2} are not \CL{}
+  \clterm{number} then the functions \code{asin}, \code{acos} and
+  \code{atan} signals a \clname{cl:type-error}.
 \end{enumerate}
 
 \DSeeAlso{}
