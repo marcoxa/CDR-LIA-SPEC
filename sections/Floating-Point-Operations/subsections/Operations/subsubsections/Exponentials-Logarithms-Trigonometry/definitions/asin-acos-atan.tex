@@ -1,3 +1,7 @@
+%%%% -*- Mode: LaTeX -*-
+
+%%%% asin-acos-atan.tex
+
 \documentclass[../Exponentials-Logarithms-Trigonometry.tex]{subfiles}
 \begin{document}
 
@@ -43,24 +47,25 @@ When \varname{n} or \varname{n1} or \varname{n2} are
 The function \code{asin}
 \begin{itemize}
 \item When \varname{n} is \code{negative-infinity} returns
-  \code{\#c((- (\ pi 2)) positive-infinity)}
+  \code{(complex (- (/ pi 2)) positive-infinity)}
 
 \item When \varname{n} is \code{positive-infinity} returns
-  \code{\#c((\ pi 2) negative-infinity)}
+  \code{(complex (/ pi 2) negative-infinity)}
 
 \item When \varname{n} is a complex number, \varname{x} and \varname{y}
   are its \clieeeterm{real} and \clieeeterm{imaginary} parts
   \begin{itemize}
-  \item If \varname{x} is a \code{negative-zero} returns \code{(- (asin
-      \#c(0 (- }\varname{y}\code{))))}
+  \item If \varname{x} is a \code{negative-zero} returns
+    \code{(- (asin (complex 0 (- }\varname{y}\code{))))}
   \item If \varname{y} is a \code{negative-zero} and \varname{x} is not a
-    \code{negative-zero} returns \code{(conjugate (asin
-      \#c(}\varname{x}\code{ (- 0)))}
+    \code{negative-zero} returns
+    \code{(conjugate (asin (complex} \varname{x}\code{ (- 0)))}
   \item If \varname{x} is a \code{positive-infinity} or
     \code{negative-infinity} and \varname{y} a real number OR if \varname{y} is
     a \code{positive-infinity} or a \code{negative-infinity} and \varname{x} is
-    a \clieeeterm{finite} \clieeeterm{real} number returns \code{\#c((phase
-      \#c((abs }\varname{y}\code{) }\varname{x}\code{)) (* (signum}
+    a \clieeeterm{finite} \clieeeterm{real} number returns
+    \code{(complex (phase
+      (complex  (abs }\varname{y}\code{) }\varname{x}\code{)) (* (signum}
     \varname{y}\code{) positive-infinity))}
   \end{itemize}
 \end{itemize}
@@ -68,26 +73,31 @@ The function \code{asin}
 \noindent
 The function \code{acos}
 \begin{itemize}
-\item When \varname{n} is \code{negative-infinity} returns \code{\#c(pi
-    negative-infinity)}
-\item When \varname{n} is \code{positive-infinity} returns \code{\#c(0
-    positive-infinity)}
+\item When \varname{n} is \code{negative-infinity} returns
+  \code{(complex pi negative-infinity)}
+  
+\item When \varname{n} is \code{positive-infinity} returns
+  \code{(complex 0 positive-infinity)}
+  
 \item When \varname{n} is a complex number, \varname{x} and \varname{y}
   are its \clieeeterm{real} and \clieeeterm{imaginary} parts
   \begin{itemize}
-  \item If \varname{x} is a \code{negative-zero} returns \code{\#c((\ pi 2)
-      (- (asinh }\varname{y}\code{)))}
+  \item If \varname{x} is a \code{negative-zero} returns
+    \code{(complex (/ pi 2) (- (asinh }\varname{y}\code{)))}
+    
   \item If \varname{y} is a \code{negative-zero} and \varname{x} is not a
-    \code{negative-zero} returns \code{(conjugate (acos \#c
-      (}\varname{x}\code{ 0))}
+    \code{negative-zero} returns
+    \code{(conjugate (acos (complex }\varname{x}\code{ 0))}
+
   \item If \varname{x} is a \code{positive-infinity} or
     \code{negative-infinity} and \varname{y} a positive \clieeeterm{real}
-    number or zero or a \code{positive-infinity} returns \code{\#c((phase n)
-      negative-infinity))}
+    number or zero or a \code{positive-infinity} returns
+    \code{(complex (phase n) negative-infinity))}
+    
   \item If \varname{x} is a \code{positive-infinity} or
     \code{negative-infinity} and \varname{y} a negative \clieeeterm{real}
     number or a \code{negative-infinity} returns
-    \code{\#c((phase \#c(x (- y)) positive-infinity))}
+    \code{(complex(phase (complex \varname{x} (- \varname{y})) positive-infinity))}
   \end{itemize}
 \end{itemize}
 
@@ -97,24 +107,27 @@ The function \code{atan}
 \item When \varname{n1}, or the ratio \varname{n1}$/$\varname{n2}, is a
   \code{positive-infinity} (or \code{negative-infinity}) it returns $+\pi/2$
   (or $-\pi/2$)
+  
 \item When \varname{n1} is a complex
   number, \varname{x} and \varname{y} are its \clieeeterm{real} and
   \clieeeterm{imaginary} parts,
   \begin{itemize}
   \item If $x = 0$ and $y \in \{-1, 1\}$ then the function
-    \code{(atan }\varname{n1}\code{)}
-    returns \code{\#c(0 (* }\varname{y} \code{positive-infinity))}
-  \item If \varname{x} is a \code{negative-zero} return \code{(- (atan \#c(0 (-
-    }\varname{y}\code{))))}
+    \code{(atan }\varname{n1}\code{)} returns
+    \code{(complex 0 (* }\varname{y} \code{positive-infinity))}
+    
+  \item If \varname{x} is a \code{negative-zero} return
+    \code{(- (atan (complex 0 (- }\varname{y}\code{))))}
+    
   \item If \varname{y} is a \code{negative-zero} and \varname{x} is not a
-    \code{negative-zero} return \code{(conjugate (atan
-      \#c(}\varname{x}\code{ 0))}
+    \code{negative-zero} return
+    \code{(conjugate (atan (complex }\varname{x}\code{ 0))}
+    
   \item If \varname{x} is a \code{positive-infinity} or
     \code{negative-infinity} and \varname{y} a real number OR if \varname{y} is
     a \code{positive-infinity} or a \code{negative-infinity} and \varname{x} is
-    a \clieeeterm{finite} \clieeeterm{real} number return \code{\#c((* (signum
-    }\varname{x}\code{) (\ pi 2)) (* (signum
-    }\varname{y}\code{) 0))}
+    a \clieeeterm{finite} \clieeeterm{real} number return
+    \code{(complex (* (signum}\varname{x}\code{) (/ pi 2)) (* (signum}\varname{y}\code{) 0))}
   \end{itemize}
 \end{itemize}
 
@@ -125,11 +138,13 @@ There are different exceptional situations to be considered:
 \begin{enumerate}
 \item If \code{asin}, \code{acos} and \code{atan} are called with
   \varname{n}, \varname{n1}, or \varname{n2} being a
-  \clieeeterm{signaling NaN}, then the
+  \clieeeterm{signaling NaN}, then the\\
   \clname{cl:floating-point-invalid-operation} error is signaled.
+
 \item If \code{atan} is called with both \varname{n1} and
   \varname{n2} and at least one of them is not a \clterm{real} number,
   then the a \code{type-error} is signaled.
+
 \item If \varname{n} or \varname{n1} or \varname{n2} are not \CL{}
   \clterm{number} then the functions \code{asin}, \code{acos} and
   \code{atan} signals a \clname{cl:type-error}.
@@ -140,3 +155,8 @@ There are different exceptional situations to be considered:
 \code{*}, \code{-}, \code{signum}, \code{abs}, \code{conjugate}.
 
 \end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../../../../../../../CDR-IEEE-754-support"
+%%% End:
