@@ -1,36 +1,40 @@
 %%%% -*- Mode: LaTeX -*-
 
-%%%% sqrt.tex
+%%%% sqrt-isqrt.tex
 
 \documentclass[../Comparisons-Predicates.tex]{subfiles}
 \begin{document}
 
-    \DDictionaryItem{Function \code{sqrt}}
+    \DDictionaryItem{Function \code{sqrt}, \code{isqrt}}
     \index{S!\code{sqrt}}
+    \index{S!\code{isqrt}}
 
     \DSyntax{}
 
-    \code{sqrt} \varname{n} \RArrow{} \varname{root}
+    \code{sqrt} \varname{n} \RArrow{} \varname{root}\\
+    \code{sqrt} \varname{n1} \RArrow{} \varname{n2}
 
     \DArgsNValues{}
 
     \varname{n} -- A \clterm{number}.\\
-    \varname{root} -- A \clterm{number}.
+    \varname{root} -- A \clterm{number}.\\
+    \varname{n1} -- A \clterm{natural number}.\\
+    \varname{n2} -- A \clterm{natural number}.
 
     \DDescription{}
 
-    The function \code{sqrt} compute the \emph{square root} of \varname{n}.
+    The functions \code{sqrt}, \code{isqrt} compute the \emph{square root},
+    \emph{natural square root} of \varname{n}, \varname{n1}.
 
     \noindent
-    When \varname{n} is not a \clieeeterm{NaNs} or an
-    \clieeeterm{infinity} its behavior is the one described in
-    \cite{1996:ANSIHyperSpec} for regular floating point numbers and complex
-    numbers.
+    When \varname{n}, \varname{n1}  are not a \clieeeterm{NaNs} or an
+    \clieeeterm{infinity} the behavior of \code{sqrt} \code{isqrt} are the one
+    described in \cite{1996:ANSIHyperSpec} for regular numbers (natural
+    numbers for \code{isqrt}).
 
     \noindent
-    When \varname{n} is a \clieeeterm{quiet NaN} the function \code{sqrt}
-    returns a
-    \clieeeterm{quiet NaN}.
+    When \varname{n} or \varname{n1} are a \clieeeterm{quiet NaN} the functions
+    \code{sqrt} and \code{isqrt} returns a \clieeeterm{quiet NaN}.
 
     \noindent
     When \varname{n} is a negative \clterm{real}
@@ -47,7 +51,7 @@
         \item If \varname{x} is a \clieeeterm{number} or an
         \clieeeterm{infinity} and
         \varname{y} is
-$-0.0$ returns \code{(conjugate (sqrt (complex }\varname{x}
+        $-0.0$ returns \code{(conjugate (sqrt (complex }\varname{x}
         \code{0)))}
         \item If \varname{x} is a \clieeeterm{number} or an
         \clieeeterm{infinity} and
@@ -76,12 +80,16 @@ $-0.0$ returns \code{(conjugate (sqrt (complex }\varname{x}
 
     There are different exceptional situations to be considered:
     \begin{enumerate}
-        \item If \code{sqrt} is called with
+        \item If \code{isqrt} is called with \varname{n1} being a negative
+        number or being not a natural number, then the
+        \clname{cl:floating-point-invalid-operation} error
+        is signaled.
+        \item If \code{sqrt} and \code{isqrt} are called with
         \varname{n} being a \clieeeterm{signaling NaN}, then the
         \clname{cl:floating-point-invalid-operation} error is signaled.
-        \item If \varname{n} is not \CL{}
-        \clterm{number} then the function \code{sqrt} signals a
-        \clname{cl:type-error}.
+        \item If \varname{n} and \varname{n1} are not \CL{}
+        \clterm{number} then the functions \code{sqrt} and \code{isqrt}
+        signals a \clname{cl:type-error}.
     \end{enumerate}
 
 %    If \varname{} is a \clliaterm{signaling NaN} then if the notification
