@@ -52,24 +52,24 @@
         \varname{y} are its real and imaginary parts
         \begin{itemize}
             \item If \varname{x} is $0$ or \code{negative-zero} and
-            \varname{y} is $0$ returns \code{\#c(negative-infinity (phase
-            \#c(}\varname{x} \varname{y}\code{)))}
+            \varname{y} is $0$ returns \code{(complex negative-infinity (phase
+            (complex }\varname{x} \varname{y}\code{)))}
             \item If \varname{y} is \code{negative-zero} returns \code
-            {(conjugate (log \#c(}\varname{x} \code{0)))}
+            {(conjugate (log (complex }\varname{x} \code{0)))}
             \item If \varname{x} is \code{negative-zero} and \varname{y} is a
             positive \clterm{number} or \code{positive-infinity} returns
-            \code{\#c((log} \varname{y}\code{) (/ $\pi$ 2)}
+            \code{(complex (log} \varname{y}\code{) (/ $\pi$ 2)}
             \item If \varname{x} is \code{negative-zero} and \varname{y} is a
             negative \clterm{number} or \code{negative-infinity} returns
-            \code{\#c((log (-} \varname{y}\code{)) (- (/ $\pi$ 2))}
+            \code{(complex (log (-} \varname{y}\code{)) (- (/ $\pi$ 2))}
             \item If \varname{x} is an \clieeeterm{infinity} and \varname{y}
             is a finite number or an \clieeeterm{infinity} returns
-            \code{\#c(positive-infinity (phase \#c(}\varname{x}
+            \code{(complex positive-infinity (phase (complex }\varname{x}
             \varname{y}\code{)))}
             \item If \varname{x} is a \clterm{finite} number and \varname{y}
             is an \clieeeterm{infinity} returns
-            \code{\#c(positive-infinity (phase
-            \#c(}\varname{x} \varname{y}\code{)))}
+            \code{(complex positive-infinity (phase
+            (complex }\varname{x} \varname{y}\code{)))}
         \end{itemize}
     \end{itemize}
 

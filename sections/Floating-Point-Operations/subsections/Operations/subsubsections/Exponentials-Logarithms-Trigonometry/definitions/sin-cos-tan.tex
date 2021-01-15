@@ -39,16 +39,16 @@ The function \code{sin}, when \varname{radians} is a complex number, \varname{x}
 and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
 \begin{itemize}
   \item If \varname{y} is a \code{negative-zero} returns \code{(conjugate
-  (sin \#c(}\varname{x}\code{ 0)))}
+  (sin (complex }\varname{x}\code{ 0)))}
   \item If \varname{x} is a \code{negative-zero} and \varname{y} is not a
-  \code{negative-zero} returns \code{(- (sin \#c(0 (-
+  \code{negative-zero} returns \code{(- (sin (complex 0 (-
   }\varname{y}\code{))))}
   \item If \varname{x} is not \code{negative-zero} or \code{zero} and
   \varname{y} is \code{positive-infinity} or \code{negative-infinity} returns
-  \code{\#c((* (sin }\varname{x}\code{) positive-infinity) (*
+  \code{(complex (* (sin }\varname{x}\code{) positive-infinity) (*
   (cos} \varname{x}\code{)} \varname{y}\code{))}
   \item If \varname{x} is \code{zero} and \varname{y} is
-  \code{positive-infinity} or \code{negative-infinity} returns \code{\#c(0
+  \code{positive-infinity} or \code{negative-infinity} returns \code{(complex 0
   }\varname{y}\code{)}
 \end{itemize}
 
@@ -57,17 +57,17 @@ The function \code{cos}, when \varname{radians} is a complex number, \varname{x}
 and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
 \begin{itemize}
   \item If \varname{y} is a \code{negative-zero} returns \code{(conjugate
-  (cos \#c(}\varname{x}\code{ 0)))}
+  (cos (complex }\varname{x}\code{ 0)))}
   \item If \varname{x} is a \code{negative-zero} and \varname{y} is not a
-  \code{negative-zero} returns \code{(cos \#c(0 (-
+  \code{negative-zero} returns \code{(cos (complex 0 (-
   }\varname{y}\code{)))}
   \item If \varname{x} is not \code{negative-zero} or \code{zero} and
   \varname{y} is \code{positive-infinity} or \code{negative-infinity} returns
-  \code{\#c((* (cos }\varname{x}\code{) positive-infinity) (*
+  \code{(complex (* (cos }\varname{x}\code{) positive-infinity) (*
   (sin} \varname{x}\code{)} (- \varname{y})\code{))}
   \item If \varname{x} is \code{zero} and \varname{y} is
   \code{positive-infinity} or \code{negative-infinity} returns
-  \item \code{\#c(positive-infinity }(\ (-1) \varname{y})\code{)}
+  \item \code{(complex positive-infinity }(\ (-1) \varname{y})\code{)}
 \end{itemize}
 
 \noindent
@@ -75,12 +75,12 @@ The function \code{tan}, when \varname{radians} is a complex number, \varname{x}
 and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
 \begin{itemize}
   \item If \varname{y} is a \code{negative-zero} returns \code{(conjugate
-  (tan \#c(}\varname{x}\code{ 0)))}
+  (tan (complex }\varname{x}\code{ 0)))}
   \item If \varname{x} is a \code{negative-zero} and \varname{y} is not a
-  \code{negative-zero} returns \code{(- (tan \#c(0 (-
+  \code{negative-zero} returns \code{(- (tan (complex 0 (-
   }\varname{y}\code{))))}
   \item If \varname{x} is not a \code{negative-zero} and \varname{y} is a
-  \code{positive-infinity} or a \code{negative-infinity} returns \code{\#c((*
+  \code{positive-infinity} or a \code{negative-infinity} returns \code{(complex (*
   (tan }\varname{x}\code{) 0) (signum }\varname{y}\code{))}
 \end{itemize}
 

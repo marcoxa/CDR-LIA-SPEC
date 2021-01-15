@@ -64,7 +64,7 @@ The function \code{sinh}
   \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
   are its real and imaginary parts has the behaviour and the exceptional
   situations derived from the relation: \code{(sinh }\varname{n}\code{)}
-  $\equiv$ \code{(* \#c(0 1) (sin \#c(}\varname{y}\code{ (-
+  $\equiv$ \code{(* (complex 0 1) (sin (complex }\varname{y}\code{ (-
   }\varname{x}\code{)))}
 \end{itemize}
 
@@ -77,7 +77,7 @@ The function \code{cosh}
   \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
   are its real and imaginary parts has the behaviour and the exceptional
   situations derived from the relation: \code{(cosh }\varname{n}\code{)}
-  $\equiv$ \code{(cos \#c(}\varname{y}\code{ (-
+  $\equiv$ \code{(cos (complex }\varname{y}\code{ (-
   }\varname{x}\code{)))}
 \end{itemize}
 
@@ -92,7 +92,7 @@ The function \code{tanh}
   \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
   are its real and imaginary parts has the behaviour and the exceptional
   situations derived from the relation: \code{(tanh }\varname{n}\code{)}
-  $\equiv$ \code{(* \#c(0 1) (tan \#c(}\varname{y}\code{ (-
+  $\equiv$ \code{(* (complex 0 1) (tan (complex }\varname{y}\code{ (-
   }\varname{x}\code{)))}
 \end{itemize}
 
@@ -104,7 +104,7 @@ The function \code{asinh}
   \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
   are its real and imaginary parts has the behaviour and the exceptional
   situations derived from the relation: \code{(asinh }\varname{n}\code{)}
-  $\equiv$ \code{(* \#c(0 1) (asin \#c(}\varname{y}\code{ (-
+  $\equiv$ \code{(* (complex 0 1) (asin (complex }\varname{y}\code{ (-
   }\varname{x}\code{)))}
 \end{itemize}
 
@@ -120,11 +120,11 @@ The function \code{acosh}
     \item If \varname{y} is greater than or equal to zero or
     \code{positive-infinity}, \code{(acosh
     }\varname{n}\code{)}
-    $\equiv$ \code{(* \#c(0 1) (acos \#c(}\varname{x}\code{
+    $\equiv$ \code{(* (complex 0 1) (acos (complex }\varname{x}\code{
     }\varname{y}\code{)))}
     \item Else  \code{(acosh
     }\varname{n}\code{)}
-    $\equiv$ \code{(- (* \#c(0 1) (acos \#c(}\varname{x}\code{
+    $\equiv$ \code{(- (* (complex 0 1) (acos (complex }\varname{x}\code{
     }\varname{y}\code{))))}
   \end{itemize}
 \end{itemize}
@@ -138,7 +138,7 @@ The function \code{atanh}
   \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
   are its real and imaginary parts has the behaviour and the exceptional
   situations derived from the relation: \code{(atanh }\varname{n}\code{)}
-  $\equiv$ \code{(* \#c(0 1) (atan \#c(}\varname{y}\code{ (-
+  $\equiv$ \code{(* (complex 0 1) (atan (complex }\varname{y}\code{ (-
   }\varname{x}\code{)))}
 \end{itemize}
 

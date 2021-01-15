@@ -31,7 +31,7 @@
     \begin{itemize}
         \item \code{(expt} \varname{a} \varname{b}\code{)} $\equiv$ \code{(* (exp}
         \varname{b}\code{)} \code{(log} \varname{a}\code{))}
-        \item \code{(cis} \varname{x}\code{)} $\equiv$ \code{(exp} \code{\#c(0}
+        \item \code{(cis} \varname{x}\code{)} $\equiv$ \code{(exp} \code{(complex 0}
         \varname{x}\code{))}
     \end{itemize}
 
@@ -49,22 +49,22 @@
     The function \code{exp}, when \varname{n} is a complex number, \varname{x}
     and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
     \begin{itemize}
-        \item If \varname{x} is a \code{negative-zero} returns \code{(exp \#c(0 }
+        \item If \varname{x} is a \code{negative-zero} returns \code{(exp (complex 0 }
         \varname{y}\code{))}
         \item If \varname{x} is not a \code{negative-zero} and \varname{y} is a
-        \code{negative-zero} returns \code{(conjugate (exp \#c(}\varname{x}
+        \code{negative-zero} returns \code{(conjugate (exp (complex }\varname{x}
         \code{0)))}
         \item If \varname{x} is \code{negative-infinity} and
         \varname{y} is not \code{positive-infinity} or \code{negative-infinity}
-        returns \code{\#c((* 0 (cos }\varname{y}\code{)) (* 0 (sin
+        returns \code{(complex (* 0 (cos }\varname{y}\code{)) (* 0 (sin
         }\varname{y}\code{)))}
         \item If \varname{x} is \code{positive-infinity} and
         \varname{y} is not \code{positive-infinity} or \code{negative-infinity} or $0$
-        returns \code{\#c((* positive-infinity (cos }\varname{y}\code{)) (*
+        returns \code{(complex (* positive-infinity (cos }\varname{y}\code{)) (*
         positive-infinity (sin
         }\varname{y}\code{)))}
         \item If \varname{x} is \code{positive-infinity} and \varname{y} is $0$
-        returns \code{\#c(positive-infinity 0)}
+        returns \code{(complex positive-infinity 0)}
     \end{itemize}
 
     \DExceptional{}
