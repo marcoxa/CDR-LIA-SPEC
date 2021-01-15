@@ -9,15 +9,15 @@
 
 \begin{tt}
   \begin{tabular}{lll}
-    ceiling & float-radix & rational\\
-    complex &  float-sign &  rationalize\\
-    decode-float & floor  &  realpart\\
-    denominator &  fround &  rem\\
+    ceiling & \# float-radix \# & rational\\
+    complex &  \# float-sign \# &  rationalize\\
+    \# decode-float \# & floor  &  realpart\\
+    \# denominator \# &  fround &  rem\\
     fceiling & ftruncate &  round\\
-    ffloor &  imagepart &   scale-float\\
-    float & integer-decode-float & truncate\\
-    float-digits & mod & \\
-    float-precision & numerator & \\
+    ffloor &  imagepart & \# scale-float \#\\
+    float & \# integer-decode-float \# & truncate\\
+    \# float-digits \# & mod & \\
+    \# float-precision \# & numerator & \\
   \end{tabular}
 \end{tt}
 
@@ -25,9 +25,15 @@
 
 \noindent
 The above table corresponds to Figure~12-4 of \cite{1996:ANSIHyperSpec}.
-The ``commented'' entries will not be described as they either don't
-operate on floating point numbers or do not have a semantic different
-from the \CL{} standard.
+The ``commented'' entries will not be described as they either do not
+apply to float numbers or they have a trivial extension
+compatible with \cite{2012:LIA1,2001:LIA2,2004:LIA3}, e.g. \code{float-sign}
+has a natural extension to \code{positive-infinity},
+\code{negative-infinity} and $-0.0$. As a general rule, if any argument of a
+function is a \clieeeterm{quiet-Nan} then the function returns a
+\clieeeterm{quiet-Nan}, if any argument of a function i a
+\clieeeterm{signaling-Nan} then the
+\clname{cl:floating-point-invalid-operation} error is signaled.
 
 \noindent
 For each of the functions in the table above, even if for some of them is
@@ -42,5 +48,6 @@ redundant, the following set of functions is defined:
 
 \subfile{definitions/floor-ffloor-ceiling-fceiling-truncate-ftruncate-round-fround.tex}
 \subfile{definitions/complex.tex}
+\subfile{definitions/float.tex}
 
 \end{document}

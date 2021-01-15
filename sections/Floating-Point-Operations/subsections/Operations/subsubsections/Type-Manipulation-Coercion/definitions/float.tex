@@ -1,0 +1,56 @@
+%%%% -*- Mode: LaTeX -*-
+%%%% float.tex
+
+\documentclass[../Type-Manipulation-Coercion.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{float}}
+\index{A!\code{float}}
+
+\DSyntax{}
+
+\code{float} \varname{n}, \varname{p} \RArrow \varname{f}
+
+\DArgsNValues{}
+
+\varname{n} -- A \clieeeterm{real}\\
+\varname{p} -- A \clieeeterm{float}\\
+\varname{f} -- A \clieeeterm{float}\\
+
+\DDescription{}
+
+The function returns the float number \varname{f} with the same magnitude of
+\varname{n} and format of \varname{p}. When
+\varname{n}, \varname{p} are not \clieeeterm{NaNs} or \clieeeterm{infinities}
+their behavior is the one described in \cite{1996:ANSIHyperSpec}.
+
+\noindent
+When \varname{n} or \varname{p} are
+\clieeeterm{quiet NaN} the functions return a \clieeeterm{quiet NaN}.
+
+\noindent
+When \varname{n}, is \code{positive-infinity} or
+\code{negative-infinity} then the result of \code{float} is a float
+with magnitude \code{positive-infinity} or\code{negative-infinity} and
+format of \varname{p}.
+
+\noindent
+When \varname{p}, is \code{positive-infinity} or
+\code{negative-infinity} then the result of \code{float} is a float
+with magnitude of \varname{n} and the format of the \clieeeterm{infinity}
+represented with p.
+
+\DExceptional{}
+
+There are different exceptional situations to be considered:
+\begin{enumerate}
+\item If the functions are called with
+  \varname{n} or \varname{p} being a
+  \clieeeterm{signaling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+\item If \varname{n} is not a \CL{} \clterm{real number} or \varname{p} is
+  not \CL{} \clterm{float} then the functions signals a
+  \clname{cl:type-error}.
+\end{enumerate}
+
+\end{document}
