@@ -1,229 +1,1 @@
-%%%% -*- Mode: LaTeX -*-
-
-%%%% CDR-IEEE-754-support.tex --
-%%%% Minimalistic support for (a subset) of IEEE 754 for Common Lisp.
-
-
-\documentclass[10pt,fleqn]{article}
-
-\usepackage{latexsym}
-\usepackage{epsfig}
-\usepackage{alltt}
-\usepackage{tabulary}
-\usepackage{color}
-
-\usepackage[margin=3cm]{geometry}
-
-% \usepackage[linktocpage=true]{hyperref} % Causes some problems.
-  \usepackage[depth=4]{bookmark}
-
-\usepackage{makeidx}
-
-% \usepackage[OT1]{fontenc}
-% \usepackage{bold-extra}
-% \renewcommand{\ttdefault}{cmt}
-
-\usepackage{lmodern}            % This works for decent bold 'tt'.
-
-\usepackage{subfiles}
-
-
-\newcommand{\tm}{$^\mathsf{tm}$}
-\newcommand{\cfr}{\emph{cfr.}}
-
-\newcommand{\Lisp}{\textsf{Lisp}}
-\newcommand{\CL}{\textsf{Common~Lisp}}
-
-\newcommand{\CMUCL}{\textsf{CMUCL}}
-\newcommand{\SBCL}{\textsf{SBCL}}
-\newcommand{\CCL}{\textsf{CCL}}
-\newcommand{\ACL}{\textsf{ACL}}
-\newcommand{\ABCL}{\textsf{ABCL}}
-
-
-\newcommand{\Quicklisp}{\textsf{Quicklisp}}
-
-\newcommand{\CLang}{\textsf{C}}
-\newcommand{\Java}{\textsc{\textsf{Java}}}
-\newcommand{\Fortran}{\textsc{\textsf{Fortran}}}
-
-\newcommand{\checkcite}[1]{{\textbf{[Missing Citation: #1]}}}
-\newcommand{\checkref}[1]{{\textbf{[Missing Reference: #1]}}}
-
-\newcommand{\missingpart}[1]{{\ }\vspace{2mm}\\
-{\textbf{[Still Missing: #1]}}\\
-\vspace{2mm}}
-
-\newcommand{\marginnote}[1]{%
-\marginpar{\begin{small}\begin{em}
-{\raggedright #1}
-\end{em}\end{small}}}
-
-\newcommand{\undecided}[2]{%
-  \vspace*{3mm}\noindent\fbox{\parbox{\textwidth}{\textbf{TBD: #1}{\ }\newline\emph{#2}}}}
-
-
-
-%%% CL 
-
-\newcommand{\code}[1]{\texttt{#1}}
-
-\newcommand{\term}[1]{\texttt{#1}}
-\newcommand{\nonterm}[1]{\textit{$<$#1$>$}}
-
-
-\newcommand{\kwd}[1]{\texttt{:#1}}
-
-\newcommand{\clieeeterm}[1]{\textit{#1}}
-\newcommand{\clliaterm}[1]{\textit{#1}}
-
-\newcommand{\varname}[1]{\textit{#1}}
-
-\newcommand{\clterm}[1]{\textit{#1}}
-\newcommand{\clname}[1]{\texttt{#1}}
-
-\newcommand{\codeprompt}[1]{\textcolor{blue}{\textbf{#1}}}
-\newcommand{\codelia}[1]{\textcolor{blue}{#1}}
-
-\newcommand{\RArrow}{$\Rightarrow$}
-
-
-
-%%% Useful Names.
-
-\newcommand{\IEEEFPStd}{IEEE-754}
-\newcommand{\IECFPStd}{IEC-60559}
-% \newcommand{\IECLIA123}{ISO/IEC-10967-1,2,3}
-\newcommand{\IECLIA}{ISO/IEC-10967}
-
-
-
-%%% ANSI-Spec Like Macros.
-
-\newcommand{\ANSICL}{\textsf{ANSI~CL}}
-
-% \newcommand{\DDictionaryItem}[1]{\subsection{#1}\vspace*{-9pt}\hrulefill}
-\newcommand{\DDictionaryItem}[1]{\vspace*{6pt}\noindent\hrulefill\vspace*{-9pt}\subsection*{#1}}
-
-\newcommand{\DSyntax}{\subsubsection*{Syntax:}}
-\newcommand{\DSupertypes}{\subsubsection*{Supertypes:}}
-\newcommand{\DArgsNValues}{\subsubsection*{Arguments and Values:}}
-\newcommand{\DDescription}{\subsubsection*{Description:}}
-\newcommand{\DExamples}{\subsubsection*{Examples:}}
-\newcommand{\DExceptional}{\subsubsection*{Exceptional Situations:}}
-\newcommand{\DNotes}{\subsubsection*{Notes:}}
-\newcommand{\DSeeAlso}{\subsubsection*{See Also:}}
-\newcommand{\DValues}{\subsubsection*{Values:}}
-
-
-%%% Spec special names.
-
-\newcommand{\CLLIAPKG}{\code{CL-MATH-LIA-2020}}
-
-
-
-
-%%%% Document Title.
-
-
-\title{
-\LARGE{\bfseries A Palimpsest of ``Language Independent Arithmetic'' in \CL{}}}
-
-\author{
-  Marco Antoniotti\\
-  Dipartimento di Informatica, Sistemistica e Comunicazione\\
-  Universit\`{a} degli Studi di Milano Bicocca\\
-  Viale Sarca 336, U14, Milan (MI), \textsc{Italy}\\[2mm]
-  \texttt{marco.antoniotti} at \texttt{unimib.it},\\
-  \texttt{mantoniotti} at \texttt{common-lisp.net}}
-
-
-% \author{TBD}
-
-%\date{}
-
-
-%\includeonly{}
-
-
-\makeindex
-
-
-\begin{document}
-
-\maketitle
-
-
-\begin{abstract}
-  This document presents a set of names, functions and macros that aim
-  at providing a common ground for the support of the \IEEEFPStd{}
-  \cite{2008:IEEE-754} and of the \emph{Language Independent
-    Arithmetic} (LIA) standards \cite{2012:LIA1,2001:LIA2,2004:LIA3}
-  in \CL{}.
-
-  The set of names and functions (and ancillary information) is
-  intended to map almost one to one with the LIA specification; extra
-  \CL{} related functionalities are also introduced to give a
-  programmer the maximum flexibility, while allowing the writing of
-  programs in a straightforward way if so desired.
-\end{abstract}
-
-\newpage
-
-\tableofcontents
-
-\newpage
-
-\section{Introduction}
-\subfile{sections/Introduction/Introduction.tex}
-\newpage
-
-\section{Description}
-\subfile{sections/Description/Description.tex}
-\newpage
-
-\section{LIA \CL{}-related Dictionary}
-\subfile{sections/Dictionary/Dictionary.tex}
-\newpage
-
-\section{Floating Point \IEEEFPStd{} Respecting Operations}
-\subfile{sections/Floating-Point-Operations/Floating-Point-Operations.tex}
-\newpage
-
-\nocite{2012:LIA1,2001:LIA2,2004:LIA3}
-\nocite{1994:ANSICL}
-
-\bibliographystyle{plain}
-\bibliography{CDR-CL-LIA}
-
-% \begin{thebibliography}{9}
-
-% \bibitem{IEEE-754}
-%   \textit{{IEEE} Standard for Floating-Point Arithmetic}, IEEE Std
-%   754$^{\mathrm{tm}}$-2008, IEEE Computer Society, 2008.
-  
-% \bibitem{C18}
-%   \textit{Programming languages -- C},
-%   International Standard \emph{ISO/IEC 9899-2018}, 2018.
-  
-% \bibitem{ANSIHyperSpec}
-%   \textit{The \CL{} Hyperspec},
-%   published online at\\
-%   \texttt{http://www.lisp.org/HyperSpec/FrontMatter/index.html}, 1994.
-
-% \end{thebibliography}
-
-
-\appendix
-
-\section{Example Programs}
-\subfile{sections/Appendix-Example-Program/Example-Program.tex}
-
-\section{Copying and License}
-\subfile{sections/License/License.tex}
-
-\printindex
-
-\end{document}
-
-%%%% end of file --CDR-IEEE-754-support.tex --
+%%%% -*- Mode: LaTeX -*-%%%% CDR-IEEE-754-support.tex --%%%% Minimalistic support for (a subset) of IEEE 754 for Common Lisp.\documentclass[10pt,fleqn]{article}\usepackage{latexsym}\usepackage{epsfig}\usepackage{alltt}\usepackage{tabulary}\usepackage{color}\usepackage[margin=3cm]{geometry}% \usepackage[linktocpage=true]{hyperref} % Causes some problems.  \usepackage[depth=4]{bookmark}\usepackage{makeidx}% \usepackage[OT1]{fontenc}% \usepackage{bold-extra}% \renewcommand{\ttdefault}{cmt}\usepackage{lmodern}            % This works for decent bold 'tt'.\usepackage{subfiles}\newcommand{\tm}{$^\mathsf{tm}$}\newcommand{\cfr}{\emph{cfr.}}\newcommand{\Lisp}{\textsf{Lisp}}\newcommand{\CL}{\textsf{Common~Lisp}}\newcommand{\CMUCL}{\textsf{CMUCL}}\newcommand{\SBCL}{\textsf{SBCL}}\newcommand{\CCL}{\textsf{CCL}}\newcommand{\ACL}{\textsf{ACL}}\newcommand{\ABCL}{\textsf{ABCL}}\newcommand{\Quicklisp}{\textsf{Quicklisp}}\newcommand{\CLang}{\textsf{C}}\newcommand{\Java}{\textsc{\textsf{Java}}}\newcommand{\Fortran}{\textsc{\textsf{Fortran}}}\newcommand{\checkcite}[1]{{\textbf{[Missing Citation: #1]}}}\newcommand{\checkref}[1]{{\textbf{[Missing Reference: #1]}}}\newcommand{\missingpart}[1]{{\ }\vspace{2mm}\\{\textbf{[Still Missing: #1]}}\\\vspace{2mm}}\newcommand{\marginnote}[1]{%\marginpar{\begin{small}\begin{em}{\raggedright #1}\end{em}\end{small}}}\newcommand{\undecided}[2]{%  \vspace*{3mm}\noindent\fbox{\parbox{\textwidth}{\textbf{TBD: #1}{\ }\newline\emph{#2}}}}%%% CL \newcommand{\code}[1]{\texttt{#1}}\newcommand{\term}[1]{\texttt{#1}}\newcommand{\nonterm}[1]{\textit{$<$#1$>$}}\newcommand{\kwd}[1]{\texttt{:#1}}\newcommand{\clieeeterm}[1]{\textit{#1}}\newcommand{\clliaterm}[1]{\textit{#1}}\newcommand{\varname}[1]{\textit{#1}}\newcommand{\clterm}[1]{\textit{#1}}\newcommand{\clname}[1]{\texttt{#1}}\newcommand{\codeprompt}[1]{\textcolor{blue}{\textbf{#1}}}\newcommand{\codelia}[1]{\textcolor{blue}{#1}}\newcommand{\RArrow}{$\Rightarrow$}%%% Useful Names.\newcommand{\IEEEFPStd}{IEEE-754}\newcommand{\IECFPStd}{IEC-60559}% \newcommand{\IECLIA123}{ISO/IEC-10967-1,2,3}\newcommand{\IECLIA}{ISO/IEC-10967}%%% ANSI-Spec Like Macros.\newcommand{\ANSICL}{\textsf{ANSI~CL}}% \newcommand{\DDictionaryItem}[1]{\subsection{#1}\vspace*{-9pt}\hrulefill}\newcommand{\DDictionaryItem}[1]{\vspace*{6pt}\noindent\hrulefill\vspace*{-9pt}\subsection*{#1}}\newcommand{\DSyntax}{\subsubsection*{Syntax:}}\newcommand{\DSupertypes}{\subsubsection*{Supertypes:}}\newcommand{\DArgsNValues}{\subsubsection*{Arguments and Values:}}\newcommand{\DDescription}{\subsubsection*{Description:}}\newcommand{\DExamples}{\subsubsection*{Examples:}}\newcommand{\DExceptional}{\subsubsection*{Exceptional Situations:}}\newcommand{\DNotes}{\subsubsection*{Notes:}}\newcommand{\DSeeAlso}{\subsubsection*{See Also:}}\newcommand{\DValues}{\subsubsection*{Values:}}%%% Spec special names.\newcommand{\CLLIAPKG}{\code{CL-MATH-LIA-2020}}%%%% Document Title.\title{\LARGE{\bfseries A Palimpsest of ``Language Independent Arithmetic'' in \CL{}}}\author{  Marco Antoniotti\\  Dipartimento di Informatica, Sistemistica e Comunicazione\\  Universit\`{a} degli Studi di Milano Bicocca\\  Viale Sarca 336, U14, Milan (MI), \textsc{Italy}\\[2mm]  \texttt{marco.antoniotti} at \texttt{unimib.it},\\  \texttt{mantoniotti} at \texttt{common-lisp.net}}% \author{TBD}%\date{}%\includeonly{}\makeindex\begin{document}\maketitle\begin{abstract}  This document presents a set of names, functions and macros that aim  at providing a common ground for the support of the \IEEEFPStd{}  \cite{2008:IEEE-754} and of the \emph{Language Independent    Arithmetic} (LIA) standards \cite{2012:LIA1,2001:LIA2,2004:LIA3}  in \CL{}.  The set of names and functions (and ancillary information) is  intended to map almost one to one with the LIA specification; extra  \CL{} related functionalities are also introduced to give a  programmer the maximum flexibility, while allowing the writing of  programs in a straightforward way if so desired.\end{abstract}\newpage\tableofcontents\newpage\section{Introduction}\subfile{sections/Introduction/Introduction.tex}\newpage\section{Description}\subfile{sections/Description/Description.tex}\newpage\section{LIA \CL{}-related Dictionary}\subfile{sections/Dictionary/Dictionary.tex}\newpage\section{Floating Point \IEEEFPStd{} Respecting Operations}\subfile{sections/Floating-Point-Operations/Floating-Point-Operations.tex}\newpage\nocite{2012:LIA1,2001:LIA2,2004:LIA3}\nocite{1994:ANSICL}\bibliographystyle{plain}\bibliography{CDR-CL-LIA}% \begin{thebibliography}{9}% \bibitem{IEEE-754}%   \textit{{IEEE} Standard for Floating-Point Arithmetic}, IEEE Std%   754$^{\mathrm{tm}}$-2008, IEEE Computer Society, 2008.  % \bibitem{C18}%   \textit{Programming languages -- C},%   International Standard \emph{ISO/IEC 9899-2018}, 2018.  % \bibitem{ANSIHyperSpec}%   \textit{The \CL{} Hyperspec},%   published online at\\%   \texttt{http://www.lisp.org/HyperSpec/FrontMatter/index.html}, 1994.% \end{thebibliography}\appendix\section{Example Programs}\subfile{sections/Appendix-Example-Program/Example-Program.tex}\section{Copying and License}\subfile{sections/License/License.tex}\printindex\end{document}%%%% end of file --CDR-IEEE-754-support.tex --
