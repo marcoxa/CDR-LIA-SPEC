@@ -48,19 +48,19 @@ The function \code{asin}
 \begin{itemize}
 \item When \varname{n} is \code{negative-infinity} returns
   \code{(complex (- (/ pi 2)) positive-infinity)}
-
+  
 \item When \varname{n} is \code{positive-infinity} returns
   \code{(complex (/ pi 2) negative-infinity)}
-
+  
 \item When \varname{n} is a complex number, \varname{x} and \varname{y}
   are its \clieeeterm{real} and \clieeeterm{imaginary} parts
   \begin{itemize}
   \item If \varname{x} is $-0.0$ \marginnote{Some implementation provides a
-  floating point negative zero, (float-sign -0.0) returns -1.0, we may add
-  is-implementing-negative-zero to the specification} returns
+      floating point negative zero, (float-sign -0.0) returns -1.0, we may add
+      is-implementing-negative-zero to the specification} returns
     \code{(- (asin (complex 0 (- }\varname{y}\code{))))}
   \item If \varname{y} is $-0.0$ and \varname{x} is not
-$-0.0$ returns
+    $-0.0$ returns
     \code{(conjugate (asin (complex} \varname{x}\code{ -0.0))}
   \item If \varname{x} is a \code{positive-infinity} or
     \code{negative-infinity} and \varname{y} a real number OR if \varname{y} is
@@ -88,9 +88,9 @@ The function \code{acos}
     \code{(complex (/ pi 2) (- (asinh }\varname{y}\code{)))}
     
   \item If \varname{y} is $-0.0$ and \varname{x} is not
-$-0.0$ returns
+    $-0.0$ returns
     \code{(conjugate (acos (complex }\varname{x}\code{ 0))}
-
+    
   \item If \varname{x} is a \code{positive-infinity} or
     \code{negative-infinity} and \varname{y} a positive \clieeeterm{real}
     number or zero or a \code{positive-infinity} returns
@@ -122,14 +122,15 @@ The function \code{atan}
     \code{(- (atan (complex 0 (- }\varname{y}\code{))))}
     
   \item If \varname{y} is $-0.0$ and \varname{x} is not
-$-0.0$ return
+    $-0.0$ return
     \code{(conjugate (atan (complex }\varname{x}\code{ 0))}
     
   \item If \varname{x} is a \code{positive-infinity} or
     \code{negative-infinity} and \varname{y} a real number OR if \varname{y} is
     a \code{positive-infinity} or a \code{negative-infinity} and \varname{x} is
     a \clieeeterm{finite} \clieeeterm{real} number return
-    \code{(complex (* (signum}\varname{x}\code{) (/ pi 2)) (* (signum}\varname{y}\code{) 0))}
+    \code{(complex (* (signum}\varname{x}\code{) (/ pi 2)) (*
+    (signum}\varname{y}\code{) 0))}
   \end{itemize}
 \end{itemize}
 
@@ -142,11 +143,11 @@ There are different exceptional situations to be considered:
   \varname{n}, \varname{n1}, or \varname{n2} being a
   \clieeeterm{signaling NaN}, then the\\
   \clname{cl:floating-point-invalid-operation} error is signaled.
-
+  
 \item If \code{atan} is called with both \varname{n1} and
   \varname{n2} and at least one of them is not a \clterm{real} number,
   then the a \code{type-error} is signaled.
-
+  
 \item If \varname{n} or \varname{n1} or \varname{n2} are not \CL{}
   \clterm{number} then the functions \code{asin}, \code{acos} and
   \code{atan} signals a \clname{cl:type-error}.

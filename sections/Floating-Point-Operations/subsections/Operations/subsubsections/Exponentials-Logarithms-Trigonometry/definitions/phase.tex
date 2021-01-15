@@ -33,13 +33,13 @@ When \varname{n} is a \clieeeterm{quiet NaN} the functions \code{sin},
 When \varname{n} is a complex number and \varname{x} and \varname{y} are its
 real and imaginary parts
 \begin{itemize}
-  \item If \varname{x} is \code{positive-infinity} and \varname{y} is not an
+\item If \varname{x} is \code{positive-infinity} and \varname{y} is not an
   infinity \code{phase} returns $0$
-  \item If \varname{x} is \code{negative-infinity} and \varname{y} is not an
+\item If \varname{x} is \code{negative-infinity} and \varname{y} is not an
   infinity \code{phase} returns $\pi$
-  \item If \varname{y} is \code{positive-infinity} and \varname{x} is not an
+\item If \varname{y} is \code{positive-infinity} and \varname{x} is not an
   infinity \code{phase} returns $\pi/2$
-  \item If \varname{y} is \code{negative-infinity} and \varname{x} is not an
+\item If \varname{y} is \code{negative-infinity} and \varname{x} is not an
   infinity \code{phase} returns $-\pi/2$
 \end{itemize}
 
@@ -47,14 +47,14 @@ real and imaginary parts
 
 There are different exceptional situations to be considered:
 \begin{enumerate}
-  \item If \code{phase} is called with
-    \varname{n} being a \clieeeterm{signaling NaN}, then the
-    \clname{cl:floating-point-invalid-operation} error is signaled.
-  \item If \code{phase} is called with a number with both the real and
+\item If \code{phase} is called with
+  \varname{n} being a \clieeeterm{signaling NaN}, then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+\item If \code{phase} is called with a number with both the real and
   imaginary parts of \varname{n} being a \code{infinity}, then the
-    \clname{cl:floating-point-invalid-operation} error is signaled.
-  \item If \varname{n} is not \CL{}
-    \clterm{number} then the functions \code{phase} signals a
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+\item If \varname{n} is not \CL{}
+  \clterm{number} then the functions \code{phase} signals a
   \clname{cl:type-error}.
 \end{enumerate}
 

@@ -38,16 +38,16 @@ When \varname{radians} is a \clieeeterm{quiet NaN} the functions \code{sin},
 The function \code{sin}, when \varname{radians} is a complex number, \varname{x}
 and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
 \begin{itemize}
-  \item If \varname{y} is $-0.0$ returns \code{(conjugate
-  (sin (complex }\varname{x}\code{ 0)))}
-  \item If \varname{x} is $-0.0$ and \varname{y} is not
-$-0.0$ returns \code{(- (sin (complex 0 (-
+\item If \varname{y} is $-0.0$ returns \code{(conjugate
+    (sin (complex }\varname{x}\code{ 0)))}
+\item If \varname{x} is $-0.0$ and \varname{y} is not
+  $-0.0$ returns \code{(- (sin (complex 0 (-
   }\varname{y}\code{))))}
-  \item If \varname{x} is not $-0.0$ or $0.0$ and
+\item If \varname{x} is not $-0.0$ or $0.0$ and
   \varname{y} is \code{positive-infinity} or \code{negative-infinity} returns
   \code{(complex (* (sin }\varname{x}\code{) positive-infinity) (*
-  (cos} \varname{x}\code{)} \varname{y}\code{))}
-  \item If \varname{x} is $0.0$ and \varname{y} is
+    (cos} \varname{x}\code{)} \varname{y}\code{))}
+\item If \varname{x} is $0.0$ and \varname{y} is
   \code{positive-infinity} or \code{negative-infinity} returns \code{(complex 0
   }\varname{y}\code{)}
 \end{itemize}
@@ -56,50 +56,50 @@ $-0.0$ returns \code{(- (sin (complex 0 (-
 The function \code{cos}, when \varname{radians} is a complex number, \varname{x}
 and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
 \begin{itemize}
-  \item If \varname{y} is $-0.0$ returns \code{(conjugate
-  (cos (complex }\varname{x}\code{ 0)))}
-  \item If \varname{x} is $-0.0$ and \varname{y} is not
-$-0.0$ returns \code{(cos (complex 0 (-
+\item If \varname{y} is $-0.0$ returns \code{(conjugate
+    (cos (complex }\varname{x}\code{ 0)))}
+\item If \varname{x} is $-0.0$ and \varname{y} is not
+  $-0.0$ returns \code{(cos (complex 0 (-
   }\varname{y}\code{)))}
-  \item If \varname{x} is not $-0.0$ or $0.0$ and
+\item If \varname{x} is not $-0.0$ or $0.0$ and
   \varname{y} is \code{positive-infinity} or \code{negative-infinity} returns
   \code{(complex (* (cos }\varname{x}\code{) positive-infinity) (*
-  (sin} \varname{x}\code{)} (- \varname{y})\code{))}
-  \item If \varname{x} is $0.0$ and \varname{y} is
+    (sin} \varname{x}\code{)} (- \varname{y})\code{))}
+\item If \varname{x} is $0.0$ and \varname{y} is
   \code{positive-infinity} or \code{negative-infinity} returns
-  \item \code{(complex positive-infinity }(/ (-1) \varname{y})\code{)}
+\item \code{(complex positive-infinity }(/ (-1) \varname{y})\code{)}
 \end{itemize}
 
 \noindent
 The function \code{tan}, when \varname{radians} is a complex number, \varname{x}
 and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
 \begin{itemize}
-  \item If \varname{y} is $-0.0$ returns \code{(conjugate
-  (tan (complex }\varname{x}\code{ 0)))}
-  \item If \varname{x} is $-0.0$ and \varname{y} is not
-$-0.0$ returns \code{(- (tan (complex 0 (-
+\item If \varname{y} is $-0.0$ returns \code{(conjugate
+    (tan (complex }\varname{x}\code{ 0)))}
+\item If \varname{x} is $-0.0$ and \varname{y} is not
+  $-0.0$ returns \code{(- (tan (complex 0 (-
   }\varname{y}\code{))))}
-  \item If \varname{x} is not $-0.0$ and \varname{y} is a
-  \code{positive-infinity} or a \code{negative-infinity} returns \code{(complex (*
-  (tan }\varname{x}\code{) 0) (signum }\varname{y}\code{))}
+\item If \varname{x} is not $-0.0$ and \varname{y} is a
+  \code{positive-infinity} or a \code{negative-infinity} returns \code{
+(complex (* (tan }\varname{x}\code{) 0) (signum }\varname{y}\code{))}
 \end{itemize}
 
 \DExceptional{}
 
 There are different exceptional situations to be considered:
 \begin{enumerate}
-  \item If \code{sin}, \code{cos} and \code{tan} are called with
-    \varname{radians} being a \clieeeterm{signaling NaN}, then the
-    \clname{cl:floating-point-invalid-operation} error is signaled.
-  \item If \code{sin}, \code{cos} and \code{tan} are called with the real
-    part of \varname{radians} being a \code{infinity}, then the
-    \clname{cl:floating-point-invalid-operation} error is signaled.
-  \item If \code{tan} is called with the real part of
-    \varname{radians} being an $\pi/2 + k\pi$, then the
-    \clname{cl:floating-point-invalid-operation} error is signaled.
-  \item If \varname{radians} is not \CL{}
-    \clterm{number} then the functions \code{asin}, \code{acos} and
-    \code{atan} signal a \clname{cl:type-error}.
+\item If \code{sin}, \code{cos} and \code{tan} are called with
+  \varname{radians} being a \clieeeterm{signaling NaN}, then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+\item If \code{sin}, \code{cos} and \code{tan} are called with the real
+  part of \varname{radians} being a \code{infinity}, then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+\item If \code{tan} is called with the real part of
+  \varname{radians} being an $\pi/2 + k\pi$, then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+\item If \varname{radians} is not \CL{}
+  \clterm{number} then the functions \code{asin}, \code{acos} and
+  \code{atan} signal a \clname{cl:type-error}.
 \end{enumerate}
 
 \DSeeAlso{}

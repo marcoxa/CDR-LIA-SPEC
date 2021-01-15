@@ -5,109 +5,110 @@
 \documentclass[../Comparisons-Predicates.tex]{subfiles}
 \begin{document}
 
-    \DDictionaryItem{Function \code{sqrt}, \code{isqrt}}
-    \index{S!\code{sqrt}}
-    \index{S!\code{isqrt}}
+\DDictionaryItem{Function \code{sqrt}, \code{isqrt}}
+\index{S!\code{sqrt}}
+\index{S!\code{isqrt}}
 
-    \DSyntax{}
+\DSyntax{}
 
-    \code{sqrt} \varname{n} \RArrow{} \varname{root}\\
-    \code{sqrt} \varname{n1} \RArrow{} \varname{n2}
+\code{sqrt} \varname{n} \RArrow{} \varname{root}\\
+\code{sqrt} \varname{n1} \RArrow{} \varname{n2}
 
-    \DArgsNValues{}
+\DArgsNValues{}
 
-    \varname{n} -- A \clterm{number}.\\
-    \varname{root} -- A \clterm{number}.\\
-    \varname{n1} -- A \clterm{natural number}.\\
-    \varname{n2} -- A \clterm{natural number}.
+\varname{n} -- A \clterm{number}.\\
+\varname{root} -- A \clterm{number}.\\
+\varname{n1} -- A \clterm{natural number}.\\
+\varname{n2} -- A \clterm{natural number}.
 
-    \DDescription{}
+\DDescription{}
 
-    The functions \code{sqrt}, \code{isqrt} compute the \emph{square root},
-    \emph{natural square root} of \varname{n}, \varname{n1}.
+The functions \code{sqrt}, \code{isqrt} compute the \emph{square root},
+\emph{natural square root} of \varname{n}, \varname{n1}.
 
-    \noindent
-    When \varname{n}, \varname{n1}  are not a \clieeeterm{NaNs} or an
-    \clieeeterm{infinity} the behavior of \code{sqrt} \code{isqrt} are the one
-    described in \cite{1996:ANSIHyperSpec} for regular numbers (natural
-    numbers for \code{isqrt}).
+\noindent
+When \varname{n}, \varname{n1}  are not a \clieeeterm{NaNs} or an
+\clieeeterm{infinity} the behavior of \code{sqrt} \code{isqrt} are the one
+described in \cite{1996:ANSIHyperSpec} for regular numbers (natural
+numbers for \code{isqrt}).
 
-    \noindent
-    When \varname{n} or \varname{n1} are a \clieeeterm{quiet NaN} the functions
-    \code{sqrt} and \code{isqrt} returns a \clieeeterm{quiet NaN}.
+\noindent
+When \varname{n} or \varname{n1} are a \clieeeterm{quiet NaN} the functions
+\code{sqrt} and \code{isqrt} returns a \clieeeterm{quiet NaN}.
 
-    \noindent
-    When \varname{n} is a negative \clterm{real}
-    number the function \code{sqrt} does not signal a
-    \code{cl:floating-point-invalid-operation}, it quietly returns a
-    \clterm{complex} number.
+\noindent
+When \varname{n} is a negative \clterm{real}
+number the function \code{sqrt} does not signal a
+\code{cl:floating-point-invalid-operation}, it quietly returns a
+\clterm{complex} number.
 
-    \noindent
-    The function \code{sqrt}, when \varname{n} is a complex number, \varname{x}
-    and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
-    \begin{itemize}
-        \item If \varname{x} is $-0.0$ returns \code{(sqrt (complex 0 }
-        \varname{y}\code{))}
-        \item If \varname{x} is a \clieeeterm{number} or an
-        \clieeeterm{infinity} and
-        \varname{y} is
-        $-0.0$ returns \code{(conjugate (sqrt (complex }\varname{x}
-        \code{0)))}
-        \item If \varname{x} is a \clieeeterm{number} or an
-        \clieeeterm{infinity} and
-        \varname{y} is a
-        \code{positive-infinity} returns \code{(complex positive-infinity
-        positive-infinity)}
-        \item If \varname{x} is \code{positive-infinity} and
-        \varname{y} is a greater than or equal to $0$ returns \code{(complex positive-infinity
-        0)}
-        \item If \varname{x} is \code{positive-infinity} and
-        \varname{y} is a less than $0$ returns \code{(complex positive-infinity
-        $-0.0$)}
-        \item If \varname{x} is a \clieeeterm{number} or an
-        \clieeeterm{infinity} and
-        \varname{y} is a
-        \code{negative-infinity} returns \code{(complex positive-infinity
-        negative-infinity)}
-        \item If \varname{x} is \code{negative-infinity} and
-        \varname{y} is a greater than or equal to $0$ returns \code{(complex 0 positive-infinity)}
-        \item If \varname{x} is \code{negative-infinity} and
-        \varname{y} is a less than $0$ returns \code{(complex 0 negative-infinity)}
-    \end{itemize}
+\noindent
+The function \code{sqrt}, when \varname{n} is a complex number, \varname{x}
+and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
+\begin{itemize}
+\item If \varname{x} is $-0.0$ returns \code{(sqrt (complex 0 }
+  \varname{y}\code{))}
+\item If \varname{x} is a \clieeeterm{number} or an
+  \clieeeterm{infinity} and
+  \varname{y} is
+  $-0.0$ returns \code{(conjugate (sqrt (complex }\varname{x}
+  \code{0)))}
+\item If \varname{x} is a \clieeeterm{number} or an
+  \clieeeterm{infinity} and
+  \varname{y} is a
+  \code{positive-infinity} returns \code{(complex positive-infinity
+    positive-infinity)}
+\item If \varname{x} is \code{positive-infinity} and
+  \varname{y} is a greater than or equal to $0$ returns
+  \code{(complex positive-infinity 0)}
+\item If \varname{x} is \code{positive-infinity} and
+  \varname{y} is a less than $0$ returns \code{(complex positive-infinity
+    $-0.0$)}
+\item If \varname{x} is a \clieeeterm{number} or an
+  \clieeeterm{infinity} and
+  \varname{y} is a
+  \code{negative-infinity} returns \code{(complex positive-infinity
+    negative-infinity)}
+\item If \varname{x} is \code{negative-infinity} and
+  \varname{y} is a greater than or equal to $0$ returns \code{(complex 0
+  positive-infinity)}
+\item If \varname{x} is \code{negative-infinity} and
+  \varname{y} is a less than $0$ returns \code{(complex 0 negative-infinity)}
+\end{itemize}
 
 
-    \DExceptional{}
+\DExceptional{}
 
-    There are different exceptional situations to be considered:
-    \begin{enumerate}
-        \item If \code{isqrt} is called with \varname{n1} being a negative
-        number or being not a natural number, then the
-        \clname{cl:floating-point-invalid-operation} error
-        is signaled.
-        \item If \code{sqrt} and \code{isqrt} are called with
-        \varname{n} being a \clieeeterm{signaling NaN}, then the
-        \clname{cl:floating-point-invalid-operation} error is signaled.
-        \item If \varname{n} and \varname{n1} are not \CL{}
-        \clterm{number} then the functions \code{sqrt} and \code{isqrt}
-        signals a \clname{cl:type-error}.
-    \end{enumerate}
+There are different exceptional situations to be considered:
+\begin{enumerate}
+\item If \code{isqrt} is called with \varname{n1} being a negative
+  number or being not a natural number, then the
+  \clname{cl:floating-point-invalid-operation} error
+  is signaled.
+\item If \code{sqrt} and \code{isqrt} are called with
+  \varname{n} being a \clieeeterm{signaling NaN}, then the
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+\item If \varname{n} and \varname{n1} are not \CL{}
+  \clterm{number} then the functions \code{sqrt} and \code{isqrt}
+  signals a \clname{cl:type-error}.
+\end{enumerate}
 
-%    If \varname{} is a \clliaterm{signaling NaN} then if the notification
-%    style is NACF then a\\
-%    \code{floating-point-invalid-operation} is
-%    signaled, with a \clliaterm{quiet NaN} as a continuation value. If
-%    the notification style is NRI then the \code{:invalid} indicator is
-%    recorded and a \clliaterm{quiet NaN} is returned as continuation
-%    value.
+% If \varname{} is a \clliaterm{signaling NaN} then if the notification
+% style is NACF then a\\
+% \code{floating-point-invalid-operation} is
+% signaled, with a \clliaterm{quiet NaN} as a continuation value. If
+% the notification style is NRI then the \code{:invalid} indicator is
+% recorded and a \clliaterm{quiet NaN} is returned as continuation
+% value.
 
-    \DNotes{}
+\DNotes{}
 
-    The LIA specification suggests to call \code{sqrt.<} and \code{sqrt.>}
-    as \code{sqrtDwn} and \code{sqrtUp} (cfr., LIA1
-    \cite{2012:LIA1}). This suggestion goes against the traditional \CL{}
-    naming verbosity ``feature'', plus it assumes case-sensitivity, which
-    \CL{} does not have in default mode. Therefore the more evocative
-    names \code{sqrt.<} and \code{sqrt.>} (and \code{sqrt.<>}) are
-    introduced.
+The LIA specification suggests to call \code{sqrt.<} and \code{sqrt.>}
+as \code{sqrtDwn} and \code{sqrtUp} (cfr., LIA1
+\cite{2012:LIA1}). This suggestion goes against the traditional \CL{}
+naming verbosity ``feature'', plus it assumes case-sensitivity, which
+\CL{} does not have in default mode. Therefore the more evocative
+names \code{sqrt.<} and \code{sqrt.>} (and \code{sqrt.<>}) are
+introduced.
 
 \end{document}

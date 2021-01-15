@@ -6,42 +6,42 @@
 \begin{document}
 
 \DDictionaryItem{Functions \code{is-tiny}, \code{tiny-p}}
-  \index{I!\code{is-tiny}}
-  \index{T!\code{tiny-p}}
+\index{I!\code{is-tiny}}
+\index{T!\code{tiny-p}}
+
+
+\DSyntax{}
+
+\code{is-tiny} \varname{x} \RArrow \varname{boolean}\\
+\code{tiny-p} \varname{x} \RArrow \varname{boolean}
+
+\DArgsNValues{}
+
+\varname{x} -- A \clterm{real}.\\
+\varname{boolean} -- A \clterm{generalized boolean}.
+
+
+\DDescription{}
+
+These functions check whether \varname{x} is a \emph{tiny}
+\clterm{real} close to  $0$.
   
-  
-  \DSyntax{}
-  
-  \code{is-tiny} \varname{x} \RArrow \varname{boolean}\\
-  \code{tiny-p} \varname{x} \RArrow \varname{boolean}
-  
-  \DArgsNValues{}
-  
-  \varname{x} -- A \clterm{real}.\\
-  \varname{boolean} -- A \clterm{generalized boolean}.
-  
-  
-  \DDescription{}
-  
-  These functions check whether \varname{x} is a \emph{tiny}
-  \clterm{real} close to  $0$.
-  
-  \DExceptional{}
-  
-  If \varname{x} is a \clieeeterm{NaN} then, under NCAF regime, the
-  function signals a\\
-  \code{floating-point-invalid-operation} with a
-  \code{NIL} \clieeeterm{continuation value}; under NRI, the
-  \code{:invalid} indicator is recorded and the \clieeeterm{continuation
-    value} \code{NIL} is returned.
-  
-  The function signals a \code{type-error} if the argument \varname{x}
-  is not a \clterm{real}.
-  
-  \DNotes{}
-  
-  It is very difficult to correctly specify the behavior of this function
-  in terms of \CL{} usual setup and assumptions.  Most implementations
-  may simply leave this \clliaterm{not-implemented}.
-  
+\DExceptional{}
+
+If \varname{x} is a \clieeeterm{NaN} then, under NCAF regime, the
+function signals a\\
+\code{floating-point-invalid-operation} with a
+\code{NIL} \clieeeterm{continuation value}; under NRI, the
+\code{:invalid} indicator is recorded and the \clieeeterm{continuation
+  value} \code{NIL} is returned.
+
+The function signals a \code{type-error} if the argument \varname{x}
+is not a \clterm{real}.
+
+\DNotes{}
+
+It is very difficult to correctly specify the behavior of this function
+in terms of \CL{} usual setup and assumptions.  Most implementations
+may simply leave this \clliaterm{not-implemented}.
+
 \end{document}
