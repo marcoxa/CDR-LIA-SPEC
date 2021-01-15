@@ -44,22 +44,22 @@
     \noindent
     The function \code{log}
     \begin{itemize}
-        \item When \varname{n} is $0$ or \code{negative-zero} returns
+        \item When \varname{n} is $0$ or $-0.0$ returns
         \code{negative-infinity}
         \item When \varname{n} is \code{positive-infinity} returns
         \code{positive-infinity}
         \item When \varname{n} is a complex number and \varname{x} and
         \varname{y} are its real and imaginary parts
         \begin{itemize}
-            \item If \varname{x} is $0$ or \code{negative-zero} and
+            \item If \varname{x} is $0$ or $-0.0$ and
             \varname{y} is $0$ returns \code{(complex negative-infinity (phase
             (complex }\varname{x} \varname{y}\code{)))}
-            \item If \varname{y} is \code{negative-zero} returns \code
+            \item If \varname{y} is $-0.0$ returns \code
             {(conjugate (log (complex }\varname{x} \code{0)))}
-            \item If \varname{x} is \code{negative-zero} and \varname{y} is a
+            \item If \varname{x} is $-0.0$ and \varname{y} is a
             positive \clterm{number} or \code{positive-infinity} returns
             \code{(complex (log} \varname{y}\code{) (/ $\pi$ 2)}
-            \item If \varname{x} is \code{negative-zero} and \varname{y} is a
+            \item If \varname{x} is $-0.0$ and \varname{y} is a
             negative \clterm{number} or \code{negative-infinity} returns
             \code{(complex (log (-} \varname{y}\code{)) (- (/ $\pi$ 2))}
             \item If \varname{x} is an \clieeeterm{infinity} and \varname{y}

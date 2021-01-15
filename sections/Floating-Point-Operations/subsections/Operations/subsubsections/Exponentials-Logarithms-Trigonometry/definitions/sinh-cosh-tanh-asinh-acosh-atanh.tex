@@ -60,7 +60,7 @@ a \clieeeterm{quiet NaN}.
 The function \code{sinh}
 \begin{itemize}
   \item When \varname{n} $\in \{$\code{negative-infinity}$,$
-  \code{negative-zero}$,$ \code{positive-infinity}$\}$ returns \varname{n}
+  $-0.0$$,$ \code{positive-infinity}$\}$ returns \varname{n}
   \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
   are its real and imaginary parts has the behaviour and the exceptional
   situations derived from the relation: \code{(sinh }\varname{n}\code{)}
@@ -73,7 +73,7 @@ The function \code{cosh}
 \begin{itemize}
   \item When \varname{n} $\in \{$\code{negative-infinity}$,$
   \code{positive-infinity}$\}$ returns \code{positive-infinity}
-  \item When \varname{n} is \code{negative-zero} returns $+1$
+  \item When \varname{n} is $-0.0$ returns $+1$
   \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
   are its real and imaginary parts has the behaviour and the exceptional
   situations derived from the relation: \code{(cosh }\varname{n}\code{)}
@@ -86,7 +86,7 @@ The function \code{tanh}
 \begin{itemize}
   \item When \varname{n} is \code{negative-infinity} returns
   $-1$
-  \item When \varname{n} is \code{negative-zero} returns \code{negative-zero}
+  \item When \varname{n} is $-0.0$ returns $-0.0$
   \item When \varname{n} is \code{positive-infinity} returns
   $1$
   \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
@@ -100,7 +100,7 @@ The function \code{tanh}
 The function \code{asinh}
 \begin{itemize}
   \item When \varname{n} $\in \{$\code{negative-infinity}$,$
-  \code{negative-zero}$,$ \code{positive-infinity}$\}$ returns \varname{n}
+  $-0.0$$,$ \code{positive-infinity}$\}$ returns \varname{n}
   \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
   are its real and imaginary parts has the behaviour and the exceptional
   situations derived from the relation: \code{(asinh }\varname{n}\code{)}
@@ -133,7 +133,7 @@ The function \code{acosh}
 The function \code{atanh}
 \begin{itemize}
   \item When \varname{n} is $-1$ returns \code{negative-infinity}
-  \item When \varname{n} is \code{negative-zero} returns \code{negative-zero}
+  \item When \varname{n} is $-0.0$ returns $-0.0$
   \item When \varname{n} is $1$ returns \code{positive-infinity}
   \item When \varname{n} is a complex number and  \varname{x} and \varname{y}
   are its real and imaginary parts has the behaviour and the exceptional

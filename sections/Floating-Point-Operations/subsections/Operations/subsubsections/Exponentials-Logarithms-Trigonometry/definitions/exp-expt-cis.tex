@@ -49,10 +49,10 @@
     The function \code{exp}, when \varname{n} is a complex number, \varname{x}
     and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
     \begin{itemize}
-        \item If \varname{x} is a \code{negative-zero} returns \code{(exp (complex 0 }
+        \item If \varname{x} is $-0.0$ returns \code{(exp (complex 0 }
         \varname{y}\code{))}
-        \item If \varname{x} is not a \code{negative-zero} and \varname{y} is a
-        \code{negative-zero} returns \code{(conjugate (exp (complex }\varname{x}
+        \item If \varname{x} is not $-0.0$ and \varname{y} is
+$-0.0$ returns \code{(conjugate (exp (complex }\varname{x}
         \code{0)))}
         \item If \varname{x} is \code{negative-infinity} and
         \varname{y} is not \code{positive-infinity} or \code{negative-infinity}

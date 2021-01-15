@@ -55,11 +55,13 @@ The function \code{asin}
 \item When \varname{n} is a complex number, \varname{x} and \varname{y}
   are its \clieeeterm{real} and \clieeeterm{imaginary} parts
   \begin{itemize}
-  \item If \varname{x} is a \code{negative-zero} returns
+  \item If \varname{x} is $-0.0$ \marginnote{Some implementation provides a
+  floating point negative zero, (float-sign -0.0) returns -1.0, we may add
+  is-implementing-negative-zero to the specification} returns
     \code{(- (asin (complex 0 (- }\varname{y}\code{))))}
-  \item If \varname{y} is a \code{negative-zero} and \varname{x} is not a
-    \code{negative-zero} returns
-    \code{(conjugate (asin (complex} \varname{x}\code{ (- 0)))}
+  \item If \varname{y} is $-0.0$ and \varname{x} is not
+$-0.0$ returns
+    \code{(conjugate (asin (complex} \varname{x}\code{ -0.0))}
   \item If \varname{x} is a \code{positive-infinity} or
     \code{negative-infinity} and \varname{y} a real number OR if \varname{y} is
     a \code{positive-infinity} or a \code{negative-infinity} and \varname{x} is
@@ -82,11 +84,11 @@ The function \code{acos}
 \item When \varname{n} is a complex number, \varname{x} and \varname{y}
   are its \clieeeterm{real} and \clieeeterm{imaginary} parts
   \begin{itemize}
-  \item If \varname{x} is a \code{negative-zero} returns
+  \item If \varname{x} is $-0.0$ returns
     \code{(complex (/ pi 2) (- (asinh }\varname{y}\code{)))}
     
-  \item If \varname{y} is a \code{negative-zero} and \varname{x} is not a
-    \code{negative-zero} returns
+  \item If \varname{y} is $-0.0$ and \varname{x} is not
+$-0.0$ returns
     \code{(conjugate (acos (complex }\varname{x}\code{ 0))}
 
   \item If \varname{x} is a \code{positive-infinity} or
@@ -116,11 +118,11 @@ The function \code{atan}
     \code{(atan }\varname{n1}\code{)} returns
     \code{(complex 0 (* }\varname{y} \code{positive-infinity))}
     
-  \item If \varname{x} is a \code{negative-zero} return
+  \item If \varname{x} is $-0.0$ return
     \code{(- (atan (complex 0 (- }\varname{y}\code{))))}
     
-  \item If \varname{y} is a \code{negative-zero} and \varname{x} is not a
-    \code{negative-zero} return
+  \item If \varname{y} is $-0.0$ and \varname{x} is not
+$-0.0$ return
     \code{(conjugate (atan (complex }\varname{x}\code{ 0))}
     
   \item If \varname{x} is a \code{positive-infinity} or

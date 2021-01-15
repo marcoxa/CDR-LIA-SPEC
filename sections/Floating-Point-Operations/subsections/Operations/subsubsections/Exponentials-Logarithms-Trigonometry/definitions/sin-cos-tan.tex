@@ -38,16 +38,16 @@ When \varname{radians} is a \clieeeterm{quiet NaN} the functions \code{sin},
 The function \code{sin}, when \varname{radians} is a complex number, \varname{x}
 and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
 \begin{itemize}
-  \item If \varname{y} is a \code{negative-zero} returns \code{(conjugate
+  \item If \varname{y} is $-0.0$ returns \code{(conjugate
   (sin (complex }\varname{x}\code{ 0)))}
-  \item If \varname{x} is a \code{negative-zero} and \varname{y} is not a
-  \code{negative-zero} returns \code{(- (sin (complex 0 (-
+  \item If \varname{x} is $-0.0$ and \varname{y} is not
+$-0.0$ returns \code{(- (sin (complex 0 (-
   }\varname{y}\code{))))}
-  \item If \varname{x} is not \code{negative-zero} or \code{zero} and
+  \item If \varname{x} is not $-0.0$ or $0.0$ and
   \varname{y} is \code{positive-infinity} or \code{negative-infinity} returns
   \code{(complex (* (sin }\varname{x}\code{) positive-infinity) (*
   (cos} \varname{x}\code{)} \varname{y}\code{))}
-  \item If \varname{x} is \code{zero} and \varname{y} is
+  \item If \varname{x} is $0.0$ and \varname{y} is
   \code{positive-infinity} or \code{negative-infinity} returns \code{(complex 0
   }\varname{y}\code{)}
 \end{itemize}
@@ -56,16 +56,16 @@ and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
 The function \code{cos}, when \varname{radians} is a complex number, \varname{x}
 and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
 \begin{itemize}
-  \item If \varname{y} is a \code{negative-zero} returns \code{(conjugate
+  \item If \varname{y} is $-0.0$ returns \code{(conjugate
   (cos (complex }\varname{x}\code{ 0)))}
-  \item If \varname{x} is a \code{negative-zero} and \varname{y} is not a
-  \code{negative-zero} returns \code{(cos (complex 0 (-
+  \item If \varname{x} is $-0.0$ and \varname{y} is not
+$-0.0$ returns \code{(cos (complex 0 (-
   }\varname{y}\code{)))}
-  \item If \varname{x} is not \code{negative-zero} or \code{zero} and
+  \item If \varname{x} is not $-0.0$ or $0.0$ and
   \varname{y} is \code{positive-infinity} or \code{negative-infinity} returns
   \code{(complex (* (cos }\varname{x}\code{) positive-infinity) (*
   (sin} \varname{x}\code{)} (- \varname{y})\code{))}
-  \item If \varname{x} is \code{zero} and \varname{y} is
+  \item If \varname{x} is $0.0$ and \varname{y} is
   \code{positive-infinity} or \code{negative-infinity} returns
   \item \code{(complex positive-infinity }(\ (-1) \varname{y})\code{)}
 \end{itemize}
@@ -74,12 +74,12 @@ and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
 The function \code{tan}, when \varname{radians} is a complex number, \varname{x}
 and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
 \begin{itemize}
-  \item If \varname{y} is a \code{negative-zero} returns \code{(conjugate
+  \item If \varname{y} is $-0.0$ returns \code{(conjugate
   (tan (complex }\varname{x}\code{ 0)))}
-  \item If \varname{x} is a \code{negative-zero} and \varname{y} is not a
-  \code{negative-zero} returns \code{(- (tan (complex 0 (-
+  \item If \varname{x} is $-0.0$ and \varname{y} is not
+$-0.0$ returns \code{(- (tan (complex 0 (-
   }\varname{y}\code{))))}
-  \item If \varname{x} is not a \code{negative-zero} and \varname{y} is a
+  \item If \varname{x} is not $-0.0$ and \varname{y} is a
   \code{positive-infinity} or a \code{negative-infinity} returns \code{(complex (*
   (tan }\varname{x}\code{) 0) (signum }\varname{y}\code{))}
 \end{itemize}

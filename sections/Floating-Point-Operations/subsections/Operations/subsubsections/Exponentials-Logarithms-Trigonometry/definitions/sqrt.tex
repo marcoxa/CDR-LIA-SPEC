@@ -42,12 +42,12 @@
     The function \code{sqrt}, when \varname{n} is a complex number, \varname{x}
     and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
     \begin{itemize}
-        \item If \varname{x} is a \code{negative-zero} returns \code{(sqrt (complex 0 }
+        \item If \varname{x} is $-0.0$ returns \code{(sqrt (complex 0 }
         \varname{y}\code{))}
         \item If \varname{x} is a \clieeeterm{number} or an
         \clieeeterm{infinity} and
-        \varname{y} is a
-        \code{negative-zero} returns \code{(conjugate (sqrt (complex }\varname{x}
+        \varname{y} is
+$-0.0$ returns \code{(conjugate (sqrt (complex }\varname{x}
         \code{0)))}
         \item If \varname{x} is a \clieeeterm{number} or an
         \clieeeterm{infinity} and
@@ -59,7 +59,7 @@
         0)}
         \item If \varname{x} is \code{positive-infinity} and
         \varname{y} is a less than $0$ returns \code{(complex positive-infinity
-        negative-zero)}
+        $-0.0$)}
         \item If \varname{x} is a \clieeeterm{number} or an
         \clieeeterm{infinity} and
         \varname{y} is a

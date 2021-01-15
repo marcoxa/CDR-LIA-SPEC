@@ -54,11 +54,11 @@
         \varname{y} are its real and imaginary parts
         \begin{itemize}
             \item If \varname{y} is \code{negative-infinity} or
-            code{negative-zero} returns \code{(conjugate (signum (conjugate
+            $-0.0$ returns \code{(conjugate (signum (conjugate
             (complex }\varname{x} \varname{y}\code{))))}
             \item If \varname{x} is \code{negative-infinity} or
-            code{negative-zero} and \varname{y} is not \code{negative-infinity} or
-            code{negative-zero} returns \code{(- (signum (-
+            $-0.0$ and \varname{y} is not \code{negative-infinity} or
+            $-0.0$ returns \code{(- (signum (-
             (complex }\varname{x} \varname{y}\code{))))}
             \item Else is equivalent to \code{(complex (sin (phase (complex }\varname{y} \varname{x}\code{))) (sin
             (phase (complex }\varname{y} \varname{x}\code{))))}
