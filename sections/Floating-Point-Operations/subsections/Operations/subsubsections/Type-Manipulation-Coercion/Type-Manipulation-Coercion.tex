@@ -1,0 +1,46 @@
+%%%% -*- Mode: LaTeX -*-
+
+%%%% Type-Manipulation-Coercion.tex
+
+\documentclass[../../Operations.tex]{subfiles}
+\begin{document}
+
+\label{sect:transc-ops}
+
+\begin{tt}
+  \begin{tabular}{lll}
+    ceiling & float-radix & rational\\
+    complex &  float-sign &  rationalize\\
+    decode-float & floor  &  realpart\\
+    denominator &  fround &  rem\\
+    fceiling & ftruncate &  round\\
+    ffloor &  imagepart &   scale-float\\
+    float & integer-decode-float & truncate\\
+    float-digits & mod & \\
+    float-precision & numerator & \\
+  \end{tabular}
+\end{tt}
+
+\vspace*{3mm}
+
+\noindent
+The above table corresponds to Figure~12-4 of \cite{1996:ANSIHyperSpec}.
+The ``commented'' entries will not be described as they either don't
+operate on floating point numbers or do not have a semantic different
+from the \CL{} standard.
+
+\noindent
+For each of the functions in the table above, even if for some of them is
+redundant, the following set of functions is defined:
+\begin{itemize}
+\item \code{function.<} compute the function with rounding downward
+\item \code{function.>} compute the function with rounding upward
+\item \code{function.<>} compute the function with rounding to nearest
+\item \code{function} compute the function with the current rounding mode
+\end{itemize}
+\vspace*{3mm}
+
+\subfile{definitions/floor-ffloor-ceiling-fceiling-truncate-ftruncate-round-fround.tex}
+
+
+\end{document}

@@ -1,0 +1,98 @@
+%%%% -*- Mode: LaTeX -*-
+%%%% floor-ffloor-ceiling-fceiling-truncate-ftruncate-round-fround.tex
+
+\documentclass[../Exponentials-Logarithms-Trigonometry.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Functions \code{floor}, \code{ffloor}, \code{ceiling},
+  \code{fceiling}, \code{truncate}, \code{ftruncate}, \code{round}, \code{fround}}
+\index{A!\code{floor}}
+\index{A!\code{ffloor}}
+\index{A!\code{ceiling}}
+\index{A!\code{fceiling}}
+\index{A!\code{truncate}}
+\index{A!\code{ftruncate}}
+\index{A!\code{round}}
+\index{A!\code{fround}}
+
+\DSyntax{}
+
+\code{floor} \varname{n} \code{\&optional} \varname{d} \RArrow
+\varname{q}, \varname{r}\\
+\code{ffloor} \varname{n} \code{\&optional} \varname{d} \RArrow
+\varname{q}, \varname{r}\\
+\code{ceiling} \varname{n} \code{\&optional} \varname{d} \RArrow
+\varname{q}, \varname{r}\\
+\code{fceiling} \varname{n} \code{\&optional} \varname{d} \RArrow
+\varname{q}, \varname{r}\\
+\code{truncate} \varname{n} \code{\&optional} \varname{d} \RArrow
+\varname{q}, \varname{r}\\
+\code{ftruncate} \varname{n} \code{\&optional} \varname{d} \RArrow
+\varname{q}, \varname{r}\\
+\code{round} \varname{n} \code{\&optional} \varname{d} \RArrow
+\varname{q}, \varname{r}\\
+\code{fround} \varname{n} \code{\&optional} \varname{d} \RArrow
+\varname{q}, \varname{r}\\
+
+\DArgsNValues{}
+
+\varname{n},  -- A \clieeeterm{real}\\
+\varname{d},  -- A \clieeeterm{real}, default $1$\\
+\varname{1},  -- A \clieeeterm{integer} for \code{floor}, \code{ceiling},
+\code{truncate}, \code{round}, a \clieeeterm{float} for \code{ffloor},
+\code{fceiling}, \code{ftruncate}, \code{fround}\\
+\varname{n},  -- A \clieeeterm{real}\\
+
+\DDescription{}
+
+The functions divide \varname{n} by \varname{d}. \varname{q} represents the
+quotient as as integer with the rounding defined by
+\cite{1996:ANSIHyperSpec}, while \varname{r} the remainder of the division. When
+\varname{n}, \varname{d} are not \clieeeterm{NaNs} or \clieeeterm{infinities}
+their behavior is the one described in \cite{1996:ANSIHyperSpec}.
+
+\noindent
+The \clieeeterm{rounding-modes} defined for each function, e.g. \code{.<}, are
+redundant for \varname{q} but are relevant for \varname{r}.
+
+\noindent
+When \varname{n} or \varname{d} are
+\clieeeterm{quiet NaN} the functions return a \clieeeterm{quiet NaN}.
+
+\noindent
+When \varname{n} is a \clieeeterm{positive-real}, including \clieeeterm{zero},
+and not an \clieeeterm{infinity} and \varname{d} is a
+\code{positive-infinity}\\
+(\code{negative-infinity}) the result of the
+functions is $0.0$ ($-0.0$).
+
+\noindent
+When \varname{n} is a \clieeeterm{negative-real},
+and not an \clieeeterm{infinity} and \varname{d} is a
+\code{positive-infinity} (\code{negative-infinity}) the result of the
+functions is $-0.0$ ($0.0$).
+
+\DExceptional{}
+
+There are different exceptional situations to be considered:
+\begin{enumerate}
+\item If the functions are called with
+  \varname{n} or \varname{d} being a
+  \clieeeterm{signaling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+\item If the functions are called with \varname{n} being an
+  \clieeeterm{infinity}, then the a\\
+  \clname{cl:floating-point-invalid-operation}  is signaled.
+\item If the functions are called with \varname{d} being $0.0$ or $-0.0$, then
+  the \\
+  \clname{cl:floating-point-invalid-operation}  is signaled.
+\item If \varname{n} or \varname{d} are not \CL{}
+  \clterm{number} then the functions signals a \clname{cl:type-error}.
+\end{enumerate}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../../../../../../../CDR-IEEE-754-support"
+%%% End:
