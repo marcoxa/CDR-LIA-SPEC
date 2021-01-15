@@ -1,0 +1,50 @@
+%%%% -*- Mode: LaTeX -*-
+%%%% complex.tex
+
+\documentclass[../Type-Manipulation-Coercion.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Function \code{complex}}
+\index{A!\code{complex}}
+
+\DSyntax{}
+
+\code{complex} \varname{r}, \varname{i} \RArrow
+\varname{c}
+
+\DArgsNValues{}
+
+\varname{r} -- A \clieeeterm{real}\\
+\varname{i} -- A \clieeeterm{real}\\
+\varname{c} -- A \clieeeterm{complex}\\
+
+\DDescription{}
+
+The function returns the complex number \varname{c} with real part
+\varname{r} and imaginary part \varname{i}. When
+\varname{r}, \varname{i} are not \clieeeterm{NaNs} or \clieeeterm{infinities}
+their behavior is the one described in \cite{1996:ANSIHyperSpec}.
+
+\noindent
+When \varname{r} or \varname{i} are
+\clieeeterm{quiet NaN} the functions return a \clieeeterm{quiet NaN}.
+
+\noindent
+When \varname{r}, or \varname{i} or both are \code{positive-infinity} or
+\code{negative-infinity} then the result of \code{complex} is a complex
+number whose real or imaginary parts or both are \code{positive-infinity} or
+\code{negative-infinity}.
+
+\DExceptional{}
+
+There are different exceptional situations to be considered:
+\begin{enumerate}
+\item If the functions are called with
+  \varname{r} or \varname{i} being a
+  \clieeeterm{signaling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+\item If \varname{r} or \varname{i} are not \CL{}
+  \clterm{real number} then the functions signals a \clname{cl:type-error}.
+\end{enumerate}
+
+\end{document}

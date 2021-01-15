@@ -1,7 +1,7 @@
 %%%% -*- Mode: LaTeX -*-
 %%%% floor-ffloor-ceiling-fceiling-truncate-ftruncate-round-fround.tex
 
-\documentclass[../Exponentials-Logarithms-Trigonometry.tex]{subfiles}
+\documentclass[../Type-Manipulation-Coercion.tex]{subfiles}
 \begin{document}
 
 \DDictionaryItem{Functions \code{floor}, \code{ffloor}, \code{ceiling},
@@ -46,7 +46,7 @@
 \DDescription{}
 
 The functions divide \varname{n} by \varname{d}. \varname{q} represents the
-quotient as as integer with the rounding defined by
+quotient as as integer with the rounding defined in
 \cite{1996:ANSIHyperSpec}, while \varname{r} the remainder of the division. When
 \varname{n}, \varname{d} are not \clieeeterm{NaNs} or \clieeeterm{infinities}
 their behavior is the one described in \cite{1996:ANSIHyperSpec}.
@@ -87,12 +87,7 @@ There are different exceptional situations to be considered:
   the \\
   \clname{cl:floating-point-invalid-operation}  is signaled.
 \item If \varname{n} or \varname{d} are not \CL{}
-  \clterm{number} then the functions signals a \clname{cl:type-error}.
+  \clterm{real number} then the functions signals a \clname{cl:type-error}.
 \end{enumerate}
 
 \end{document}
-
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: "../../../../../../../CDR-IEEE-754-support"
-%%% End:
