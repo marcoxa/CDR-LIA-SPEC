@@ -1,0 +1,59 @@
+%%%% -*- Mode: LaTeX -*-
+%%%% realpart-imagpart.tex
+
+\documentclass[../Type-Manipulation-Coercion.tex]{subfiles}
+\begin{document}
+
+\DDictionaryItem{Functions \code{realpart}, \code{imagpart}}
+\index{A!\code{realpart}}
+\index{A!\code{imagpart}}
+
+\DSyntax{}
+
+\code{realpart} \varname{n} \RArrow \varname{r}\\
+\code{imagpart} \varname{n} \RArrow \varname{r}
+
+\DArgsNValues{}
+
+\varname{n} -- A \clieeeterm{number}\\
+\varname{r} -- A \clieeeterm{real}
+
+\DDescription{}
+
+The functions returns the real or the imaginary part of a number \varname{n}.
+When \varname{n} is not \clieeeterm{NaN} or \clieeeterm{infinity}
+their behavior is the one described in \cite{1996:ANSIHyperSpec}.
+
+\noindent
+When \varname{n} is a \clieeeterm{quiet NaN} the functions return a
+\clieeeterm{quiet NaN}.
+
+\noindent
+When \varname{n} is \code{positive-infinity} or
+\code{negative-infinity} then the result of
+\code{realpart} is \code{positive-infinity} or \code{negative-infinity}, the
+result of \code{imagpart} is $0.0$ or $-0.0$.
+
+\noindent
+When \varname{n}, is a complex number with a \code{positive-infinity} or
+\code{negative-infinity} as real part, then \code{realpart} returns
+\code{positive-infinity} or \code{negative-infinity}.
+
+\noindent
+When \varname{n}, is a complex number with a \code{positive-infinity} or
+\code{negative-infinity} as imaginary part, then \code{imagpart} returns
+\code{positive-infinity} or \code{negative-infinity}.
+
+\DExceptional{}
+
+There are different exceptional situations to be considered:
+\begin{enumerate}
+\item If the functions are called with
+  \varname{n} being a
+  \clieeeterm{signaling NaN}, then the\\
+  \clname{cl:floating-point-invalid-operation} error is signaled.
+\item If \varname{n} is not a \CL{} \clterm{number} then the functions
+  signals a \clname{cl:type-error}.
+\end{enumerate}
+
+\end{document}

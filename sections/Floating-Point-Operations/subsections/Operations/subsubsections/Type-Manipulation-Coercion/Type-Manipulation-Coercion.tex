@@ -9,15 +9,15 @@
 
 \begin{tt}
   \begin{tabular}{lll}
-    ceiling & \# float-radix \# & rational\\
-    complex &  \# float-sign \# &  rationalize\\
+    ceiling & \# float-radix \# & \# rational \#\\
+    complex &  \# float-sign \# &  \# rationalize \#\\
     \# decode-float \# & floor  &  realpart\\
-    \# denominator \# &  fround &  rem\\
+    \# denominator \# &  fround &  \# rem \#\\
     fceiling & ftruncate &  round\\
     ffloor &  imagepart & \# scale-float \#\\
     float & \# integer-decode-float \# & truncate\\
-    \# float-digits \# & mod & \\
-    \# float-precision \# & numerator & \\
+    \# float-digits \# & \# mod \# & \\
+    \# float-precision \# & \# numerator \# & \\
   \end{tabular}
 \end{tt}
 
@@ -49,5 +49,6 @@ redundant, the following set of functions is defined:
 \subfile{definitions/floor-ffloor-ceiling-fceiling-truncate-ftruncate-round-fround.tex}
 \subfile{definitions/complex.tex}
 \subfile{definitions/float.tex}
+\subfile{definitions/realpart-imagpart.tex}
 
 \end{document}
