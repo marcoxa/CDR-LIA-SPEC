@@ -34,7 +34,7 @@ $\Rightarrow$ \varname{results}
 
 \DArgsNValues{}
 
-\varname{traps} -- A list of the exception conditions that should cause
+\varname{traps} -- A list of the exceptional conditions that should cause
 traps.\\
 \varname{rounding-mode} -- The rounding mode to use when the result is
 not exact.\\
@@ -93,6 +93,10 @@ code-walk of \varname{body} and if it finds some floating point
 operation which potentially may not respect the changed environment as
 described by the specified arguments, it then issues a warning.
 
+\undecided{Code walk}{Requiring some code walking is always quite a
+  burden on an implementation; so this proposal should be weighted
+  with care. (Or \texttt{CLAST} -- \url{http://clast.sf.net} -- should
+  be mandated, but this is a shameless plug.)}
 
 \DSeeAlso{}
 

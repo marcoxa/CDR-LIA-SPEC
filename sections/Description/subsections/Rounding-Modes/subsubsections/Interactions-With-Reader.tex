@@ -3,6 +3,7 @@
 %%%% Interaction-With-Reader.tex
 
 \documentclass[../Rounding-Modes.tex]{subfiles}
+
 \begin{document}
 
 The \CL{} reader builds floating point numbers according to the rules
@@ -17,5 +18,11 @@ CL prompt> \codeprompt{(round-upward (read))}
 will produce a \code{42.0} result that is rounded according to the
 standard rules of the \CL{} reader floating point parsing
 rules, overriding the \code{round-upward} settings.
+
+\cllianote{Minimization of required changes.}{The spec tries to
+  minimize the changes that an implementation must introduce; hence
+  the choice -- for the time being -- not to require changes to the
+  reader; an implementation of \code{PARSE-FLOAT} could explored
+  before requiring changes to the \CL{} reader.}
 
 \end{document}

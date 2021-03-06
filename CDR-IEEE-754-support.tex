@@ -15,7 +15,7 @@
 \usepackage[margin=3cm]{geometry}
 
 % \usepackage[linktocpage=true]{hyperref} % Causes some problems.
-  \usepackage[depth=4]{bookmark}
+\usepackage[depth=4]{bookmark}
 
 \usepackage{makeidx}
 
@@ -61,6 +61,9 @@
 
 \newcommand{\undecided}[2]{%
   \vspace*{3mm}\noindent\fbox{\parbox{\textwidth}{\textbf{TBD: #1}{\ }\newline\emph{#2}}}}
+
+\newcommand{\cllianote}[2]{%
+  \vspace*{3mm}\noindent\fbox{\parbox{\textwidth}{\textbf{Note: #1}{\ }\newline\emph{#2}}}}
 
 
 
@@ -118,7 +121,7 @@
 
 %%% Spec special names.
 
-\newcommand{\CLLIAPKG}{\code{CL-MATH-LIA-2020}}
+\newcommand{\CLLIAPKG}{\code{CL-MATH-LIA-2021}}
 
 
 
@@ -136,7 +139,9 @@
   Viale Sarca 336, U14, Milan (MI), \textsc{Italy}\\[2mm]
   \texttt{marco.antoniotti} at \texttt{unimib.it},\\
   \texttt{mantoniotti} at \texttt{common-lisp.net},\\
-  \texttt{e.zanoni3} at \texttt{campus.unimib.it}}
+  \texttt{e.zanoni3} at \texttt{campus.unimib.it}\\[2mm]
+  More will join\ldots
+}
 
 
 % \author{TBD}

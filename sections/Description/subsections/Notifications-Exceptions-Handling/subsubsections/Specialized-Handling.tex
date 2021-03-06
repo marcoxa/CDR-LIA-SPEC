@@ -3,8 +3,8 @@
 %%%% Specialized-Handling.tex
 
 \documentclass[../Notifications-Exception-Handling.tex]{subfiles}
-\begin{document}
 
+\begin{document}
 
 This document specifies a simple macro, built on top of the standard
 \CL{} condition handling machinery to quickly handle LIA-related
@@ -67,6 +67,7 @@ Other ``actions'' available, besides \code{:continue}, are
   on, but for other operations it may be different; in most cases this
   will be a no-op with respect to the specification.
     
+
 \item\code{:clear} the low level exceptions stored in the
   \emph{floating point environment} are cleared\footnote{Cfr.,
     the \CLang{} standard function \code{feclearexcept},

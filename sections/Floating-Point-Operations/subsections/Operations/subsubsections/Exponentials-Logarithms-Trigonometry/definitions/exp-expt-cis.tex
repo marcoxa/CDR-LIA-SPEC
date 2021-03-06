@@ -3,6 +3,7 @@
 %%%% exp-expt-cis.tex
 
 \documentclass[../Exponentials-Logarithms-Trigonometry.tex]{subfiles}
+
 \begin{document}
 
 \DDictionaryItem{Functions \code{exp}, \code{expt}, \code{cis}}
@@ -25,7 +26,7 @@
 
 \DDescription{}
 
-The function \code{exp} compute the natural exponentiation of a number. In
+The function \code{exp} computes the natural exponentiation of a number. In
 this section we describe only \code{exp}, the description and the properties
 of \code{expt} and \code{cis} can be derived with the relations:
 \begin{itemize}
@@ -75,7 +76,7 @@ There are different exceptional situations to be considered:
 \item If \code{exp} is called with the imaginary
   part of \varname{n} being a \code{infinity}, then the
   \clname{cl:floating-point-invalid-operation} error is signaled.
-\item If \varname{n} is not \CL{}
+\item If \varname{n} is not a \CL{}
   \clterm{number} then the function \code{exp} signals a
   \clname{cl:type-error}.
 \end{enumerate}
