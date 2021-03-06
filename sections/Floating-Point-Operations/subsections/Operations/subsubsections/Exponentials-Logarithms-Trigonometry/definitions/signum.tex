@@ -54,13 +54,16 @@ The function \code{signum}
   \varname{y} are its real and imaginary parts
   \begin{itemize}
   \item If \varname{y} is \code{negative-infinity} or
-    $-0.0$ returns \code{(conjugate (signum (conjugate
+    $-0.0$ returns\\
+    \code{(conjugate (signum (conjugate
       (complex }\varname{x} \varname{y}\code{))))}
   \item If \varname{x} is \code{negative-infinity} or
     $-0.0$ and \varname{y} is not \code{negative-infinity} or
-    $-0.0$ returns \code{(- (signum (-
+    $-0.0$ returns\\
+    \code{(- (signum (-
       (complex }\varname{x} \varname{y}\code{))))}
-  \item Else is equivalent to \code{(complex (sin (phase (complex
+  \item Else is equivalent to\\
+  \code{(complex (sin (phase (complex
   }\varname{y} \varname{x}\code{))) (sin (phase (complex }\varname{y}
   \varname{x}\code{))))}
   \end{itemize}
@@ -72,7 +75,7 @@ The function \code{float-sign}
 \item If \varname{f2} is not provided has the same behavior of
   \code{signum}
 \item If \varname{f2} is a \code{positive-infinity} or a
-  \code{negative-infinity} returns
+  \code{negative-infinity} returns\\
   \code{(* (signum} \varname{f1}\code{) positive-infinity)}
 \item If \varname{f2} is a complex number number and its real or
   imaginary parts are \code{positive-infinity} or
@@ -89,7 +92,7 @@ There are different exceptional situations to be considered:
 \begin{enumerate}
 \item If \code{signum} or \code{float-sign} are called with
   \varname{n} or \varname{f1} or \varname{f2} being a
-  \clieeeterm{signaling NaN}, then the
+  \clieeeterm{signaling NaN}, then the\\
   \clname{cl:floating-point-invalid-operation} error is signaled.
 \item If \varname{n} or \varname{f1} or \varname{f2} are not \CL{}
   \clterm{number} then the functions \code{signum} and \code{float-sign}

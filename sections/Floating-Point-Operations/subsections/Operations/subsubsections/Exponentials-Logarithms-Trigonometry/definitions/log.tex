@@ -37,7 +37,7 @@ returns a \clieeeterm{quiet NaN}.
 
 \noindent
 When \varname{n} is a negative \clterm{real}
-number the function \code{log} does not signal a
+number the function \code{log} does not signal a\\
 \code{cl:floating-point-invalid-operation}, it quietly returns a
 \clterm{complex} number.
 
@@ -52,18 +52,19 @@ The function \code{log}
   \varname{y} are its real and imaginary parts
   \begin{itemize}
   \item If \varname{x} is $0$ or $-0.0$ and
-    \varname{y} is $0$ returns \code{(complex negative-infinity (phase
+    \varname{y} is $0$ returns\\
+    \code{(complex negative-infinity (phase
       (complex }\varname{x} \varname{y}\code{)))}
-  \item If \varname{y} is $-0.0$ returns \code
-    {(conjugate (log (complex }\varname{x} \code{0)))}
+  \item If \varname{y} is $-0.0$ returns\\
+    \code{(conjugate (log (complex }\varname{x} \code{0)))}
   \item If \varname{x} is $-0.0$ and \varname{y} is a
-    positive \clterm{number} or \code{positive-infinity} returns
+    positive \clterm{number} or \code{positive-infinity} returns\\
     \code{(complex (log} \varname{y}\code{) (/ $\pi$ 2)}
   \item If \varname{x} is $-0.0$ and \varname{y} is a
-    negative \clterm{number} or \code{negative-infinity} returns
+    negative \clterm{number} or \code{negative-infinity} returns\\
     \code{(complex (log (-} \varname{y}\code{)) (- (/ $\pi$ 2))}
   \item If \varname{x} is an \clieeeterm{infinity} and \varname{y}
-    is a finite number or an \clieeeterm{infinity} returns
+    is a finite number or an \clieeeterm{infinity} returns\\
     \code{(complex positive-infinity (phase (complex }\varname{x}
     \varname{y}\code{)))}
   \item If \varname{x} is a \clterm{finite} number and \varname{y}

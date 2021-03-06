@@ -38,7 +38,7 @@ When \varname{n} or \varname{n1} are a \clieeeterm{quiet NaN} the functions
 
 \noindent
 When \varname{n} is a negative \clterm{real}
-number the function \code{sqrt} does not signal a
+number the function \code{sqrt} does not signal a\\
 \code{cl:floating-point-invalid-operation}, it quietly returns a
 \clterm{complex} number.
 
@@ -56,10 +56,11 @@ and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
 \item If \varname{x} is a \clieeeterm{number} or an
   \clieeeterm{infinity} and
   \varname{y} is a
-  \code{positive-infinity} returns \code{(complex positive-infinity
+  \code{positive-infinity} returns\\
+  \code{(complex positive-infinity
     positive-infinity)}
 \item If \varname{x} is \code{positive-infinity} and
-  \varname{y} is a greater than or equal to $0$ returns
+  \varname{y} is a greater than or equal to $0$ returns\\
   \code{(complex positive-infinity 0)}
 \item If \varname{x} is \code{positive-infinity} and
   \varname{y} is a less than $0$ returns \code{(complex positive-infinity
@@ -67,11 +68,11 @@ and \varname{y} are its \clieeeterm{real} and \clieeeterm{imaginary} parts
 \item If \varname{x} is a \clieeeterm{number} or an
   \clieeeterm{infinity} and
   \varname{y} is a
-  \code{negative-infinity} returns \code{(complex positive-infinity
-    negative-infinity)}
+  \code{negative-infinity} returns\\
+  \code{(complex positive-infinity negative-infinity)}
 \item If \varname{x} is \code{negative-infinity} and
-  \varname{y} is a greater than or equal to $0$ returns \code{(complex 0
-  positive-infinity)}
+  \varname{y} is a greater than or equal to $0$ returns\\
+  \code{(complex 0 positive-infinity)}
 \item If \varname{x} is \code{negative-infinity} and
   \varname{y} is a less than $0$ returns \code{(complex 0 negative-infinity)}
 \end{itemize}
@@ -86,11 +87,12 @@ There are different exceptional situations to be considered:
   \clname{cl:floating-point-invalid-operation} error
   is signaled.
 \item If \code{sqrt} and \code{isqrt} are called with
-  \varname{n} being a \clieeeterm{signaling NaN}, then the
+  \varname{n} being a \clieeeterm{signaling NaN}, then the\\
   \clname{cl:floating-point-invalid-operation} error is signaled.
 \item If \varname{n} and \varname{n1} are not \CL{}
   \clterm{number} then the functions \code{sqrt} and \code{isqrt}
-  signals a \clname{cl:type-error}.
+  signals a\\
+  \clname{cl:type-error}.
 \end{enumerate}
 
 % If \varname{} is a \clliaterm{signaling NaN} then if the notification
