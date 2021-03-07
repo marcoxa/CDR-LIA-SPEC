@@ -7,7 +7,9 @@
 
 \label{sect:transc-ops}
 
-\begin{tt}
+\begin{table}[ht!]
+  \centering
+  \begin{tt}
   \begin{tabular}{lll}
     \#| abs |\# & cos & signum\\
     acos &  cosh &  sin\\
@@ -18,15 +20,19 @@
     atanh & phase & \\
     cis & \#| pi |\# & \\
   \end{tabular}
-\end{tt}
+  \end{tt}
+  \caption{The \CL{} symbols related to exponential,
+  trigonometric and transcendental operations.}
+  \label{table:cl-exptrig-symbols}
+\end{table}
 
 \vspace*{3mm}
 
 \noindent
-The above table corresponds to Figure~12-2 of \cite{1996:ANSIHyperSpec}.
+Table~\ref{table:cl-exptrig-symbols} corresponds to Figure~12-2 of \cite{1996:ANSIHyperSpec}.
 The ``commented'' entries will not be described as they either don't
 operate on floating point numbers or do not have a semantic different
-from the \CL{} standard.
+from the \CL{} standard (moreover, \code{pi} is a constant).
 
 \noindent
 The listed \CL{} functions have correspondences in the \cite{2008:IEEE-754}
@@ -40,11 +46,12 @@ standard.
 For each of the functions in the table above the following set of functions is
 defined:
 \begin{itemize}
-\item \code{function.<} compute the function with rounding downward
-\item \code{function.>} compute the function with rounding upward
-\item \code{function.<>} compute the function with rounding to nearest
-\item \code{function} compute the function with the current rounding mode
+\item \textit{\code{function}}\code{.<} computes the function with rounding downward,
+\item \textit{\code{function}}\code{.>} computes the function with rounding upward,
+\item \textit{\code{function}}\code{.<>} computes the function with rounding to nearest,
+\item \textit{\code{function}} computes the function with the current rounding mode.
 \end{itemize}
+
 \vspace*{3mm}
 
 The following functions will also be specified for completeness,

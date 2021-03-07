@@ -44,7 +44,8 @@ In the following, this specification will state exactly what kind of
 behavior the various functions and macros will follow.  In general, a
 \CL{} \emph{condition} will be \emph{signaled} when either the \CL{}
 standard already mandates so (e.g., in the case of
-\code{cl:division-by-zero}) or when the LIA specification implies that
+\code{cl:division-by-zero})\marginnote{As noted by phoe, we also need to specify when a condition is "serious" or not and when it is signalled by \code{signal} and when it is signalled by \code{error}}
+or when the LIA specification implies that
 the ``continuation value'' and the recording of the exception proposed
 are really a stopgap measure\footnote{This may be seen as somewhat
   arbitrary.  This interpretation is warranted, as the main goal of

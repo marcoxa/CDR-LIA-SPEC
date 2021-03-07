@@ -8,12 +8,13 @@
 
 Suppose some code should be executed only if the single float
 precision is at least 1 part in a million.  The code below can be used
-to bail out before executing it.
+to bail out before executing it (assuming the \CL{} reader,
+which is not covered by this specification, behaves "reasonably").
 \begin{alltt}
     (when (< (/ single-float-epsilon) 1.0e6)
         (format *error-output*
                 "The SINGLE-FLOAT type has insufficient precision.")
-        (abort 'arithmetic-error))
+        (error 'arithmetic-error))
     ...
 \end{alltt}
 
@@ -26,9 +27,10 @@ A range test on the bounds of the single float type.
 \end{alltt}
 
 \noindent
+\missingpart{The constant \codelia{single-float-rounding-error} is still undefined.}
 Checking for $\frac{1}{2}$ulp.
 \begin{alltt}
-    (when (/= \codelia{single-float-rounding-error} 0.5) ...)
+    (when (/= 0.5) ...)
 \end{alltt}
 
 \noindent

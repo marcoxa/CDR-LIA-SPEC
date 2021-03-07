@@ -105,17 +105,17 @@ specification provides the following API.
   \code{arithmetic-notification-style}.
   \begin{alltt}
     (deftype \codelia{arithmetic-notification-style} ()
-      (member :recording    \textcolor{red}{; I.e., NRI.}
-              :error        \textcolor{red}{; I.e., NACF.}
-              :termination  \textcolor{red}{; I.e., NTM.}
-              ))
+      '(member :recording    \textcolor{red}{; I.e., NRI.}
+               :error        \textcolor{red}{; I.e., NACF.}
+               :termination  \textcolor{red}{; I.e., NTM.}
+               ))
   \end{alltt}
 \item A set of functions and macros to retrieve and set the current
   notification style.
   \begin{description}
   \item \code{current-notification-style}: a function that retrieves
     the, as the name implies, the current notification style.
-  \item \code{set-notification-style}: a function that sets the
+  \item \code{set-notification-style}, \code{(setf current-notification-style)}: functions that set the
     notification style.
   \item \code{with-notification-style}: a macro that temporarily sets
     the notification style and ensures to restore the one in effect

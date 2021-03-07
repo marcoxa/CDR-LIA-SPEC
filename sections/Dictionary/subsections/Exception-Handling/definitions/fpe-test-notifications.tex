@@ -35,9 +35,9 @@ code may decide how to \emph{handle} either
 \begin{alltt}
 (let ((fpe-excps \textcolor{blue}{(fpe-test-notifications :overflow :invalid)}))
    (when (fpe-check-notifications :invalid)
-     (signal 'cl:floating-point-invalid-operation))
+     (error 'cl:floating-point-invalid-operation))
    (when (fpe-check-notifications :overflow)
-     (signal 'cl:floating-point-overflow))
+     (error 'cl:floating-point-overflow))
    )
 \end{alltt}
 

@@ -40,14 +40,17 @@ returns \varname{f} as result \varname{frac}; \code{exponent}
 returns $\infty$ if \varname{f} is an \clliaterm{infinity}.
 
 If \varname{f} is a \clliaterm{quiet NaN} then, \code{exponent}
-returns a \clliaterm{quiet NaN}.  If \varname{f} is a \clliaterm{quiet
-  NaN} then, \code{exponentfraction} returns a \clliaterm{quiet NaN}.
+returns a \clliaterm{quiet NaN}.  If \varname{f} is a
+\clliaterm{quiet NaN} then, \code{fraction} returns a
+\clliaterm{quiet NaN}.
 
 \DExceptional{}
 
 If \varname{f} is a \clliaterm{signaling NaN} then, if the notification
 style is NACF, the condition\\
-\code{floating-point-invalid-operation} is signaled with a
+\code{floating-point-invalid-operation}\marginnote{LIA defines
+the INFINITARY exception which included "division by zero"; define
+this.} is signaled with a
 \clliaterm{quiet NaN} as continuation value; if the notification style
 is NRI, the indicator \code{:invalid} is recorded and a
 \clliaterm{quiet NaN} is returned as continuation value.
