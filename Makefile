@@ -9,15 +9,17 @@
 RM = rm
 
 LATEX = pdflatex
+BIBTEX = bibtex
+MKINDEX = makeindex
 
 DOC = CDR-IEEE-754-support.tex
 
 all: $(DOC)
 	$(LATEX) $(DOC)
-	bibtex $(DOC:.tex=)
+	$(BIBTEX) $(DOC:.tex=)
 	$(LATEX) $(DOC)
 	$(LATEX) $(DOC)
-	makeindex $(DOC)
+	$(MKINDEX) $(DOC:.tex=)
 	$(LATEX) $(DOC)
 
 # No cleaning up of 'sections' subfolders.
@@ -26,4 +28,3 @@ clean:
 
 
 # end of file -- Makefile
-
