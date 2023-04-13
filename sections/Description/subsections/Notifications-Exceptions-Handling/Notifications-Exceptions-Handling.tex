@@ -68,7 +68,7 @@ Debug  (type H for help)
   underlying \emph{floating point environment}.  In that case, it
   appears that \CMUCL{} and \SBCL{} do offer the NRI machinery.
 \begin{alltt}
-SBCL> \codeprompt{(sb-int:with-float-traps-masked (:divide-by-zero) (/ 3 0.0))}
+SBCL> \codeprompt{(sb-int:with-float-traps-masked (:divide-by-zero) (/ 3 0.0))}\\
 \textit{\#.SB-EXT:SINGLE-FLOAT-POSITIVE-INFINITY}
 
 SBCL> \codeprompt{(sb-int:get-floating-point-modes)}\\

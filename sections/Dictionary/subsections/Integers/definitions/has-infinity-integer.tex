@@ -25,6 +25,12 @@ include infinities.
 This is the parameter \textit{hasinf}$_I$ with $I$ equal to
 \code{integer}, required in LIA1 \cite{2012:LIA1}.
 
+Note that this parameter does not agree with the LIA1
+specification; it is \code{NIL} and not \code{T}.  The reason is that at the time
+of this writing there appear to be no portable way to express an
+integer infinity in most (all?) \CL{} implementations.
+
+
 \DSeeAlso{}
 
 \code{bounded-fixnum}, \code{bounded-integer}, \code{has-infinity-fixnum}.
