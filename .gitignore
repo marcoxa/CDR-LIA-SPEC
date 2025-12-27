@@ -16,3 +16,6 @@ cleqcmp.html
 divz
 *.out
 *.tex~
+
+# This is Emacs AUCTex generated stuff.
+auto/
